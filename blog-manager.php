@@ -11,7 +11,6 @@ function cbc_enqueue_scripts() {
         'bulk_upload_nonce' => wp_create_nonce('bulk-upload-csv-action')
     );
     // error log the entire translation array
-    error_log(print_r($translation_array, true));
     wp_localize_script('cbc_script', 'cbc_object', $translation_array);
 }
 add_action('admin_enqueue_scripts', 'cbc_enqueue_scripts');
@@ -134,9 +133,7 @@ add_action('wp_ajax_cbc_create_category', 'handle_cbc_create_category');
 function handle_cbc_create_category() {
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
-    error_log("approved nonce");
     $category_name = isset($_POST['category_name']) ? sanitize_text_field(wp_unslash($_POST['category_name'])) : '';
-    error_log("category name: " . $category_name);
     if (!$category_name) {
         wp_send_json_error(array('message' => "Invalid category name."));
         return;
@@ -219,7 +216,6 @@ function handle_cbc_file_upload() {
         
         // Process the CSV file
         $file_path = $file['file'];
-        error_log(print_r($file_path, true));
         $response = cbc_process_csv($file_path, $category_id);
         $status_code = $response['status'];
         wp_send_json(array(
