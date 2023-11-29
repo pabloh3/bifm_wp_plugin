@@ -1,8 +1,10 @@
     <?php
     // Extract the 'client_folder' parameter from the URL
-    $folderName = isset($_GET['foldername']) ? $_GET['foldername'] : '';
+    $folderName = isset($_GET['foldername']) ? sanitize_text_field($_GET['foldername']) : '';
     $client_folder = preg_replace("/[a-zA-Z]/", "", $folderName); // Remove any letters
-    
+    $url = "https://wp.builditforme.ai/instance/". esc_attr($folderName) . "/widget.php";
+    // for testing
+    //$url = 'http://127.0.0.1:3015/widget.php';
     
     echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2";"><i class="material-icons left">arrow_back</i>Back</button>';
     
@@ -38,8 +40,8 @@
                     <button class='btn waves-effect waves-light' id='undo-button'>Undo</button>
                 </div>
                 <div class='aspect-16-9'>
-                    <iframe id='myframe' src='https://wp.builditforme.ai/instance/{$folderName}/widget.php' frameborder='0' allowfullscreen></iframe>
-                    <!--<iframe id='myframe' src='http://127.0.0.1:3015/widget.php' frameborder='0' allowfullscreen></iframe>-->
+                    <iframe id='myframe' src='{$url}' frameborder='0' allowfullscreen></iframe>
+                    
                 </div>
                 
                 <button class='btn waves-effect waves-light' id='save-button'>Save</button>

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-function ewm_admin_menu() {
+function builditforme_ewm_admin_menu() {
     add_menu_page(
         'Elementor Widget Manager',
         'Build It For Me',
@@ -43,12 +43,15 @@ function ewm_admin_menu() {
         'ewm_create_blog_content'
     );
 }
-add_action('admin_menu', 'ewm_admin_menu');
+add_action('admin_menu', 'builditforme_ewm_admin_menu');
+
 
 
 function ewm_admin_page_content() {
     //this code was taken to admin-page.php
     include plugin_dir_path(__FILE__) . 'admin-page.php';
+    // Externalize JavaScript Code
+    wp_enqueue_script('my-custom-script', plugin_dir_url(__FILE__) . 'static/admin-page.js');
 }
 
 function ewm_create_widget_content() {
@@ -62,13 +65,13 @@ function ewm_create_blog_content() {
 }
 
 
-function ewm_enqueue_admin_scripts($hook) {
+function builditforme_ewm_enqueue_admin_scripts($hook) {
     global $pagenow;
     
     // Check if we're on the create-widget page to load that JS
     if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-widget')) {
         // Enqueue CSS & JavaScript
-        wp_enqueue_style('my-plugin-styles', plugins_url('static/styles.css', __FILE__),'','1.0.7', false);
+        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)),'','1.0.7', false);
         wp_enqueue_script('my-plugin-script', plugin_dir_url(__FILE__) . 'static/main.js', array('jquery'), '1.0.76', true);
         // Pass ajax_url to script.js
         wp_localize_script('my-plugin-script', 'my_plugin', array(
@@ -81,7 +84,7 @@ function ewm_enqueue_admin_scripts($hook) {
         wp_enqueue_style('my-plugin-styles', plugins_url('static/styles.css', __FILE__),'','1.0.7', false);
     }
 }
-add_action('admin_enqueue_scripts', 'ewm_enqueue_admin_scripts');
+add_action('admin_enqueue_scripts', 'builditforme_ewm_enqueue_admin_scripts');
 
 // handle deleting widgets
 add_action('wp_ajax_delete_custom_widget', 'delete_custom_widget_callback');
@@ -91,7 +94,8 @@ function delete_custom_widget_callback() {
         exit;
     }
 
-    $widget_name = sanitize_text_field($_POST['widget_name']);
+    $widget_name = isset($_POST['widget_name']) ? sanitize_text_field($_POST['widget_name']) : '';
+
     $widget_folder_path = __DIR__ . '/bifm-widgets/' . $widget_name;
 
     // Delete the widget folder

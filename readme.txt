@@ -74,6 +74,42 @@ We appreciate any feedback at pablo@builditforme.ai
 = 1.0 =
 Initial version of the BIFM Widget Manager plugin. Manage and view all AI-generated widgets for Elementor with ease.
 
+== External API Usage ==
+
+The BIFM Widget Manager relies on the Build It For Me (BIFM) external API to generate and manage AI-powered widgets. This integration is essential for the functionality of our plugin, enabling users to create, customize, and manage widgets through AI-driven processes.
+
+### API Dependency Details:
+- **Service Provider**: The plugin uses services provided by Build It For Me.
+- **Service Usage**: The plugin communicates with the Build It For Me API to request widget generation and management tasks.
+
+### Important Data Safety Notice:
+- **Protection of PII**: Users should never share any Personally Identifiable Information (PII) through the plugin. Ensuring the privacy and security of your data is paramount. Avoid entering any sensitive personal details into the widget creation process.
+
+### Terms of Service and Privacy:
+- We highly recommend reviewing Build It For Me's Terms and Conditions to understand the usage policies and data handling practices. 
+- For detailed information, please visit [Build It For Me Terms and Conditions](https://www.builditforme.ai/terms-and-conditions).
+
+### User Consent:
+- By using the BIFM Widget Manager, you agree to the terms and conditions set forth by Build It For Me. It is important to be aware of these terms as they govern the use of the API and the services provided through our plugin.
+
+### Data Handling:
+- The plugin does not store personal data but may transmit data necessary for widget generation to Build It For Me's API. This data is subject to Build It For Me's privacy policy.
+
+This integration is crucial for providing our users with a seamless and efficient widget creation experience. Should you have any concerns or questions regarding the API integration, please feel free to reach out to us.
+
 == Arbitrary section ==
 
 A special thanks to the Build It For Me team for their API, which powers the AI widget generation.
+
+
+
+Reviewed:
+admin-page.php 
+bifm_action_hooks.php
+blog-creator-page.php
+blog-manager.php
+chat.php
+client.php
+readme.txt
+widget-manager.php
+blog-creator-script.js

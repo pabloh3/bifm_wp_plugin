@@ -2,7 +2,7 @@
 
 // Enqueue required scripts and styles
 function cbc_enqueue_scripts() {
-    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.55', true);
+    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.57', true);
 
     // Localize the script with your data
     $translation_array = array(
@@ -10,6 +10,8 @@ function cbc_enqueue_scripts() {
         'single_post_nonce' => wp_create_nonce('create-single-post-action'),
         'bulk_upload_nonce' => wp_create_nonce('bulk-upload-csv-action')
     );
+    // error log the entire translation array
+    error_log(print_r($translation_array, true));
     wp_localize_script('cbc_script', 'cbc_object', $translation_array);
 }
 add_action('admin_enqueue_scripts', 'cbc_enqueue_scripts');
@@ -21,14 +23,18 @@ function handle_cbc_create_blog() {
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
 
+
+
     // Get the keyphrase and category_id from the frontend
-    $keyphrase = isset($_POST['keyphrase']) ? sanitize_text_field($_POST['keyphrase']) : '';
-    $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+    $keyphrase = isset($_POST['keyphrase']) ? sanitize_text_field(wp_unslash($_POST['keyphrase'])) : '';
+    $category = isset($_POST['category']) ? sanitize_text_field(wp_unslash($_POST['category'])) : '';
     $website = home_url();  // Current website URL
     $user_id = get_current_user_id();
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
     $related_links = fetch_related_links($category);
+
+    
 
     $url = "https://wp.builditforme.ai/create-blog";
     
@@ -75,9 +81,11 @@ function handle_cbc_poll_for_results() {
     error_log("called to poll for results");
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
+
     
     // Get the jobId from the frontend
-    $jobId = isset($_POST['jobId']) ? sanitize_text_field($_POST['jobId']) : '';
+    $jobId = isset($_POST['jobId']) ? sanitize_text_field(wp_unslash($_POST['jobId'])) : '';
+    
 
     // Construct the URL for the external service
     $url = "https://wp.builditforme.ai/poll-blog-results/{$jobId}";
@@ -126,8 +134,9 @@ add_action('wp_ajax_cbc_create_category', 'handle_cbc_create_category');
 function handle_cbc_create_category() {
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
-
-    $category_name = isset($_POST['category_name']) ? sanitize_text_field($_POST['category_name']) : '';
+    error_log("approved nonce");
+    $category_name = isset($_POST['category_name']) ? sanitize_text_field(wp_unslash($_POST['category_name'])) : '';
+    error_log("category name: " . $category_name);
     if (!$category_name) {
         wp_send_json_error(array('message' => "Invalid category name."));
         return;
@@ -191,9 +200,10 @@ add_action('wp_ajax_cbc_file_upload', 'handle_cbc_file_upload');
 function handle_cbc_file_upload() {
     // Check user capabilities and nonce
     check_ajax_referer('bulk-upload-csv-action', 'nonce');
+
     
     // get the category
-    $category_id = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+    $category_id = isset($_POST['category']) ? sanitize_text_field(wp_unslash($_POST['category'])) : '';
     
     #This is checking if the file upload field (named 'cbc_csv_file') exists within the $_FILES superglobal array
     if (isset($_FILES['cbc_csv_file'])) {

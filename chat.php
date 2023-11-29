@@ -8,8 +8,8 @@ $api_url = "https://wp.builditforme.ai";
 #change url when working on local
 #$api_url = "http://127.0.0.1:5000";
 
-add_action('wp_ajax_plugin_send_message', 'handle_plugin_send_message');
-function handle_plugin_send_message() {
+add_action('wp_ajax_plugin_send_message', 'bifm_handle_plugin_send_message');
+function bifm_handle_plugin_send_message() {
     // Check nonce for security
     check_ajax_referer('my-plugin-nonce', 'nonce');
 
@@ -37,7 +37,7 @@ function handle_plugin_send_message() {
     // Check for errors
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong: $error_message"));
+        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
     } else {
         // Get the status code from the external server's response
         $status_code = wp_remote_retrieve_response_code($response);
@@ -74,7 +74,7 @@ function handle_my_plugin_poll_action() {
     // Check for errors
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong: $error_message"));
+        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
     } else {
         // Get the status code from the external server's response
         $status_code = wp_remote_retrieve_response_code($response);
@@ -110,8 +110,8 @@ function handle_fatal_error($dir_path, $widget_name) {
 }
 
 
-add_action('wp_ajax_plugin_save', 'handle_plugin_save');
-function handle_plugin_save() {
+add_action('wp_ajax_plugin_save', 'bifm_handle_plugin_save');
+function bifm_handle_plugin_save() {
     $error_encountered = false;
     // Check nonce for security
     check_ajax_referer('my-plugin-nonce', 'nonce');
@@ -147,7 +147,7 @@ function handle_plugin_save() {
     if (is_wp_error($response)) {
         $error_encountered = true;
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong: $error_message"));
+        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
     } 
     
     //Saving the widget
@@ -237,7 +237,8 @@ function handle_plugin_save() {
         }
      } catch (Exception $e) {
         $rollback_required = true;
-        wp_send_json_error(array('message' => 'An error occurred: ' . $e->getMessage()));
+        wp_send_json_error(array('message' => 'An error occurred: ' . esc_html__($e->getMessage())));
+    
     } finally {
         // 3. Rollback on error
         if ($rollback_required) {
@@ -279,8 +280,8 @@ function lint_php_code($code) {
 }
 
 
-add_action('wp_ajax_plugin_reset', 'handle_plugin_reset');
-function handle_plugin_reset() {
+add_action('wp_ajax_plugin_reset', 'bifm_handle_plugin_reset');
+function bifm_handle_plugin_reset() {
     // Check nonce for security
     check_ajax_referer('my-plugin-nonce', 'nonce');
 
@@ -298,7 +299,7 @@ function handle_plugin_reset() {
     // Check for errors
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong: $error_message"));
+        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
     }
     
     wp_send_json_success(array(
@@ -311,8 +312,8 @@ function handle_plugin_reset() {
 
 
 // Handle the undo request
-add_action('wp_ajax_plugin_undo', 'handle_plugin_undo');
-function handle_plugin_undo() {
+add_action('wp_ajax_plugin_undo', 'bifm_handle_plugin_undo');
+function bifm_handle_plugin_undo() {
     // Check nonce for security
     check_ajax_referer('my-plugin-nonce', 'nonce');
 
@@ -330,7 +331,7 @@ function handle_plugin_undo() {
     // Check for errors
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong: $error_message"));
+        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
     }
     
     wp_send_json_success(array(

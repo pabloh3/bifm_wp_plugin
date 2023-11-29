@@ -14,14 +14,16 @@
                     let categories = response.data;
                     let categoryInput = $('#category_input');
                     categories.forEach(category => {
-                        categoryInput.append('<option value="' + category.id + '">' + category.name + '</option>');
+                        //categoryInput.append('<option value="' + category.id + '">' + category.name + '</option>');
+
+                        categoryInput.append($('<option>').val(category.id).text(category.name));
                     });
                     categoryInput.append('<option value="other">Other...</option>');
                     categoryInput.formSelect(); // Re-initialize the Materialize dropdown
                     
                     let categoryInput2 = $('#category_input2');
                     categories.forEach(category => {
-                        categoryInput2.append('<option value="' + category.id + '">' + category.name + '</option>');
+                        categoryInput2.append($('<option>').val(category.id).text(category.name));
                     });
                     categoryInput2.append('<option value="other">Other...</option>');
                     categoryInput2.formSelect(); // Re-initialize the Materialize dropdown
@@ -55,7 +57,13 @@ jQuery(document).ready(function($) {
 
         $.post(cbc_object.ajax_url, data, function(response) {
             if(response.status === 202) {
-                let innerData = JSON.parse(response.data);
+                let innerData;
+                try {
+                    innerData = JSON.parse(response.data);
+                } catch (e) {
+                    console.error('Error parsing JSON response:', e);
+                    return; // Exit the function
+                }
                 jobId = innerData.jobId;  // Assuming the response returns a jobId
                 $('#cbc_response').html('The blog is being created. This might take up to 2 minutes...');
                 submit_single.prop('disabled', true);
@@ -120,7 +128,8 @@ function goBack() {
     $('#category_input').change(function() {
         let selected = $(this).val();
         if (selected === 'other') {
-            let newCategory = prompt("Please enter the new category:");
+            let newCategory = $("<div>").text(prompt("Please enter the new category:")).text();
+            console.log("new category: " + newCategory);
             if (newCategory) {
                 // Send AJAX request to create the new category
                 $.ajax({
