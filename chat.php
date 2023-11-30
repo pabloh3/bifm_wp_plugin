@@ -266,13 +266,18 @@ function lint_php_code($code) {
     $output0 = shell_exec("echo 'Hello World'");
     error_log("Printing text: " . $output0);
     error_log("temp file: " . $temp_file);
-    //check php version
-    #$output1 = shell_exec("/Users/pabloh/Library/Application Support/Local/lightning-services/php-8.2.10+1/bin/darwin/bin/php -v");
-    #error_log("php version: " . $output1);
-
-    // Lint the file
-    $output = shell_exec("php -l " . escapeshellarg($temp_file));
+    //check php version when running locally
+    /*$phpBinary = "/Users/pablohernandezsanz/Library/'Application Support'/Local/lightning-services/php-8.1.23+0/bin/darwin-arm64/bin/php";
+    $output1 = shell_exec($phpBinary . " -v");
+    error_log("php version used by Pablo: " . $output1);*/
+    
+    $phpBinary = "php";
+    // Lint the file using the dynamic PHP path
+    $output = shell_exec($phpBinary . ' -l ' . escapeshellarg($temp_file));
     error_log("Lint test output: " . $output);
+    // Lint the file
+    //$output = shell_exec("php -l " . escapeshellarg($temp_file));
+    //error_log("Lint test output: " . $output);
     // Delete the temporary file
     unlink($temp_file);
     // If the output contains "No syntax errors", the lint was successful
