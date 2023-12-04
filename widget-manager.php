@@ -248,11 +248,7 @@ function register_yoast_fields() {
 }
 add_action('rest_api_init', 'register_yoast_fields');
 
-function get_yoast_focuskw($object, $field_name, $request) {
-    return get_post_meta($object['id'], $field_name, true);
-}
-
-function get_yoast_metadesc($object, $field_name, $request) {
+function custom_get_post_meta_for_api($object, $field_name, $request) {
     return get_post_meta($object['id'], $field_name, true);
 }
 
