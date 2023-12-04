@@ -51,7 +51,7 @@ function ewm_admin_page_content() {
     //this code was taken to admin-page.php
     include plugin_dir_path(__FILE__) . 'admin-page.php';
     // Externalize JavaScript Code
-    wp_enqueue_script('my-custom-script', plugin_dir_url(__FILE__) . 'static/admin-page.js');
+    wp_enqueue_script('my-custom-script', plugin_dir_url(__FILE__) . 'static/admin-page.js', array('jquery'), '1.0.2', true);
 }
 
 function ewm_create_widget_content() {
@@ -71,7 +71,7 @@ function builditforme_ewm_enqueue_admin_scripts($hook) {
     // Check if we're on the create-widget page to load that JS
     if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-widget')) {
         // Enqueue CSS & JavaScript
-        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)),'','1.0.7', false);
+        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)),'','1.0.8', false);
         wp_enqueue_script('my-plugin-script', plugin_dir_url(__FILE__) . 'static/main.js', array('jquery'), '1.0.76', true);
         // Pass ajax_url to script.js
         wp_localize_script('my-plugin-script', 'my_plugin', array(
@@ -189,6 +189,95 @@ function get_folder_name_callback() {
 }
 
 
+// Handle change blog settings
+// Add action for logged-in users
+add_action('wp_ajax_bifm_save_settings', 'handle_bifm_save_settings');
+
+// Function to handle form submission
+function handle_bifm_save_settings() {
+    // Check for nonce security
+    if (!isset($_POST['bifm_nonce']) || !wp_verify_nonce($_POST['bifm_nonce'], 'my_custom_action')) {
+        wp_send_json_error('Nonce verification failed!', 400);
+    }
+
+    // Your encryption and data handling logic
+    if (isset($_POST['blog_author_username'], $_POST['blog_author_password'])) {
+        $random_key = bin2hex(random_bytes(32));
+        $username = encrypt_data($_POST['blog_author_username'], $random_key);
+        $password = encrypt_data($_POST['blog_author_password'], $random_key);
+
+        $user_id = get_current_user_id();
+
+        update_user_meta($user_id, 'encrypted_username', $username);
+        update_user_meta($user_id, 'encrypted_password', $password);
+        update_user_meta($user_id, 'website_description', $_POST['website_description']);
+        update_user_meta($user_id, 'blog_language', $_POST['blog_language']);
+        update_user_meta($user_id, 'random_key', $random_key);
+    }
+    wp_send_json_success('Settings saved successfully.');
+}
+
+// Define a secret key. Store this securely and do not expose it.
+
+function encrypt_data($data, $random_key) {
+    $ivLength = openssl_cipher_iv_length($cipher = 'AES-128-CBC');
+    $iv = openssl_random_pseudo_bytes($ivLength);
+    $encrypted = openssl_encrypt($data, $cipher, $random_key, $options = 0, $iv);
+    return base64_encode($encrypted . '::' . $iv);
+}
+
+function decrypt_data($data, $random_key) {
+    list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
+    return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
+}
+
+
+# expose Yoast values in the API that usually wouldn't be exposed
+function register_yoast_fields() {
+    register_rest_field('post', '_yoast_wpseo_focuskw',  array(
+        'get_callback'    => 'custom_get_post_meta_for_api',
+        'update_callback' => 'custom_update_post_meta_for_api',
+        'schema'          => null,
+    ));
+
+    register_rest_field('post', '_yoast_wpseo_metadesc',  array(
+        'get_callback'    => 'custom_get_post_meta_for_api',
+        'update_callback' => 'custom_update_post_meta_for_api',
+        'schema'          => null,
+    ));
+}
+add_action('rest_api_init', 'register_yoast_fields');
+
+function get_yoast_focuskw($object, $field_name, $request) {
+    return get_post_meta($object['id'], $field_name, true);
+}
+
+function get_yoast_metadesc($object, $field_name, $request) {
+    return get_post_meta($object['id'], $field_name, true);
+}
+
+function custom_update_post_meta_for_api($value, $object, $field_name) {
+    // Ensure the value is sanitized before saving
+    $sanitized_value = sanitize_text_field($value);
+    return update_post_meta($object->ID, $field_name, $sanitized_value);
+}
+
+/* //what we used before
+function custom_register_rest_fields() {
+    register_rest_field('post', '_yoast_wpseo_metadesc', array(
+        'get_callback'    => 'custom_get_post_meta_for_api',
+        'update_callback' => 'custom_update_post_meta_for_api',
+        'schema'          => null,
+    ));
+
+    // ... (your other fields)
+}
+
+function custom_update_post_meta_for_api($value, $object, $field_name) {
+    // Ensure the value is sanitized before saving
+    $sanitized_value = sanitize_text_field($value);
+    return update_post_meta($object->ID, $field_name, $sanitized_value);
+}*/
 
 require_once( __DIR__ . '/blog-manager.php' );
 require_once( __DIR__ . '/widget-registration.php' );

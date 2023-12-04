@@ -92,11 +92,14 @@ jQuery(document).ready(function($) {
                 if(response.status === 200) {
                     submit_single.prop('disabled', false);
                     let innerData = JSON.parse(response.data);
-                    if(innerData.message){
-                        $('#cbc_response').html('Your post was successfully created. <a href="' + 'https://www.elquesabe.mx/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>'+innerData.message);    
+                    if (innerData.blogpost_id == null){
+                        $('#cbc_response').html('Your post failed to be created. <br>'+innerData.message);
+                    }
+                    else if(innerData.message){
+                        $('#cbc_response').html('Your post was successfully created. <a href="' + '/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>'+innerData.message);    
                     }
                     else{
-                        $('#cbc_response').html('Your post was successfully created. <a href="' + 'https://www.elquesabe.mx/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>');    
+                        $('#cbc_response').html('Your post was successfully created. <a href="' + '/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>');    
                     }
                 } else if(response.status === 202) {
                     setTimeout(() => pollForResults(jobId), 5000);

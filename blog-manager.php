@@ -1,5 +1,9 @@
 <?php
 
+// define base url for the API
+//define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
+define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
+
 // Enqueue required scripts and styles
 function cbc_enqueue_scripts() {
     wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.57', true);
@@ -15,6 +19,12 @@ function cbc_enqueue_scripts() {
 }
 add_action('admin_enqueue_scripts', 'cbc_enqueue_scripts');
 
+function decrypt($data, $random_key) {
+    error_log("data: " . $data);
+    error_log("random_key: " . $random_key);
+    list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
+    return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
+}
 
 // create blog
 add_action('wp_ajax_cbc_create_blog', 'handle_cbc_create_blog');
@@ -32,10 +42,18 @@ function handle_cbc_create_blog() {
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
     $related_links = fetch_related_links($category);
-
+    # Extract website info
+    $encrypted_username = get_user_meta($user_id, 'encrypted_username', true);
+    $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
+    $random_key = get_user_meta($user_id, 'random_key', true);
+    $username = decrypt($encrypted_username, $random_key);
+    $password = decrypt($encrypted_password, $random_key);
+    $website_description = get_user_meta($user_id, 'website_description', true);
+    $blog_language = get_user_meta($user_id, 'blog_language', true);
     
 
-    $url = "https://wp.builditforme.ai/create-blog";
+    $url = BIFM_API_BASE_URL . "/create-blog";
+    error_log("url for API called: " . $url);
     
     /*// for  debugging DELETE!!!!!!!!!!!!!!!!!!!
     wp_send_json(array(
@@ -50,7 +68,11 @@ function handle_cbc_create_blog() {
             'category' => $category,
             'website' => $website,
             'requester' => $user_email,
-            'related_links' => $related_links
+            'related_links' => $related_links,
+            'username' => $username,
+            'password' => $password,
+            'website_description' => $website_description,
+            'blog_language' => $blog_language
         )),
         'method' => 'POST',
         'data_format' => 'body'
@@ -87,7 +109,8 @@ function handle_cbc_poll_for_results() {
     
 
     // Construct the URL for the external service
-    $url = "https://wp.builditforme.ai/poll-blog-results/{$jobId}";
+    $url = BIFM_API_BASE_URL . "/poll-blog-results/{$jobId}";
+
 
     // Send a GET request to the external service
     $response = wp_remote_get($url);
@@ -229,7 +252,7 @@ function handle_cbc_file_upload() {
 function cbc_process_csv($file_path, $category_id) {
 
     // Assume the API expects a multipart/form-data request with a file field
-    $url = "https://wp.builditforme.ai/create-blog-batch";
+    $url = BIFM_API_BASE_URL . "/create-blog-batch";
     
     // Fetch additional data
     $website = home_url();  // Current website URL
