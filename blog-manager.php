@@ -1,8 +1,8 @@
 <?php
 
 // define base url for the API
-//define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
-define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
+define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
+//define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
 
 // Enqueue required scripts and styles
 function cbc_enqueue_scripts() {
