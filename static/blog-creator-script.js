@@ -69,13 +69,13 @@ jQuery(document).ready(function($) {
                 submit_single.prop('disabled', true);
                 pollForResults(jobId);
             } else {
+                console.log(response.data);
                 if (JSON.parse(response.data).message){
                     $('#cbc_response').html(JSON.parse(response.data).message);
                 }
                 else{
                     $('#cbc_response').html(response.message ? response.message : 'An unknown error occurred.');
                 }
-                
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {
             let parsedData = (jqXHR.responseJSON && jqXHR.responseJSON.data) ? JSON.parse(jqXHR.responseJSON.data) : null;
