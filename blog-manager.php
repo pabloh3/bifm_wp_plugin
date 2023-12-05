@@ -45,6 +45,10 @@ function handle_cbc_create_blog() {
     # Extract website info
     $encrypted_username = get_user_meta($user_id, 'encrypted_username', true);
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
+    // return an error if the user has not set their username and password
+    if (!$encrypted_username || !$encrypted_password) {
+        wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
+    }
     $random_key = get_user_meta($user_id, 'random_key', true);
     $username = decrypt($encrypted_username, $random_key);
     $password = decrypt($encrypted_password, $random_key);

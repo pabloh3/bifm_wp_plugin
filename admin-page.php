@@ -78,8 +78,8 @@
         echo '<div class="row"><div class="input-field col s12 l4">';
         echo '<select id="blog_language" name="blog_language[]" >';
         echo '<option value="" disabled selected>Choose language</option>';
-        echo '<option value="English">English</option>';
-        echo '<option value="Spanish">Spanish</option>';
+        echo '<option value="english">English</option>';
+        echo '<option value="spanish">Spanish</option>';
         echo '</select>';
         echo '<label for="blog_language">Language for new blog posts</label>';
         echo '</div></div>';
