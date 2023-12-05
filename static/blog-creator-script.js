@@ -69,9 +69,8 @@ jQuery(document).ready(function($) {
                 submit_single.prop('disabled', true);
                 pollForResults(jobId);
             } else {
-                console.log(response.data);
-                if (JSON.parse(response.data)){
-                    $('#cbc_response').html(JSON.parse(response.data).message);
+                if (response.data.message){
+                    $('#cbc_response').html(response.data.message);
                 }
                 else{
                     $('#cbc_response').html(response.message ? response.message : 'An unknown error occurred.');

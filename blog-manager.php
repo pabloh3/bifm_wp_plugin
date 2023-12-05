@@ -1,12 +1,12 @@
 <?php
 
 // define base url for the API
-define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
-//define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
+//define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
+define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
 
 // Enqueue required scripts and styles
 function cbc_enqueue_scripts() {
-    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.60', true);
+    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.66', true);
 
     // Localize the script with your data
     $translation_array = array(
@@ -32,8 +32,6 @@ function handle_cbc_create_blog() {
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
 
-
-
     // Get the keyphrase and category_id from the frontend
     $keyphrase = isset($_POST['keyphrase']) ? sanitize_text_field(wp_unslash($_POST['keyphrase'])) : '';
     $category = isset($_POST['category']) ? sanitize_text_field(wp_unslash($_POST['category'])) : '';
@@ -52,6 +50,8 @@ function handle_cbc_create_blog() {
     $random_key = get_user_meta($user_id, 'random_key', true);
     $username = decrypt($encrypted_username, $random_key);
     $password = decrypt($encrypted_password, $random_key);
+    error_log("username: " . $username);
+    error_log("password: " . $password);
     $website_description = get_user_meta($user_id, 'website_description', true);
     $blog_language = get_user_meta($user_id, 'blog_language', true);
     
