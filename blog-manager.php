@@ -50,9 +50,17 @@ function handle_cbc_create_blog() {
     $random_key = get_user_meta($user_id, 'random_key', true);
     $password = decrypt($encrypted_password, $random_key);
     $website_description = get_user_meta($user_id, 'website_description', true);
+    if (!$website_description) {
+        $website_description = "";
+    }
     $image_style = get_user_meta($user_id, 'image_style', true);
+    if (!$image_style) {
+        $image_style = "";
+    }
     $blog_language = get_user_meta($user_id, 'blog_language', true);
-    
+    if (!$blog_language) {
+        $blog_language = "english";
+    }
 
     $url = BIFM_API_BASE_URL . "/create-blog";
     error_log("url for API called: " . $url);
@@ -273,9 +281,17 @@ function cbc_process_csv($file_path, $category_id) {
     $random_key = get_user_meta($user_id, 'random_key', true);
     $password = decrypt($encrypted_password, $random_key);
     $website_description = get_user_meta($user_id, 'website_description', true);
+    if (!$website_description) {
+        $website_description = "";
+    }
     $image_style = get_user_meta($user_id, 'image_style', true);
+    if (!$image_style) {
+        $image_style = "";
+    }
     $blog_language = get_user_meta($user_id, 'blog_language', true);
-
+    if (!$blog_language) {
+        $blog_language = "english";
+    }
     
     $keyphrases = array();
     if (($handle = fopen($file_path, 'r')) !== FALSE) {
