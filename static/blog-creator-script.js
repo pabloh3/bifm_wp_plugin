@@ -201,13 +201,21 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.status == 200 || response.status === 202) {
                     console.log("Successful response from submitting csv");
-                    inner_data = JSON.parse(response.data);
+                    try{
+                        inner_data = JSON.parse(response.data);
+                    } catch {
+                        inner_data = response.data;
+                    }
                     // Handle success. If there are categories to validate, prompt the user.
                     $('#cbc_response').html('Upload successful! ' + inner_data.message);
                 }
                 else {
                     console.log("Error response from submitting csv");
-                    inner_data = JSON.parse(response.data);
+                    try{
+                        inner_data = response.data.message;
+                    } catch {
+                        inner_data = response.data;
+                    }
                     // Handle success. If there are categories to validate, prompt the user.
                     $('#cbc_response').html('An error occurred during upload: ' + inner_data);
                     

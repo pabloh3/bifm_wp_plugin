@@ -7,8 +7,9 @@
 
     // Tabs structure
     echo '<div class="row">';
-    echo '<h3>API URL return to original</h3>';
-    echo '<h3>Adjust bulk blog creator too</h3>';
+    //disclaimers for staging
+    //echo '<h3 style="color:red">Change the API URL to the staging site</h3>';
+
     echo '<div class="col s12">';
     echo '<ul class="tabs">';
     echo '<li class="tab col s4"><a href="#widget-generator">Widget Generator</a></li>';
@@ -62,21 +63,27 @@
         echo '<form id="bifm-settings-form" action="#" method="post">';
 
         // Blog author's username
+        $user_id = get_current_user_id();
+        $username = get_user_meta($user_id, 'username', true);
         echo '<div class="row"><div class="input-field col s12 l4">';
-        echo '<input id="blog_author_username" type="text" name="blog_author_username" class="validate">';
+        if (!is_null($username)) {
+            echo '<input id="blog_author_username" type="text" name="blog_author_username" class="validate materialize-textarea" value="' . htmlspecialchars($username) . '" required >';
+        } else {
+            echo '<input id="blog_author_username" type="text" name="blog_author_username" class="validate materialize-textarea" required >';
+        }
         echo '<label for="blog_author_username">Blog author\'s username</label>';
-        echo '<p style="color:red">Create an author account that only has editor access, DO NOT use an admin account. </p>';
+        echo '<p style="color:red">Create an author account that only has author access, DO NOT use an admin account. </p>';
         echo '</div></div>';
 
         // Blog author's password
         echo '<div class="row"><div class="input-field col s12 l4">';
-        echo '<input id="blog_author_password" type="password" name="blog_author_password" class="validate">';
+        echo '<input id="blog_author_password" type="password" name="blog_author_password" class="validate materialize-textarea" required>';
         echo '<label for="blog_author_password">Blog author\'s password</label>';
         echo '</div></div>';
 
         // Language for new blog posts
         echo '<div class="row"><div class="input-field col s12 l4">';
-        echo '<select id="blog_language" name="blog_language[]" >';
+        echo '<select id="blog_language" name="blog_language">';
         echo '<option value="" disabled selected>Choose language</option>';
         echo '<option value="english">English</option>';
         echo '<option value="spanish">Spanish</option>';
@@ -85,13 +92,30 @@
         echo '</div></div>';
 
         // Website description
+        $website_description = get_user_meta($user_id, 'website_description', true);
         echo '<div class="row"><div class="input-field col s12 l8">';
-        echo '<textarea id="website_description" name="website_description" class="materialize-textarea"></textarea>';
-        echo '<label for="website_description">Describe your website / company in a couple of sentences</label>';
+        if (!is_null($website_description)) {
+            echo '<textarea id="website_description" name="website_description" class="materialize-textarea">' . htmlspecialchars($website_description) . '</textarea>';
+        } else {
+            echo '<textarea id="website_description" name="website_description" class="materialize-textarea"></textarea>';
+        }
+        echo '<label for="website_description">Describe your website / company in a couple of sentences.</label>';
+        echo '</div></div>';
+
+
+        // Image style 
+        $image_style = get_user_meta($user_id, 'image_style', true);
+        echo '<div class="row"><div class="input-field col s12 l8">';
+        if (!is_null($image_style)) {
+            echo '<textarea id="image_style" name="image_style" class="materialize-textarea">' . htmlspecialchars($image_style) . '</textarea>';
+        } else {
+            echo '<textarea id="image_style" name="image_style" class="materialize-textarea"></textarea>';
+        }
+        echo '<label for="image_style">Describe the style you want for your images.</label>';
         echo '</div></div>';
 
         // Submit button
-        echo '<button class="btn waves-effect waves-light" type="submit" name="action">Update</button>';
+        echo '<button class="btn waves-effect waves-light" type="submit" name="action" >Update</button>';
 
         echo '</form>';
     echo '</div>'; // Close the settings tab

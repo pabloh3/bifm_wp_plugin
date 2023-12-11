@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 warningDiv.textContent = 'Settings saved successfully.';
                 warningDiv.style.display = 'flex';
                 //cleanup all fields
-                document.getElementById('bifm-password').value = '';
+                document.getElementById('blog_author_password').value = '';
             } else {
                 console.error('Error:', result.data);
                 //display error message

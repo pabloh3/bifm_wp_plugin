@@ -41,18 +41,16 @@ function handle_cbc_create_blog() {
     $user_email = $current_user->user_email;
     $related_links = fetch_related_links($category);
     # Extract website info
-    $encrypted_username = get_user_meta($user_id, 'encrypted_username', true);
+    $username = get_user_meta($user_id, 'username', true);
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
     // return an error if the user has not set their username and password
-    if (!$encrypted_username || !$encrypted_password) {
+    if (!$username || !$encrypted_password) {
         wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
     }
     $random_key = get_user_meta($user_id, 'random_key', true);
-    $username = decrypt($encrypted_username, $random_key);
     $password = decrypt($encrypted_password, $random_key);
-    error_log("username: " . $username);
-    error_log("password: " . $password);
     $website_description = get_user_meta($user_id, 'website_description', true);
+    $image_style = get_user_meta($user_id, 'image_style', true);
     $blog_language = get_user_meta($user_id, 'blog_language', true);
     
 
@@ -76,6 +74,7 @@ function handle_cbc_create_blog() {
             'username' => $username,
             'password' => $password,
             'website_description' => $website_description,
+            'image_style' => $image_style,
             'blog_language' => $blog_language
         )),
         'method' => 'POST',
@@ -262,8 +261,20 @@ function cbc_process_csv($file_path, $category_id) {
     $website = home_url();  // Current website URL
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
+    $user_id = get_current_user_id();
     $related_links = fetch_related_links($category_id); // Assuming this function exists and $category_id is used here
-
+    # Extract website info
+    $username = get_user_meta($user_id, 'username', true);
+    $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
+    // return an error if the user has not set their username and password
+    if (!$username || !$encrypted_password) {
+        wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
+    }
+    $random_key = get_user_meta($user_id, 'random_key', true);
+    $password = decrypt($encrypted_password, $random_key);
+    $website_description = get_user_meta($user_id, 'website_description', true);
+    $image_style = get_user_meta($user_id, 'image_style', true);
+    $blog_language = get_user_meta($user_id, 'blog_language', true);
 
     
     $keyphrases = array();
@@ -283,7 +294,12 @@ function cbc_process_csv($file_path, $category_id) {
         'website' => $website,
         'requester' => $user_email,
         'related_links' => json_encode($related_links),
-        'category_id' => $category_id
+        'category_id' => $category_id, 
+        'username' => $username,
+        'password' => $password,
+        'website_description' => $website_description,
+        'image_style' => $image_style,
+        'blog_language' => $blog_language
     );
     
     // Use wp_remote_post to perform the request
