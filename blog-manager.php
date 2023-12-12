@@ -4,8 +4,13 @@
 define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
 //define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
 
+// define base url for the API
+define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
+//define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
+
 // Enqueue required scripts and styles
 function cbc_enqueue_scripts() {
+    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.66', true);
     wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.66', true);
 
     // Localize the script with your data
@@ -20,6 +25,12 @@ function cbc_enqueue_scripts() {
 add_action('admin_enqueue_scripts', 'cbc_enqueue_scripts');
 
 function decrypt($data, $random_key) {
+    list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
+    return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
+}
+function decrypt($data, $random_key) {
+    error_log("data: " . $data);
+    error_log("random_key: " . $random_key);
     list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
     return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
 }
@@ -38,6 +49,30 @@ function handle_cbc_create_blog() {
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
     $related_links = fetch_related_links($category);
+    # Extract website info
+    $username = get_user_meta($user_id, 'username', true);
+    $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
+    // return an error if the user has not set their username and password
+    if (!$username || !$encrypted_password) {
+        wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
+    }
+    $random_key = get_user_meta($user_id, 'random_key', true);
+    $password = decrypt($encrypted_password, $random_key);
+    $website_description = get_user_meta($user_id, 'website_description', true);
+    if (!$website_description) {
+        $website_description = "";
+    }
+    $image_style = get_user_meta($user_id, 'image_style', true);
+    if (!$image_style) {
+        $image_style = "";
+    }
+    $blog_language = get_user_meta($user_id, 'blog_language', true);
+    if (!$blog_language) {
+        $blog_language = "english";
+    }
+
+    $url = BIFM_API_BASE_URL . "/create-blog";
+    error_log("url for API called: " . $url);
     # Extract website info
     $username = get_user_meta($user_id, 'username', true);
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
@@ -82,6 +117,12 @@ function handle_cbc_create_blog() {
             'website_description' => $website_description,
             'image_style' => $image_style,
             'blog_language' => $blog_language
+            'related_links' => $related_links,
+            'username' => $username,
+            'password' => $password,
+            'website_description' => $website_description,
+            'image_style' => $image_style,
+            'blog_language' => $blog_language
         )),
         'method' => 'POST',
         'data_format' => 'body'
@@ -118,6 +159,8 @@ function handle_cbc_poll_for_results() {
     
 
     // Construct the URL for the external service
+    $url = BIFM_API_BASE_URL . "/poll-blog-results/{$jobId}";
+
     $url = BIFM_API_BASE_URL . "/poll-blog-results/{$jobId}";
 
 
@@ -264,13 +307,36 @@ function cbc_process_csv($file_path, $category_id) {
 
     // Assume the API expects a multipart/form-data request with a file field
     $url = BIFM_API_BASE_URL . "/create-blog-batch";
+    $url = BIFM_API_BASE_URL . "/create-blog-batch";
     
     // Fetch additional data
     $website = home_url();  // Current website URL
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
     $user_id = get_current_user_id();
+    $user_id = get_current_user_id();
     $related_links = fetch_related_links($category_id); // Assuming this function exists and $category_id is used here
+    # Extract website info
+    $username = get_user_meta($user_id, 'username', true);
+    $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
+    // return an error if the user has not set their username and password
+    if (!$username || !$encrypted_password) {
+        wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
+    }
+    $random_key = get_user_meta($user_id, 'random_key', true);
+    $password = decrypt($encrypted_password, $random_key);
+    $website_description = get_user_meta($user_id, 'website_description', true);
+    if (!$website_description) {
+        $website_description = "";
+    }
+    $image_style = get_user_meta($user_id, 'image_style', true);
+    if (!$image_style) {
+        $image_style = "";
+    }
+    $blog_language = get_user_meta($user_id, 'blog_language', true);
+    if (!$blog_language) {
+        $blog_language = "english";
+    }
     # Extract website info
     $username = get_user_meta($user_id, 'username', true);
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
@@ -310,6 +376,12 @@ function cbc_process_csv($file_path, $category_id) {
         'website' => $website,
         'requester' => $user_email,
         'related_links' => json_encode($related_links),
+        'category_id' => $category_id, 
+        'username' => $username,
+        'password' => $password,
+        'website_description' => $website_description,
+        'image_style' => $image_style,
+        'blog_language' => $blog_language
         'category_id' => $category_id, 
         'username' => $username,
         'password' => $password,
