@@ -1,8 +1,12 @@
 <?php
 
+// define base url for the API
+define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
+//define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
+
 // Enqueue required scripts and styles
 function cbc_enqueue_scripts() {
-    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.57', true);
+    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.66', true);
 
     // Localize the script with your data
     $translation_array = array(
@@ -11,19 +15,20 @@ function cbc_enqueue_scripts() {
         'bulk_upload_nonce' => wp_create_nonce('bulk-upload-csv-action')
     );
     // error log the entire translation array
-    error_log(print_r($translation_array, true));
     wp_localize_script('cbc_script', 'cbc_object', $translation_array);
 }
 add_action('admin_enqueue_scripts', 'cbc_enqueue_scripts');
 
+function decrypt($data, $random_key) {
+    list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
+    return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
+}
 
 // create blog
 add_action('wp_ajax_cbc_create_blog', 'handle_cbc_create_blog');
 function handle_cbc_create_blog() {
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
-
-
 
     // Get the keyphrase and category_id from the frontend
     $keyphrase = isset($_POST['keyphrase']) ? sanitize_text_field(wp_unslash($_POST['keyphrase'])) : '';
@@ -33,10 +38,30 @@ function handle_cbc_create_blog() {
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
     $related_links = fetch_related_links($category);
+    # Extract website info
+    $username = get_user_meta($user_id, 'username', true);
+    $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
+    // return an error if the user has not set their username and password
+    if (!$username || !$encrypted_password) {
+        wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
+    }
+    $random_key = get_user_meta($user_id, 'random_key', true);
+    $password = decrypt($encrypted_password, $random_key);
+    $website_description = get_user_meta($user_id, 'website_description', true);
+    if (!$website_description) {
+        $website_description = "";
+    }
+    $image_style = get_user_meta($user_id, 'image_style', true);
+    if (!$image_style) {
+        $image_style = "";
+    }
+    $blog_language = get_user_meta($user_id, 'blog_language', true);
+    if (!$blog_language) {
+        $blog_language = "english";
+    }
 
-    
-
-    $url = "https://wp.builditforme.ai/create-blog";
+    $url = BIFM_API_BASE_URL . "/create-blog";
+    error_log("url for API called: " . $url);
     
     /*// for  debugging DELETE!!!!!!!!!!!!!!!!!!!
     wp_send_json(array(
@@ -51,7 +76,12 @@ function handle_cbc_create_blog() {
             'category' => $category,
             'website' => $website,
             'requester' => $user_email,
-            'related_links' => $related_links
+            'related_links' => $related_links,
+            'username' => $username,
+            'password' => $password,
+            'website_description' => $website_description,
+            'image_style' => $image_style,
+            'blog_language' => $blog_language
         )),
         'method' => 'POST',
         'data_format' => 'body'
@@ -88,7 +118,8 @@ function handle_cbc_poll_for_results() {
     
 
     // Construct the URL for the external service
-    $url = "https://wp.builditforme.ai/poll-blog-results/{$jobId}";
+    $url = BIFM_API_BASE_URL . "/poll-blog-results/{$jobId}";
+
 
     // Send a GET request to the external service
     $response = wp_remote_get($url);
@@ -112,9 +143,11 @@ add_action('wp_ajax_cbc_get_categories', 'handle_cbc_get_categories');
 function handle_cbc_get_categories() {
     // Get all the categories
     $categories = get_categories(array(
+        'hide_empty' => false, // Include categories that are empty
         'orderby' => 'name',
         'order'   => 'ASC'
     ));
+    //print length of categories
     $result = array();
     foreach ($categories as $category) {
         $result[] = array('id' => $category->term_id, 'name' => $category->name);
@@ -134,9 +167,7 @@ add_action('wp_ajax_cbc_create_category', 'handle_cbc_create_category');
 function handle_cbc_create_category() {
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
-    error_log("approved nonce");
     $category_name = isset($_POST['category_name']) ? sanitize_text_field(wp_unslash($_POST['category_name'])) : '';
-    error_log("category name: " . $category_name);
     if (!$category_name) {
         wp_send_json_error(array('message' => "Invalid category name."));
         return;
@@ -219,7 +250,6 @@ function handle_cbc_file_upload() {
         
         // Process the CSV file
         $file_path = $file['file'];
-        error_log(print_r($file_path, true));
         $response = cbc_process_csv($file_path, $category_id);
         $status_code = $response['status'];
         wp_send_json(array(
@@ -233,15 +263,35 @@ function handle_cbc_file_upload() {
 function cbc_process_csv($file_path, $category_id) {
 
     // Assume the API expects a multipart/form-data request with a file field
-    $url = "https://wp.builditforme.ai/create-blog-batch";
+    $url = BIFM_API_BASE_URL . "/create-blog-batch";
     
     // Fetch additional data
     $website = home_url();  // Current website URL
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
+    $user_id = get_current_user_id();
     $related_links = fetch_related_links($category_id); // Assuming this function exists and $category_id is used here
-
-
+    # Extract website info
+    $username = get_user_meta($user_id, 'username', true);
+    $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
+    // return an error if the user has not set their username and password
+    if (!$username || !$encrypted_password) {
+        wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
+    }
+    $random_key = get_user_meta($user_id, 'random_key', true);
+    $password = decrypt($encrypted_password, $random_key);
+    $website_description = get_user_meta($user_id, 'website_description', true);
+    if (!$website_description) {
+        $website_description = "";
+    }
+    $image_style = get_user_meta($user_id, 'image_style', true);
+    if (!$image_style) {
+        $image_style = "";
+    }
+    $blog_language = get_user_meta($user_id, 'blog_language', true);
+    if (!$blog_language) {
+        $blog_language = "english";
+    }
     
     $keyphrases = array();
     if (($handle = fopen($file_path, 'r')) !== FALSE) {
@@ -260,7 +310,12 @@ function cbc_process_csv($file_path, $category_id) {
         'website' => $website,
         'requester' => $user_email,
         'related_links' => json_encode($related_links),
-        'category_id' => $category_id
+        'category_id' => $category_id, 
+        'username' => $username,
+        'password' => $password,
+        'website_description' => $website_description,
+        'image_style' => $image_style,
+        'blog_language' => $blog_language
     );
     
     // Use wp_remote_post to perform the request

@@ -87,3 +87,6 @@ body {
     justify-content: flex-end;
 }
 
+#wpfooter {
+    display: none;
+}

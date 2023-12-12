@@ -15,7 +15,6 @@
                     let categoryInput = $('#category_input');
                     categories.forEach(category => {
                         //categoryInput.append('<option value="' + category.id + '">' + category.name + '</option>');
-
                         categoryInput.append($('<option>').val(category.id).text(category.name));
                     });
                     categoryInput.append('<option value="other">Other...</option>');
@@ -69,7 +68,12 @@ jQuery(document).ready(function($) {
                 submit_single.prop('disabled', true);
                 pollForResults(jobId);
             } else {
-                $('#cbc_response').html(response.message ? response.message : 'An unknown error occurred.');
+                if (response.data.message){
+                    $('#cbc_response').html(response.data.message);
+                }
+                else{
+                    $('#cbc_response').html(response.message ? response.message : 'An unknown error occurred.');
+                }
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {
             let parsedData = (jqXHR.responseJSON && jqXHR.responseJSON.data) ? JSON.parse(jqXHR.responseJSON.data) : null;
@@ -92,11 +96,14 @@ jQuery(document).ready(function($) {
                 if(response.status === 200) {
                     submit_single.prop('disabled', false);
                     let innerData = JSON.parse(response.data);
-                    if(innerData.message){
-                        $('#cbc_response').html('Your post was successfully created. <a href="' + 'https://www.elquesabe.mx/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>'+innerData.message);    
+                    if (innerData.blogpost_id == null){
+                        $('#cbc_response').html('Your post failed to be created. <br>'+innerData.message);
+                    }
+                    else if(innerData.message){
+                        $('#cbc_response').html('Your post was successfully created. <a href="' + '/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>'+innerData.message);    
                     }
                     else{
-                        $('#cbc_response').html('Your post was successfully created. <a href="' + 'https://www.elquesabe.mx/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>');    
+                        $('#cbc_response').html('Your post was successfully created. <a href="' + '/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>');    
                     }
                 } else if(response.status === 202) {
                     setTimeout(() => pollForResults(jobId), 5000);
@@ -129,7 +136,6 @@ function goBack() {
         let selected = $(this).val();
         if (selected === 'other') {
             let newCategory = $("<div>").text(prompt("Please enter the new category:")).text();
-            console.log("new category: " + newCategory);
             if (newCategory) {
                 // Send AJAX request to create the new category
                 $.ajax({
@@ -193,13 +199,21 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.status == 200 || response.status === 202) {
                     console.log("Successful response from submitting csv");
-                    inner_data = JSON.parse(response.data);
+                    try{
+                        inner_data = JSON.parse(response.data);
+                    } catch {
+                        inner_data = response.data;
+                    }
                     // Handle success. If there are categories to validate, prompt the user.
                     $('#cbc_response').html('Upload successful! ' + inner_data.message);
                 }
                 else {
                     console.log("Error response from submitting csv");
-                    inner_data = JSON.parse(response.data);
+                    try{
+                        inner_data = response.data.message;
+                    } catch {
+                        inner_data = response.data;
+                    }
                     // Handle success. If there are categories to validate, prompt the user.
                     $('#cbc_response').html('An error occurred during upload: ' + inner_data);
                     
