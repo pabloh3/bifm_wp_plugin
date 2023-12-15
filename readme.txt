@@ -5,7 +5,7 @@ Tags: widgets, elementor, AI, automation, management
 Requires at least: 5.0
 Tested up to: 6.3.1
 Requires PHP: 7.0
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,8 +71,8 @@ We appreciate any feedback at pablo@builditforme.ai
 
 == Upgrade Notice ==
 
-= 1.0 =
-Initial version of the BIFM Widget Manager plugin. Manage and view all AI-generated widgets for Elementor with ease.
+= 1.1 =
+Fixed widget saving issues.
 
 == External API Usage ==
 

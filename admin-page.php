@@ -8,7 +8,6 @@
     // Tabs structure
     echo '<div class="row">';
     //disclaimers for staging
-    //echo '<h3 style="color:red">Change the API URL to the staging site</h3>';
 
     echo '<div class="col s12">';
     echo '<ul class="tabs">';

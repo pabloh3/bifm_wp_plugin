@@ -2,13 +2,15 @@
 /*
 Plugin Name: Build It For Me - Widget creator
 Description: Ask a bot to create Elementor widgets for you.
-Version: 1.0
+Version: 1.1
 Author: Build It For Me
 */
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 
-
+$api_endpoint = 'https://wp.builditforme.ai/assign_foldername';
+//change when working on local
+//$api_endpoint = "http://127.0.0.1:5001/assign_foldername";
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -143,9 +145,6 @@ function get_folder_name_callback() {
     }
     
     $site_url = home_url();
-    $api_endpoint = 'https://wp.builditforme.ai/assign_foldername';
-    #change when working on local
-    #$api_endpoint = "http://127.0.0.1:5000/assign_foldername";
     $user_id_complete = "site=" . $site_url . "&user=" . $user_id;
     $plugin_data = get_plugin_data(__FILE__);
     $version = $plugin_data['Version'];
@@ -157,7 +156,7 @@ function get_folder_name_callback() {
         'site_url' => $site_url,
         'plugin_version' => $version
     );
-
+    global $api_endpoint;
     $response = wp_remote_post($api_endpoint, array(
         'method' => 'POST',
         'headers' => array(

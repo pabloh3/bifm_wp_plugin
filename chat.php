@@ -5,8 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $api_url = "https://wp.builditforme.ai";
-#change url when working on local
-#$api_url = "http://127.0.0.1:5000";
+//change url when working on local
+//$api_url = "http://127.0.0.1:5001";
 
 add_action('wp_ajax_plugin_send_message', 'bifm_handle_plugin_send_message');
 function bifm_handle_plugin_send_message() {
@@ -257,7 +257,7 @@ function bifm_handle_plugin_save() {
 }
 
 
-function lint_php_code($code) {
+/*function lint_php_code($code) {
     // Create a temporary file
     $temp_file = tempnam(sys_get_temp_dir(), 'lint');
     file_put_contents($temp_file, $code);
@@ -267,11 +267,19 @@ function lint_php_code($code) {
     error_log("Printing text: " . $output0);
     error_log("temp file: " . $temp_file);
     //check php version when running locally
-    /*$phpBinary = "/Users/pablohernandezsanz/Library/'Application Support'/Local/lightning-services/php-8.1.23+0/bin/darwin-arm64/bin/php";
-    $output1 = shell_exec($phpBinary . " -v");
-    error_log("php version used by Pablo: " . $output1);*/
+    $phpBinary = "php";*/
+    /*$phpBinary = "/Users/pablohernandezsanz/Library/'Application Support'/Local/lightning-services/php-8.1.23+0/bin/darwin-arm64/bin/php";*/
+    //$output1 = shell_exec($phpBinary . " -v");
+    /*$output1 = shell_exec("which php");
+    $log_message = "php version used by Pablo: " . $output1;
+    file_put_contents(WP_CONTENT_DIR . '/custom.log', print_r($log_message, true), FILE_APPEND);
+    $deb1 = function_exists('shell_exec');
+    $deb2 = is_callable('shell_exec');
+    file_put_contents(WP_CONTENT_DIR . '/custom.log', print_r("\nchecked if shell_exec exists: " . $deb1 . " and is callable: " . $deb2 . "\n", true), FILE_APPEND);
+    $deb3 = exec("whereis php");
+    $deb4 = exec("type -a php");
+    file_put_contents(WP_CONTENT_DIR . '/custom.log', print_r("\nwhereis php: " . $deb3 . " and type -a php: " . $deb4 . "\n", true), FILE_APPEND);
     
-    $phpBinary = "php";
     // Lint the file using the dynamic PHP path
     $output = shell_exec($phpBinary . ' -l ' . escapeshellarg($temp_file));
     error_log("Lint test output: " . $output);
@@ -282,8 +290,29 @@ function lint_php_code($code) {
     unlink($temp_file);
     // If the output contains "No syntax errors", the lint was successful
     return strpos($output, "No syntax errors") !== false;
-}
+}*/
 
+function lint_php_code($code) {
+    // Strip opening and closing PHP tags
+    $code = trim($code);
+    if (substr($code, 0, 5) == '<?php') {
+        $code = substr($code, 5);
+    }
+    if (substr($code, -2) == '?>') {
+        $code = substr($code, 0, -2);
+    }
+
+    // Wrap in output buffering to prevent execution
+    ob_start();
+    $result = @eval('return true; if(0){ ?>' . $code . '<?php }');
+    ob_end_clean();
+    file_put_contents(WP_CONTENT_DIR . '/custom.log', print_r("\nresult of eval: " . $result . "\n", true), FILE_APPEND);
+    $deb1 = shell_exec("pwd");
+    file_put_contents(WP_CONTENT_DIR . '/custom.log', print_r("\nPrinting text: " . $deb1 . "\n", true), FILE_APPEND);
+
+    // Check if eval() was successful
+    return $result !== false;
+}
 
 add_action('wp_ajax_plugin_reset', 'bifm_handle_plugin_reset');
 function bifm_handle_plugin_reset() {

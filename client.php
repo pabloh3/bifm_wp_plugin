@@ -31,7 +31,7 @@
             <div class='future-column'>   
                 <div class='title-container'>
                     <h4>builditforme.ai</h4>
-                    <div>New? Watch our tutorial <a id='site-link' href='https://www.builditforme.ai/wp/how-to-use' target='_blank'>here</a>.</div>
+                    <div style='color:red'>You should ONLY use this tool on your staging site!</div>
                     <div data-stage='visual' id='stageDisplay'>Modify how your widget looks.</div>
                     <div id='warningMessage' class='card-panel yellow darken-2' style='display: none;'></div>
                 </div>  
