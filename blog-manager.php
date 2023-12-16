@@ -59,6 +59,14 @@ function handle_cbc_create_blog() {
     if (!$blog_language) {
         $blog_language = "english";
     }
+    $image_width = get_user_meta($user_id, 'image_width', true);
+    if (!$image_width) {
+        $image_width = "";
+    }
+    $image_height = get_user_meta($user_id, 'image_height', true);
+    if (!$image_height) {
+        $image_height = "";
+    }
 
     $url = BIFM_API_BASE_URL . "/create-blog";
     
@@ -80,7 +88,9 @@ function handle_cbc_create_blog() {
             'password' => $password,
             'website_description' => $website_description,
             'image_style' => $image_style,
-            'blog_language' => $blog_language
+            'blog_language' => $blog_language,
+            'image_width' => $image_width,
+            'image_height' => $image_height
         )),
         'method' => 'POST',
         'data_format' => 'body'

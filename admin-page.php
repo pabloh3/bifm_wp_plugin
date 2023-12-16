@@ -5,6 +5,8 @@
     echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">';
     echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
 
+    //echo '<div style="color:red">API url in blog-manager.</div>';
+
     // Tabs structure
     echo '<div class="row">';
     //disclaimers for staging
@@ -81,15 +83,40 @@
         echo '</div></div>';
 
         // Language for new blog posts
+        $blog_language = get_user_meta($user_id, 'blog_language', true);
         echo '<div class="row"><div class="input-field col s12 l4">';
         echo '<select id="blog_language" name="blog_language">';
-        echo '<option value="" disabled selected>Choose language</option>';
-        echo '<option value="english">English</option>';
-        echo '<option value="spanish">Spanish</option>';
+        echo '<option value="" disabled' . (empty($blog_language) ? ' selected' : '') . '>Choose your option</option>';
+        echo '<option value="english"' . ($blog_language == 'english' ? ' selected' : '') . '>English</option>';
+        echo '<option value="spanish"' . ($blog_language == 'spanish' ? ' selected' : '') . '>Spanish</option>';
         echo '</select>';
         echo '<label for="blog_language">Language for new blog posts</label>';
         echo '</div></div>';
 
+        // Image dimensions
+        echo '<div class="row">';
+        // Image width input field
+        $image_width = get_user_meta($user_id, 'image_width', true);
+        echo '<div class="row"><div class="input-field col s12 l2">';
+        echo '<select id="image_width" name="image_width">';
+        echo '<option value="" disabled' . (empty($image_width) ? ' selected' : '') . '>Width</option>';
+        echo '<option value="1024"' . ($image_width == '1024' ? ' selected' : '') . '>1024</option>';
+        echo '<option value="1792"' . ($image_width == '1792' ? ' selected' : '') . '>1792</option>';
+        echo '</select>';
+        echo '<label for="image_width">Image width (px)</label>';
+        echo '</div>';        
+
+        $image_height = get_user_meta($user_id, 'image_height', true);
+        echo '<div class="input-field col s12 l2">';
+        echo '<select id="image_height" name="image_height">';
+        echo '<option value="" disabled' . (empty($image_height) ? ' selected' : '') . '>Height</option>';
+        echo '<option value="1024"' . ($image_height == '1024' ? ' selected' : '') . '>1024</option>';
+        echo '<option value="1792">1792</option>';
+        echo '</select>';
+        echo '<label for="image_height">Image height (px)</label>';
+        echo '</div></div>';
+
+        
         // Website description
         $website_description = get_user_meta($user_id, 'website_description', true);
         echo '<div class="row"><div class="input-field col s12 l8">';

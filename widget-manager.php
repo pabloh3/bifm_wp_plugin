@@ -211,6 +211,8 @@ function handle_bifm_save_settings() {
         update_user_meta($user_id, 'website_description', $_POST['website_description']);
         update_user_meta($user_id, 'image_style', $_POST['image_style']);
         update_user_meta($user_id, 'blog_language', $_POST['blog_language']);
+        update_user_meta($user_id, 'image_width', $_POST['image_width']);
+        update_user_meta($user_id, 'image_height', $_POST['image_height']);
         update_user_meta($user_id, 'random_key', $random_key);
     }
     wp_send_json_success('Settings saved successfully.');
