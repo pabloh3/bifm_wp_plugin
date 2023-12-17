@@ -320,10 +320,10 @@ function cbc_process_csv($file_path, $category_id) {
     
     // Prepare the headers and body of the request
     $body = array(
-        'keyphrases' => json_encode($keyphrases),
+        'keyphrases' => $keyphrases,
         'website' => $website,
         'requester' => $user_email,
-        'related_links' => json_encode($related_links),
+        'related_links' => $related_links,
         'category_id' => $category_id, 
         'username' => $username,
         'password' => $password,
@@ -334,10 +334,15 @@ function cbc_process_csv($file_path, $category_id) {
         'image_height' => $image_height
     );
     
+    $json_body = json_encode($body);
+
     // Use wp_remote_post to perform the request
+    $headers = array(
+        'Content-Type' => 'application/json'
+    );
     $response = wp_remote_post($url, array(
         'headers' => $headers,
-        'body' => $body,
+        'body' => $json_body,
         'method' => 'POST',
         'timeout' => 45,
     ));
