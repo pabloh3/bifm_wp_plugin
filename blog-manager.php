@@ -298,6 +298,14 @@ function cbc_process_csv($file_path, $category_id) {
     if (!$blog_language) {
         $blog_language = "english";
     }
+    $image_width = get_user_meta($user_id, 'image_width', true);
+    if (!$image_width) {
+        $image_width = "";
+    }
+    $image_height = get_user_meta($user_id, 'image_height', true);
+    if (!$image_height) {
+        $image_height = "";
+    }
     # Extract website info    
     $keyphrases = array();
     if (($handle = fopen($file_path, 'r')) !== FALSE) {
@@ -321,7 +329,9 @@ function cbc_process_csv($file_path, $category_id) {
         'password' => $password,
         'website_description' => $website_description,
         'image_style' => $image_style,
-        'blog_language' => $blog_language
+        'blog_language' => $blog_language,
+        'image_width' => $image_width,
+        'image_height' => $image_height
     );
     
     // Use wp_remote_post to perform the request
