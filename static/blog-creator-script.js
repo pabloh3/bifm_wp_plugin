@@ -132,7 +132,7 @@ function goBack() {
 
 
 (function($) {
-    $('#category_input').change(function() {
+    $('#category_input, #category_input2').change(function() {
         let selected = $(this).val();
         if (selected === 'other') {
             let newCategory = $("<div>").text(prompt("Please enter the new category:")).text();

@@ -2,7 +2,7 @@
 /*
 Plugin Name: Build It For Me - Widget creator
 Description: Ask a bot to create Elementor widgets for you.
-Version: 1.01
+Version: 1.02
 Author: Build It For Me
 */
 // include the WordPress HTTP API
@@ -194,28 +194,33 @@ add_action('wp_ajax_bifm_save_settings', 'handle_bifm_save_settings');
 
 // Function to handle form submission
 function handle_bifm_save_settings() {
-    // Check for nonce security
-    if (!isset($_POST['bifm_nonce']) || !wp_verify_nonce($_POST['bifm_nonce'], 'my_custom_action')) {
-        wp_send_json_error('Nonce verification failed!', 400);
+    try {
+        // Check for nonce security
+        if (!isset($_POST['bifm_nonce']) || !wp_verify_nonce($_POST['bifm_nonce'], 'my_custom_action')) {
+            throw new Exception('Nonce verification failed!');
+        }
+
+        // Your encryption and data handling logic
+        if (isset($_POST['blog_author_username'], $_POST['blog_author_password'])) {
+            $random_key = bin2hex(random_bytes(32));
+            $password = encrypt_data($_POST['blog_author_password'], $random_key);
+
+            $user_id = get_current_user_id();
+
+            update_user_meta($user_id, 'username', $_POST['blog_author_username']);
+            update_user_meta($user_id, 'encrypted_password', $password);
+            update_user_meta($user_id, 'website_description', $_POST['website_description']);
+            update_user_meta($user_id, 'image_style', $_POST['image_style']);
+            update_user_meta($user_id, 'blog_language', $_POST['blog_language']);
+            update_user_meta($user_id, 'image_width', $_POST['image_width']);
+            update_user_meta($user_id, 'image_height', $_POST['image_height']);
+            update_user_meta($user_id, 'random_key', $random_key);
+        }
+
+        wp_send_json_success('Settings saved successfully.');
+    } catch (Exception $e) {
+        wp_send_json_error($e->getMessage(), 400);
     }
-
-    // Your encryption and data handling logic
-    if (isset($_POST['blog_author_username'], $_POST['blog_author_password'])) {
-        $random_key = bin2hex(random_bytes(32));
-        $password = encrypt_data($_POST['blog_author_password'], $random_key);
-
-        $user_id = get_current_user_id();
-
-        update_user_meta($user_id, 'username', $_POST['blog_author_username']);
-        update_user_meta($user_id, 'encrypted_password', $password);
-        update_user_meta($user_id, 'website_description', $_POST['website_description']);
-        update_user_meta($user_id, 'image_style', $_POST['image_style']);
-        update_user_meta($user_id, 'blog_language', $_POST['blog_language']);
-        update_user_meta($user_id, 'image_width', $_POST['image_width']);
-        update_user_meta($user_id, 'image_height', $_POST['image_height']);
-        update_user_meta($user_id, 'random_key', $random_key);
-    }
-    wp_send_json_success('Settings saved successfully.');
 }
 
 // Define a secret key. Store this securely and do not expose it.
@@ -259,22 +264,6 @@ function custom_update_post_meta_for_api($value, $object, $field_name) {
     return update_post_meta($object->ID, $field_name, $sanitized_value);
 }
 
-/* //what we used before
-function custom_register_rest_fields() {
-    register_rest_field('post', '_yoast_wpseo_metadesc', array(
-        'get_callback'    => 'custom_get_post_meta_for_api',
-        'update_callback' => 'custom_update_post_meta_for_api',
-        'schema'          => null,
-    ));
-
-    // ... (your other fields)
-}
-
-function custom_update_post_meta_for_api($value, $object, $field_name) {
-    // Ensure the value is sanitized before saving
-    $sanitized_value = sanitize_text_field($value);
-    return update_post_meta($object->ID, $field_name, $sanitized_value);
-}*/
 
 require_once( __DIR__ . '/blog-manager.php' );
 require_once( __DIR__ . '/widget-registration.php' );
