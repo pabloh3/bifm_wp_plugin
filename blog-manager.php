@@ -6,7 +6,7 @@ define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
 
 // Enqueue required scripts and styles
 function cbc_enqueue_scripts() {
-    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.66', true);
+    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.67', true);
 
     // Localize the script with your data
     $translation_array = array(

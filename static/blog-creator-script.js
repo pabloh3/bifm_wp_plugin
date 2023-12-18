@@ -33,7 +33,7 @@
 
 jQuery(document).ready(function($) {
     let jobId = null;
-    console.log("loaded JS 1.0.32");
+    console.log("loaded JS 1.0.67");
     let submit_single = $('#submit_single_post');
 
     
