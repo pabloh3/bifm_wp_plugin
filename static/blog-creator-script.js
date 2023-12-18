@@ -13,17 +13,15 @@
                 if (response.success) {
                     let categories = response.data;
                     let categoryInput = $('#category_input');
+                    let categoryInput2 = $('#category_input2');
                     categories.forEach(category => {
                         //categoryInput.append('<option value="' + category.id + '">' + category.name + '</option>');
                         categoryInput.append($('<option>').val(category.id).text(category.name));
+                        categoryInput2.append($('<option>').val(category.id).text(category.name));
                     });
                     categoryInput.append('<option value="other">Other...</option>');
                     categoryInput.formSelect(); // Re-initialize the Materialize dropdown
-                    
-                    let categoryInput2 = $('#category_input2');
-                    categories.forEach(category => {
-                        categoryInput2.append($('<option>').val(category.id).text(category.name));
-                    });
+
                     categoryInput2.append('<option value="other">Other...</option>');
                     categoryInput2.formSelect(); // Re-initialize the Materialize dropdown
                 }
