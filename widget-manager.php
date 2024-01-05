@@ -223,6 +223,68 @@ function handle_bifm_save_settings() {
     }
 }
 
+
+// Handle change smart chat settings
+// Add action for logged-in users
+add_action('wp_ajax_bifm_smart_chat_settings', 'handle_bifm_smart_chat_settings');
+
+// Function to handle form submission
+function handle_bifm_smart_chat_settings() {
+    try {
+        // Check for nonce security
+        if (!isset($_POST['bifm_nonce']) || !wp_verify_nonce($_POST['bifm_nonce'], 'my_custom_action')) {
+            throw new Exception('Nonce verification failed!');
+        }
+
+        // Your encryption and data handling logic
+        if (isset($_POST['assistant_instructions'], $_POST['assistant_instructions'])) {
+            $assistant_instructions = $_POST['assistant_instructions'];
+            update_option( 'assistant_instructions', $assistant_instructions);
+            $assistant_id = get_option('assistant_id');
+            
+            // Send the message to AI API
+            $url = 'http://localhost:5001/assistant_update';
+
+            $response = wp_remote_post($url, array(
+                'headers' => array('Content-Type' => 'application/json'),
+                'body' => json_encode(array(
+                    'assistant_id' => $assistant_id,
+                    'assistant_instructions' => $assistant_instructions
+                )),
+                'method' => 'POST',
+                'data_format' => 'body',
+                'timeout' => 10 // Set the timeout (in seconds)
+            ));
+        
+            if (is_wp_error($response)) {
+                $error_message = $response->get_error_message();
+                error_log("Error when calling chat update api");
+                wp_send_json_error(array('message' => "Something went wrong: $error_message"), 500);
+            } else {
+                $status_code = wp_remote_retrieve_response_code($response);
+                $response_body = json_decode(wp_remote_retrieve_body($response), true);
+                if ($status_code == 200) {
+                    $assistant_id = $response_body['assistant_id'];
+                    update_option('assistant_id', $assistant_id);
+                    $assistant_id_new = get_option('assistant_id');
+                    error_log("assistant id: " . $assistant_id_new);
+                    wp_send_json_success(array('message' => $response_body['message']));
+                } else {
+                    error_log($response_body['message']);
+                    wp_send_json_error(array('message' => $response_body['message']), $status_code);
+                }
+            }
+            //end message
+            
+        }
+
+        wp_send_json_success('Settings saved successfully.');
+    } catch (Exception $e) {
+        wp_send_json_error($e->getMessage(), 400);
+    }
+}
+
+
 // Define a secret key. Store this securely and do not expose it.
 
 function encrypt_data($data, $random_key) {

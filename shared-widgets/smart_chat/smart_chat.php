@@ -33,13 +33,11 @@ class smart_chat extends \Elementor\Widget_Base {
 
         // Include the HTML files
         
-        
         // Enqueue the CSS files
         wp_enqueue_style('smart_chat_css_0', plugins_url('styles.css', __FILE__));
 
         // Enqueue the JS files
-
-        wp_enqueue_script('smart_chat_js_0', plugins_url('main.js', __FILE__, array('jquery'), '1.0.8', true));
+        wp_enqueue_script('smart_chat_js_0', plugins_url('main.js', __FILE__, array('jquery'), '1.0.9', true));
         wp_localize_script('smart_chat_js_0', 'ajax_object', array( 'ajaxurl' => admin_url('admin-ajax.php') ));
         // Localize the script with new data
         
