@@ -267,5 +267,7 @@ function custom_update_post_meta_for_api($value, $object, $field_name) {
 
 require_once( __DIR__ . '/blog-manager.php' );
 require_once( __DIR__ . '/widget-registration.php' );
+require_once( __DIR__ . '/shared-widget-registration.php' );
 require_once( __DIR__ . '/chat.php' );
 require_once( __DIR__ . '/bifm_action_hooks.php' );
+require_once( __DIR__ . '/shared-bifm_action_hooks.php' );
