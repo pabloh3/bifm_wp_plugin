@@ -43,5 +43,4 @@ echo '<div class="card-panel red lighten-2">';
 echo '  <span class="white-text" id="cbc_response"></span>';
 echo '</div>';
 
-
 ?>

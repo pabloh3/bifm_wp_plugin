@@ -8,9 +8,10 @@ Author: Build It For Me
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 
-$api_endpoint = 'https://wp.builditforme.ai/assign_foldername';
+//$API_URL = 'https://wp.builditforme.ai';
 //change when working on local
-//$api_endpoint = "http://127.0.0.1:5001/assign_foldername";
+$API_URL = 'http://127.0.0.1:5001';
+
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,9 +45,49 @@ function builditforme_ewm_admin_menu() {
         'create-blog',
         'ewm_create_blog_content'
     );
+        
+    add_submenu_page(
+        'elementor-chat-manager',
+        'Smart Chat Settings',
+        'Smart Chat',
+        'edit_posts',
+        'create-chat',
+        'ewm_create_chat_content'
+    );
 }
 add_action('admin_menu', 'builditforme_ewm_admin_menu');
 
+function bifm_enqueue_scripts() {
+    if (isset($_GET['page'])) {
+        if ($_GET['page'] == 'create-blog') {
+            // Enqueue scripts for the blog page
+            wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.67', true);
+
+            // Localize the script with your data
+            $translation_array = array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'single_post_nonce' => wp_create_nonce('create-single-post-action'),
+                'bulk_upload_nonce' => wp_create_nonce('bulk-upload-csv-action')
+            );
+            // error log the entire translation array
+            wp_localize_script('cbc_script', 'cbc_object', $translation_array);
+            
+        } elseif ($_GET['page'] == 'create-chat') {
+            // Enqueue scripts for the chat page
+            wp_enqueue_script('cbc_script_chat', plugins_url('/static/smart-chat-script.js', __FILE__), array('jquery'), '1.0.1', true); 
+            // Localize the script with your data
+            $translation_array = array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('update-chat-settings-nonce'),
+            );
+            // error log the entire translation array
+            wp_localize_script('cbc_script_chat', 'cbc_script_object_chat', $translation_array);
+            
+        } 
+    }
+}
+
+add_action('admin_enqueue_scripts', 'bifm_enqueue_scripts');
 
 
 function ewm_admin_page_content() {
@@ -66,6 +107,10 @@ function ewm_create_blog_content() {
     include plugin_dir_path(__FILE__) . 'blog-creator-page.php';
 }
 
+function ewm_create_chat_content() {
+    //this code was taken to admin-page.php
+    include plugin_dir_path(__FILE__) . 'smart-chat-page.php';
+}
 
 function builditforme_ewm_enqueue_admin_scripts($hook) {
     global $pagenow;
@@ -156,7 +201,8 @@ function get_folder_name_callback() {
         'site_url' => $site_url,
         'plugin_version' => $version
     );
-    global $api_endpoint;
+    global $API_URL;
+    $api_endpoint = $API_URL . '/assign_foldername';
     $response = wp_remote_post($api_endpoint, array(
         'method' => 'POST',
         'headers' => array(
@@ -224,66 +270,6 @@ function handle_bifm_save_settings() {
 }
 
 
-// Handle change smart chat settings
-// Add action for logged-in users
-add_action('wp_ajax_bifm_smart_chat_settings', 'handle_bifm_smart_chat_settings');
-
-// Function to handle form submission
-function handle_bifm_smart_chat_settings() {
-    try {
-        // Check for nonce security
-        if (!isset($_POST['bifm_nonce']) || !wp_verify_nonce($_POST['bifm_nonce'], 'my_custom_action')) {
-            throw new Exception('Nonce verification failed!');
-        }
-
-        // Your encryption and data handling logic
-        if (isset($_POST['assistant_instructions'], $_POST['assistant_instructions'])) {
-            $assistant_instructions = $_POST['assistant_instructions'];
-            update_option( 'assistant_instructions', $assistant_instructions);
-            $assistant_id = get_option('assistant_id');
-            
-            // Send the message to AI API
-            $url = 'http://localhost:5001/assistant_update';
-
-            $response = wp_remote_post($url, array(
-                'headers' => array('Content-Type' => 'application/json'),
-                'body' => json_encode(array(
-                    'assistant_id' => $assistant_id,
-                    'assistant_instructions' => $assistant_instructions
-                )),
-                'method' => 'POST',
-                'data_format' => 'body',
-                'timeout' => 10 // Set the timeout (in seconds)
-            ));
-        
-            if (is_wp_error($response)) {
-                $error_message = $response->get_error_message();
-                error_log("Error when calling chat update api");
-                wp_send_json_error(array('message' => "Something went wrong: $error_message"), 500);
-            } else {
-                $status_code = wp_remote_retrieve_response_code($response);
-                $response_body = json_decode(wp_remote_retrieve_body($response), true);
-                if ($status_code == 200) {
-                    $assistant_id = $response_body['assistant_id'];
-                    update_option('assistant_id', $assistant_id);
-                    $assistant_id_new = get_option('assistant_id');
-                    error_log("assistant id: " . $assistant_id_new);
-                    wp_send_json_success(array('message' => $response_body['message']));
-                } else {
-                    error_log($response_body['message']);
-                    wp_send_json_error(array('message' => $response_body['message']), $status_code);
-                }
-            }
-            //end message
-            
-        }
-
-        wp_send_json_success('Settings saved successfully.');
-    } catch (Exception $e) {
-        wp_send_json_error($e->getMessage(), 400);
-    }
-}
-
 
 // Define a secret key. Store this securely and do not expose it.
 
@@ -327,7 +313,9 @@ function custom_update_post_meta_for_api($value, $object, $field_name) {
 }
 
 
+
 require_once( __DIR__ . '/blog-manager.php' );
+require_once( __DIR__ . '/smart-chat-manager.php' );
 require_once( __DIR__ . '/widget-registration.php' );
 require_once( __DIR__ . '/shared-widget-registration.php' );
 require_once( __DIR__ . '/chat.php' );

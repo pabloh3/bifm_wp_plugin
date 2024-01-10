@@ -73,4 +73,6 @@ jQuery(document).ready(function($) {
         chatMessages.appendChild(messageElement);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+
 });
+

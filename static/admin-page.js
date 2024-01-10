@@ -21,6 +21,11 @@ function requestFolderName() {
     });
 }
 
+document.getElementById('createNewChat').addEventListener('click', newChat);
+            
+function newChat() {
+    window.location.href = 'admin.php?page=create-chat'; // Redirect to the provided URL
+}
 
 document.querySelectorAll('.delete-widget').forEach(button => {
     button.addEventListener('click', function() {
@@ -98,42 +103,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
-// Handle submission of smart-chat form
-document.addEventListener('DOMContentLoaded', function() {
-    var form = document.getElementById('smart-chat-form');
-
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        var formData = new FormData(form);
-        formData.append('action', 'bifm_smart_chat_settings');
-        formData.append('bifm_nonce', my_script_object.nonce);
-        console.log("nonce: " + my_script_object.nonce);
-
-        fetch(my_script_object.ajax_url, {
-            method: 'POST',
-            body: formData,
-            credentials: 'same-origin'
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                console.log('Success:', result.data);
-                //display success message
-                var warningDiv = document.getElementById('warningMessage');
-                warningDiv.textContent = 'Smart chat settings saved successfully.';
-                warningDiv.style.display = 'flex';
-            } else {
-                console.error('Error:', result.data);
-                //display error message
-                var warningDiv = document.getElementById('warningMessage');
-                warningDiv.textContent = result.data;
-                warningDiv.style.display = 'flex';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-});

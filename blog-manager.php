@@ -5,7 +5,7 @@ define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
 //define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
 
 // Enqueue required scripts and styles
-function cbc_enqueue_scripts() {
+/*function cbc_enqueue_scripts() {
     wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.67', true);
 
     // Localize the script with your data
@@ -17,7 +17,7 @@ function cbc_enqueue_scripts() {
     // error log the entire translation array
     wp_localize_script('cbc_script', 'cbc_object', $translation_array);
 }
-add_action('admin_enqueue_scripts', 'cbc_enqueue_scripts');
+add_action('admin_enqueue_scripts', 'cbc_enqueue_scripts');*/
 
 function decrypt($data, $random_key) {
     list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);

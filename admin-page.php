@@ -56,32 +56,11 @@
 
     // Smart chat Tab
     echo '<div id="smart-chat" class="col s12">';
-    echo '<h5>Smart chat</h5>';
-    // Add settings content here...
-        echo '<p>Here you can update the settings for smart chat.</p>';
-        echo '<p>Please note that the smart chat incurrs in extra costs ($0.05 per request).</p>';
-
-        // Start of the form
-        echo '<form id="smart-chat-form" action="#" method="post">';
-
-        // Bot description
-        $assistant_instructions = get_option( 'assistant_instructions' );
-        echo '<div class="row"><div class="input-field col s12 l8">';
-        if (!is_null($assistant_instructions)) {
-            echo '<textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea">' . htmlspecialchars($assistant_instructions) . '</textarea>';
-        } else {
-            echo '<textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>';
-        }
-        echo '<label for="assistant_instructions">Give the bot instructions for how to respond. Start with something like "You are a support representative that...".</label>';
-        echo '</div></div>';
-        // Submit button
-        echo '<button class="btn waves-effect waves-light" type="submit" name="action" >Update</button>';
-
-        echo '</form>';
-    echo '</div>'; // Close the settings tab
-
-    echo '<div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>';
-
+    echo '<h5>Smart-chat</h5>';
+    // Button to create a new blog
+    echo '<button id="createNewChat" class="btn waves-effect waves-light red lighten-2">Modify Smart Chat Settings</button>';
+    echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2" style="display: none;"><i class="material-icons left">arrow_back</i>Back</button>';
+    echo '</div>';
     //end smart chat tab
 
     // Settings Tab
