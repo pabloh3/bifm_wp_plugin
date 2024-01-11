@@ -16,15 +16,16 @@ function handle_bifm_smart_chat_settings() {
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'update-chat-settings-nonce')) {
             throw new Exception('Nonce verification failed!');
         }
+        
+        // Handle files that need to be deleted
+        $file_list_stored_new = array();
+        $files_to_delete = array();
         // in order to manage file updates, the front end passes a list of files not deleted by the user, we iterate through the files in the directory and delete the ones not in the list
         // The deleted files are stored in array $files_to_delete to be passed to the API for deletion by OpenAI
-        // Update files_list on options
         if (isset($_POST['files_list'])) {
-            $files_to_delete = array();
             $files_list_json = $_POST['files_list'];
             $files_list_json = stripslashes($files_list_json);
             $files_list_posted = json_decode($files_list_json, true);
-            error_log("files list when saving as option: " . print_r($files_list_posted, true));
 
             $dirPath = plugin_dir_path(__FILE__) . 'shared-widgets/smart_chat/chat_files/';
             // Check if directory exists and is readable
@@ -49,16 +50,17 @@ function handle_bifm_smart_chat_settings() {
                                 unlink($dirPath . $file);
                                 //remove the file from options
                                 $file_list_stored = get_option('uploaded_file_names');
-                                $file_list_stored_new = array();
-                                foreach ($file_list_stored as $file_info) {
+                                foreach ($file_list_stored as $key => $value) {
                                     // iterate through the files in the list and add them to a temp array, except the one to delete
-                                    if ($file_info['filename'] != $file) {
-                                        $file_list_stored_new[] = $file_info;
+                                    if ($value['file_name'] != $file) {
+                                        $files_list_stored_new[] = ['file_name' => $value['file_name'], 'file_id' => $value['file_id']];
                                     }
                                     else {
-                                        $files_to_delete[] = $file_info['file_id'];
+                                        $file_to_delete_id = $value['file_id'];
+                                        array_push($files_to_delete, $file_to_delete_id);
                                     }
                                 }
+                                error_log("file list after deleting: " . print_r($files_list_stored_new, true));
                                 update_option('uploaded_file_names', $file_list_stored_new);
                             }
                         }
@@ -68,19 +70,17 @@ function handle_bifm_smart_chat_settings() {
             }
         }
 
+        // Handle assistant update and new files
         if (isset($_POST['assistant_instructions'], $_POST['assistant_instructions'])) {
             $assistant_instructions = $_POST['assistant_instructions'];
             update_option( 'assistant_instructions', $assistant_instructions);
             $assistant_id = get_option('assistant_id');
             $uploadedFiles = $_FILES['files'];
             $uploadedFile = $uploadedFiles['tmp_name'];
+            global $API_URL;
             //handle files
             if (isset($_FILES['files']) && !empty($_FILES['files']['name'][0])) {
                 $uploadedFiles = $_FILES['files'];
-                //error log all the file's names
-                for ($i = 0; $i < count($uploadedFiles['name']); $i++) {
-                    error_log("uploaded file: " . $uploadedFiles['name'][$i]);
-                }
         
                 // Define the target directory
                 $targetDir = plugin_dir_path(__FILE__) . 'shared-widgets/smart_chat/chat_files/';
@@ -91,45 +91,91 @@ function handle_bifm_smart_chat_settings() {
                 }
         
                 // Process each file
-                $fileNames = []; // Array to store file data
+                //$boundary = 'pC&5CFTcj#L33e&O%pI*xua8';
+                $boundary = 'UYTvLhK1u09E5OyhWJBqEZPS';
+                //$headers = array('Content-Type' => 'multipart/form-data; boundary=' . $boundary);
+                $headers = array('Content-Type' => 'multipart/form-data; boundary=' . $boundary);
+                $file_list_query = get_option('uploaded_file_names');
                 foreach ($uploadedFiles['name'] as $key => $name) {
+                    // Manually create multipart content
+                    $body = '';
                     // Set the target file path
                     $targetFile = $targetDir . basename($name);
 
-                    // Validate and move the file
                     if (move_uploaded_file($uploadedFiles['tmp_name'][$key], $targetFile)) {
-                        // File successfully uploaded
-                        // Placeholder for file ID retrieval logic from OpenAI
-                        $fileId = 'none'; // Set to 'none' if no file ID is provided
-                        $fileNames[] = array('filename' => $name, 'file_id' => $fileId); // Store filename and file ID
+                        // Check if the file exists and is readable
+                        error_log("file was stored in back end");
+                        if (file_exists($targetFile) && is_readable($targetFile)) {
+                        // Start building the body
+                            $file_content = file_get_contents($targetFile);
+                            $body .= '--' . $boundary . "\r\n";
+                            $body .= 'Content-Disposition: form-data; name="file"; filename="' . basename($name) . '"' . "\r\n";
+                            $body .= 'Content-Type: ' . mime_content_type($targetFile) . "\r\n\r\n";
+                            $body .= $file_content . "\r\n";
+                        }
                     } else {
                         // Handle errors, e.g., file couldn't be moved
+                        error_log("Error uploading file: " . $name);
                         wp_send_json_error('Error uploading file: ' . $name);
                         return;
                     }
-                }
+                    $body .= '--' . $boundary . '--';
 
-                // Store file names and IDs
-                if (!empty($fileNames)) {
-                    update_option('uploaded_file_names', $fileNames); // Store file data
+                    // Send the file to the Flask API
+                    error_log("sending file to flask api");
+                    $file_response = wp_remote_post($API_URL . '/upload_file', array(
+                        'headers' => $headers,
+                        'body' => $body,
+                        'method' => 'POST',
+                        'timeout' => 30
+                    ));
+                    
+                    // Check for errors or non 200 responses
+                    if (is_wp_error($file_response)) {
+                        // delete file if there is an error
+                        $targetFile = $targetDir . basename($name);
+                        unlink($targetFile);
+                        $error_message = $file_response->get_error_message();
+                        error_log("Error when calling file upload api");
+                        wp_send_json_error(array('message' => "Something went wrong: $error_message"), 500);
+                        return;
+                    } else {
+                        $status_code = wp_remote_retrieve_response_code($file_response);
+                        $response_body = json_decode(wp_remote_retrieve_body($file_response), true);
+                        error_log("file list before appending: " . print_r($file_list_query, true));
+                        if ($status_code == 200) {
+                            $file = $response_body['files'];
+                            $file_list_query[] = ['file_name' => $file['file_name'], 'file_id' => $file['file_id']];
+                            // Store file names and IDs
+                            update_option('uploaded_file_names', $file_list_query); // Store file data
+                        } else {
+                            // delete file if there is an error
+                            error_log("deleting file: " . $name);
+                            $targetFile = $targetDir . basename($name);
+                            unlink($targetFile);
+                            wp_send_json_error(array('message' => $response_body['message']), $status_code);
+                            return;
+                        }
+                    }
                 }
-
-                // All files processed successfully
-                wp_send_json_success('Files uploaded successfully.');
             } else {
-                // No files or files are empty
+                // No files or files are empty which is ok
             }
             //end handle files
             
             // Send the message to AI API
-            global $API_URL;
             $url = $API_URL . '/assistant_update';
-
+            $list_file_ids = array();
+            $file_list_stored = get_option('uploaded_file_names');
+            foreach ($file_list_stored as $key => $value) {
+                array_push($list_file_ids, $value['file_id']);
+            }
             $response = wp_remote_post($url, array(
                 'headers' => array('Content-Type' => 'application/json'),
                 'body' => json_encode(array(
                     'assistant_id' => $assistant_id,
                     'assistant_instructions' => stripslashes($assistant_instructions),
+                    'assistant_files' => $list_file_ids,
                     'files_to_delete' => $files_to_delete
                 )),
                 'method' => 'POST',

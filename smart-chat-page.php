@@ -88,4 +88,11 @@ echo '</div>'; // Close the settings tab
 
 echo '<div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>';
 
+//print the files stored in options
+$file_list_stored = get_option('uploaded_file_names');
+if (!is_null($file_list_stored)) {
+    echo '<div>';
+    echo 'var file_list_stored = ' . json_encode($file_list_stored) . ';';
+    echo '</div>';}
+
 echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>';
