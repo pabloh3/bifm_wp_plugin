@@ -20,6 +20,8 @@
     echo '</ul>';
     echo '</div>';
 
+    echo '<div class="container">';  // using Materialize's container for alignment and spacing
+
     // Widget Generator Tab
     echo '<div id="widget-generator" class="col s12">';
     echo '<h5>Widget Generator</h5>';
@@ -157,6 +159,8 @@
     echo '</div>'; // Close the settings tab
 
     echo '<div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>';
+
+    echo '</div>'; // Close the container
 
     // Inline JavaScript for Tab and multiple choice Functionality
     echo '<script>

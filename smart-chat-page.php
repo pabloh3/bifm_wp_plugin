@@ -3,8 +3,8 @@
 
 echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">';
 echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
-
 echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2"><i class="material-icons left">arrow_back</i>Back</button>';
+echo '<div class="container">';  // using Materialize's container for alignment and spacing
 echo '<div id="smart-chat" class="col s12">';
 echo '<h5>Smart chat</h5>';
 // Add settings content here...
@@ -85,14 +85,8 @@ echo '<button class="btn waves-effect waves-light" type="submit" name="action" >
 
 echo '</form>';
 echo '</div>'; // Close the settings tab
+echo '</div>'; // Close the container
 
 echo '<div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>';
-
-//print the files stored in options
-$file_list_stored = get_option('uploaded_file_names');
-if (!is_null($file_list_stored)) {
-    echo '<div>';
-    echo 'var file_list_stored = ' . json_encode($file_list_stored) . ';';
-    echo '</div>';}
 
 echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>';
