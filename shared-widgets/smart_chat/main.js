@@ -3,9 +3,28 @@ jQuery(document).ready(function($) {
     var chatSubmit = document.getElementById('chat-submit');
     var chatMessages = document.getElementById('chat-messages');
 
+    var chatWidget = document.getElementById('chat-widget');
+    var chatMinimize = document.getElementById('chat-minimize');
+    var chatLogo = document.getElementById('chat-bubble');
+
+    // Minimize the chat widget
+    chatMinimize.addEventListener('click', function() {
+        chatWidget.style.display = 'none';
+        chatLogo.style.display = 'block';
+    });
+
+    // Restore the chat widget
+    chatLogo.addEventListener('click', function() {
+        chatWidget.style.display = 'block';
+        chatLogo.style.display = 'none';
+    });
+
+
+
     // allow user to press enter to submit message
     chatInput.addEventListener('keypress', function(e) {
         if(e.key === 'Enter') {
+            e.preventDefault();
             chatSubmit.click();
         }
     });
@@ -22,7 +41,12 @@ jQuery(document).ready(function($) {
         var message = chatInput.value.trim();
         chatInput.value = '';
         chatInput.style.height = 'auto'; // Reset height to auto first
-        chatInput.style.height = '36px';
+    
+        // Give the browser time to reset the scroll height
+        setTimeout(function() {
+            chatInput.style.height = '36px'; // Set to original height
+        }, 0);
+        // ...
         console.log("returning input to original size");
         if (message) {
             displayMessage(message, true); // Display user message

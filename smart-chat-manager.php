@@ -60,7 +60,6 @@ function handle_bifm_smart_chat_settings() {
                                         array_push($files_to_delete, $file_to_delete_id);
                                     }
                                 }
-                                error_log("file list after deleting: " . print_r($files_list_stored_new, true));
                                 update_option('uploaded_file_names', $file_list_stored_new);
                             }
                         }
@@ -127,7 +126,7 @@ function handle_bifm_smart_chat_settings() {
                         'headers' => $headers,
                         'body' => $body,
                         'method' => 'POST',
-                        'timeout' => 30
+                        'timeout' => 60
                     ));
                     
                     // Check for errors or non 200 responses
@@ -142,7 +141,6 @@ function handle_bifm_smart_chat_settings() {
                     } else {
                         $status_code = wp_remote_retrieve_response_code($file_response);
                         $response_body = json_decode(wp_remote_retrieve_body($file_response), true);
-                        error_log("file list before appending: " . print_r($file_list_query, true));
                         if ($status_code == 200) {
                             $file = $response_body['files'];
                             $file_list_query[] = ['file_name' => $file['file_name'], 'file_id' => $file['file_id']];

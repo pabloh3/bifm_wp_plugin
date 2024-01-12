@@ -35,7 +35,7 @@ function callAPI($message) {
         )),
         'method' => 'POST',
         'data_format' => 'body',
-        'timeout' => 30 // Set the timeout (in seconds)
+        'timeout' => 60 // Set the timeout (in seconds)
     ));
     if (is_wp_error($response)) {
         $error_response = $response->get_error_message() ? $response->get_error_message() : "Unknown error when calling chat API";
