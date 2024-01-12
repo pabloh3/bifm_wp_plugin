@@ -4,9 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$api_url = "https://wp.builditforme.ai";
-//change url when working on local
-//$api_url = "http://127.0.0.1:5001";
+require 'bifm-config.php';
 
 add_action('wp_ajax_plugin_send_message', 'bifm_handle_plugin_send_message');
 function bifm_handle_plugin_send_message() {
@@ -20,9 +18,9 @@ function bifm_handle_plugin_send_message() {
     $site_url = home_url();
     $user_id_complete = "site=" . $site_url . "&user=" . $user_id;
     $folderName = isset($_POST['folderName']) ? sanitize_text_field($_POST['folderName']) : '';
-    #put together the url by concatenating with the api_url
-    global $api_url; 
-    $url = $api_url . "/{$folderName}/processgpt";
+    #put together the url by concatenating with the API_URL
+    global $API_URL; 
+    $url = $API_URL . "/{$folderName}/processgpt";
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
         'body' => json_encode(array(
@@ -65,8 +63,8 @@ function handle_my_plugin_poll_action() {
     $jobId = isset($_POST['jobId']) ? sanitize_text_field($_POST['jobId']) : '';
 
     // Construct the URL for the external service
-    global $api_url; 
-    $url = $api_url . "/{$folderName}/results/{$jobId}";
+    global $API_URL; 
+    $url = $API_URL . "/{$folderName}/results/{$jobId}";
 
     // Send a GET request to the external service
     $response = wp_remote_get($url);
@@ -135,8 +133,8 @@ function bifm_handle_plugin_save() {
     });
     
     // call the API to save
-    global $api_url; 
-    $url = $api_url . "/{$folderName}/save/{$full_widget_name}";
+    global $API_URL; 
+    $url = $API_URL . "/{$folderName}/save/{$full_widget_name}";
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
         // Removed the 'body' parameter since $messageBody is not defined
@@ -318,8 +316,8 @@ function bifm_handle_plugin_reset() {
 
     // Get the folderName and widget name from the frontend
     $folderName = isset($_POST['folderName']) ? sanitize_text_field($_POST['folderName']) : '';
-    global $api_url; 
-    $url = $api_url . "/{$folderName}/reset";
+    global $API_URL; 
+    $url = $API_URL . "/{$folderName}/reset";
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
         // Removed the 'body' parameter since $messageBody is not defined
@@ -350,8 +348,8 @@ function bifm_handle_plugin_undo() {
 
     // Get the folderName and widget name from the frontend
     $folderName = isset($_POST['folderName']) ? sanitize_text_field($_POST['folderName']) : '';
-    global $api_url; 
-    $url = $api_url . "/{$folderName}/undo";
+    global $API_URL; 
+    $url = $API_URL . "/{$folderName}/undo";
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
         // Removed the 'body' parameter since $messageBody is not defined

@@ -1,9 +1,6 @@
 <?php
 // define base url for the API
-//$API_URL = 'https://wp.builditforme.ai';
-//change when working on local
-$API_URL = 'http://127.0.0.1:5001';
-
+require 'bifm-config.php';
 // Handle change smart chat settings
 // Add action for logged-in users
 add_action('wp_ajax_bifm_smart_chat_settings', 'handle_bifm_smart_chat_settings');

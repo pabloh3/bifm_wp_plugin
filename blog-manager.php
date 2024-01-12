@@ -1,8 +1,7 @@
 <?php
 
 // define base url for the API
-define('BIFM_API_BASE_URL', 'https://wp.builditforme.ai');
-//define('BIFM_API_BASE_URL', 'http://127.0.0.1:5001');
+require 'bifm-config.php';
 
 // Enqueue required scripts and styles
 /*function cbc_enqueue_scripts() {
@@ -67,8 +66,8 @@ function handle_cbc_create_blog() {
     if (!$image_height) {
         $image_height = "";
     }
-
-    $url = BIFM_API_BASE_URL . "/create-blog";
+    global $API_URL;
+    $url = $API_URL . "/create-blog";
     
     /*// for  debugging DELETE!!!!!!!!!!!!!!!!!!!
     wp_send_json(array(
@@ -125,7 +124,7 @@ function handle_cbc_poll_for_results() {
     $jobId = isset($_POST['jobId']) ? sanitize_text_field(wp_unslash($_POST['jobId'])) : '';
     
     // Construct the URL for the external service
-    $url = BIFM_API_BASE_URL . "/poll-blog-results/{$jobId}";
+    $url = $API_URL . "/poll-blog-results/{$jobId}";
 
     // Send a GET request to the external service
     $response = wp_remote_get($url);
@@ -269,7 +268,7 @@ function handle_cbc_file_upload() {
 function cbc_process_csv($file_path, $category_id) {
 
     // Assume the API expects a multipart/form-data request with a file field
-    $url = BIFM_API_BASE_URL . "/create-blog-batch";
+    $url = $API_URL . "/create-blog-batch";
     
     // Fetch additional data
     $website = home_url();  // Current website URL

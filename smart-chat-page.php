@@ -1,6 +1,5 @@
 <?php
 // Materialize CSS and Icons
-
 echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">';
 echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
 echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2"><i class="material-icons left">arrow_back</i>Back</button>';

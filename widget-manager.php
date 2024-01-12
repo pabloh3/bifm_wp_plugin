@@ -2,15 +2,12 @@
 /*
 Plugin Name: Build It For Me - Widget creator
 Description: Ask a bot to create Elementor widgets for you.
-Version: 1.02
+Version: 1.03
 Author: Build It For Me
 */
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
-
-//$API_URL = 'https://wp.builditforme.ai';
-//change when working on local
-$API_URL = 'http://127.0.0.1:5001';
+require 'bifm-config.php';
 
 
 // Exit if accessed directly.
@@ -321,3 +318,4 @@ require_once( __DIR__ . '/shared-widget-registration.php' );
 require_once( __DIR__ . '/chat.php' );
 require_once( __DIR__ . '/bifm_action_hooks.php' );
 require_once( __DIR__ . '/shared-bifm_action_hooks.php' );
+
