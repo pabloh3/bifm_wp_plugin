@@ -1,5 +1,6 @@
 <?php
-require 'bifm-config.php';
+include __DIR__ . '/../../bifm-config.php';
+
 //session info
 if (!session_id()) {
     session_start();
