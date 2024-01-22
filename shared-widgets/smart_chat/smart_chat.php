@@ -240,7 +240,7 @@ class smart_chat extends \Elementor\Widget_Base {
         echo '</div>';
 
         // Welcome message
-        echo '<div id="welcome-message" class="elementor-typography-' . esc_attr($settings['_content_typography']) . '">'
+        echo '<div id="welcome-message" class="elementor-typography-' . esc_attr($settings['content_typography']) . '">'
             . esc_html($settings['welcome_message']) . '</div>';
 
         // Other widget HTML

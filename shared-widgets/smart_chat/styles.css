@@ -2,6 +2,7 @@
     /* Adjust the chat widget styling as needed */
     width: 300px;
     border: 1px solid #ccc;
+    background: white;
     padding: 10px;
     position: fixed;
     bottom: 20px; /* Adjust as needed */
