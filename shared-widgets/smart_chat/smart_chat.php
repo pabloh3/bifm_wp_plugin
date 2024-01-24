@@ -257,7 +257,7 @@ class smart_chat extends \Elementor\Widget_Base {
         $display_chat = 'none';
         if ( 'open' === $settings['chat_initial_display'] ) {
             $display_bubble = 'none';
-            $display_chat = 'inline';
+            $display_chat = 'block';
         }
 
         // Start outputting the HTML
