@@ -4,7 +4,7 @@
     border: 1px solid #ccc;
     background: white;
     padding: 10px;
-    position: fixed;
+    /*position: fixed;*/
     bottom: 20px; /* Adjust as needed */
     right: 20px; /* Adjust as needed */
 }
@@ -120,7 +120,7 @@ div[style*='color: red;'] {
 #chat-bubble {
     padding: 10px;
     /* Additional styling here */
-    position: fixed;
+    /*position: fixed;*/
     bottom: 20px; /* Adjust as needed */
     right: 20px; /* Adjust as needed */
     width: 60px; /* Size of the circular background */
@@ -141,4 +141,9 @@ div[style*='color: red;'] {
     left: 10px;
     bottom: 10px;
     /* Additional styling here */
+}
+
+.elementor-widget-smart_chat {
+    position: fixed;
+    z-index: 9999;
 }

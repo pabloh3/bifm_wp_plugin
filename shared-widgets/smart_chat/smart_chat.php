@@ -138,7 +138,7 @@ class smart_chat extends \Elementor\Widget_Base {
         $this->start_controls_section(
             'style_section',
             [
-                'label' => __( 'Style', 'plugin-name' ),
+                'label' => __( 'Body style', 'plugin-name' ),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
@@ -219,6 +219,20 @@ class smart_chat extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'chat_initial_display',
+            [
+                'label' => __( 'Chat Initial Display', 'text-domain' ),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => 'minimized',
+                'options' => [
+                    'open' => __( 'Open', 'text-domain' ),
+                    'minimized' => __( 'Minimized', 'text-domain' ),
+                ],
+            ]
+        );
+        
+
         $this->end_controls_section();
     
     }
@@ -230,9 +244,15 @@ class smart_chat extends \Elementor\Widget_Base {
     
         // Use the settings to customize the output
         $text_color = $settings['text_color'];
+        $display_bubble = 'block';
+        $display_chat = 'none';
+        if ( 'open' === $settings['chat_initial_display'] ) {
+            $display_bubble = 'none';
+            $display_chat = 'block';
+        }
 
         // Start outputting the HTML
-        echo '<div id="chat-widget" style="color: ' . esc_attr($text_color) . ';">';
+        echo '<div id="chat-widget" style="display:  ' . esc_attr($display_chat) .'; color: ' . esc_attr($text_color) . ';">';
 
         // Top bar with a minimize button
         echo '<div id="chat-top-bar">';
@@ -250,7 +270,9 @@ class smart_chat extends \Elementor\Widget_Base {
         echo '<button id="chat-submit"><div id="submit-icon">→</div></button>';
         
         echo '</div>'; // Close chat-widget div
-        echo '<div id="chat-bubble" style="display: none;"><img id="chat-bubble-img" src="' . esc_url(plugins_url('/bifm-plugin/shared-widgets/smart_chat/chatbubble.png')) . '" alt="Chat Bubble"></div>';  // Replace 'Chat Logo' with an actual logo if available
+        echo '<div id="chat-bubble" style="display: ' . esc_attr($display_bubble) . ';"><img id="chat-bubble-img" src="' . esc_url(plugins_url('/bifm-plugin/shared-widgets/smart_chat/chatbubble.png')) . '" alt="Chat Bubble"></div>';  // Replace 'Chat Logo' with an actual logo if available
+
+
         // Chat logo (displayed when minimized)
         
         
