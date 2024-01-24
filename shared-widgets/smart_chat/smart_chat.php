@@ -41,6 +41,15 @@ class smart_chat extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'setup_message',
+            [
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw' => '<p> In the "Advanced" section select "width: inline".<br/>Change position from "default" to "fixed" to see the chat bubble in a corner. </p>',
+                'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+            ]
+        );
+
+        $this->add_control(
             'welcome_message',
             [
                 'label' => __( 'Welcome Message', 'plugin-name' ),
@@ -248,7 +257,7 @@ class smart_chat extends \Elementor\Widget_Base {
         $display_chat = 'none';
         if ( 'open' === $settings['chat_initial_display'] ) {
             $display_bubble = 'none';
-            $display_chat = 'block';
+            $display_chat = 'inline';
         }
 
         // Start outputting the HTML

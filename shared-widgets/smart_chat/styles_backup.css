@@ -1,38 +1,13 @@
-.elementor-widget-smart_chat {
-    /*when position setting is set to fixed, this will make the widget apepar in the bottom right*/
-    bottom: 20px; 
-    right: 20px; 
-}
-
 #chat-widget {
+    /* Adjust the chat widget styling as needed */
     width: 300px;
     border: 1px solid #ccc;
     background: white;
     padding: 10px;
+    position: fixed;
+    bottom: 20px; /* Adjust as needed */
+    right: 20px; /* Adjust as needed */
 }
-
-#chat-bubble {
-    padding: 10px;
-    width: 60px; /* Size of the circular background */
-    height: 60px; /* Size of the circular background */
-    border-radius: 50%; /* Make it circular */
-    background-color: #467ff7; /* The color you want for the background */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: adds a shadow for depth */
-}
-
-#chat-bubble-img {
-    width: 40px; /* Example width */
-    height: auto;
-    /*position: absolute;*/
-    left: 10px;
-    bottom: 10px;
-    /* Additional styling here */
-}
-
 
 #chat-messages {
     height: 400px;
@@ -138,6 +113,32 @@ div[style*='color: red;'] {
 #chat-minimize {
     cursor: pointer;
     color: white;
-    font-size: 18px; 
+    font-size: 18px; /* Adjust size as needed */
+    /* Additional styling for the minimize button */
 }
 
+#chat-bubble {
+    padding: 10px;
+    /* Additional styling here */
+    position: fixed;
+    bottom: 20px; /* Adjust as needed */
+    right: 20px; /* Adjust as needed */
+    width: 60px; /* Size of the circular background */
+    height: 60px; /* Size of the circular background */
+    border-radius: 50%; /* Make it circular */
+    background-color: #467ff7; /* The color you want for the background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: adds a shadow for depth */
+}
+
+#chat-bubble-img {
+    width: 40px; /* Example width */
+    height: auto;
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    /* Additional styling here */
+}
