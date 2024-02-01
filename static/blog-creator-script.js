@@ -2,6 +2,14 @@
 // Fetch the categories when the page loads
 (function($) {
     $(document).ready(function() {
+        //load the right tab
+        console.log("tab clicked");
+        var elems = document.querySelectorAll(".tabs");
+        var instances = M.Tabs.init(elems, {});
+        var elems2 = document.querySelectorAll("select");
+        var instances2 = M.FormSelect.init(elems2, {});
+
+        //fetch the categories
         $.ajax({
             url: cbc_object.ajax_url,
             type: 'post',
@@ -30,17 +38,16 @@
     });
 })(jQuery);
 
-
+//handle create post submissions
 jQuery(document).ready(function($) {
     let jobId = null;
     console.log("loaded JS 1.0.67");
     let submit_single = $('#submit_single_post');
-
-    
     $('#cbc_form').on('submit', function(e) {
         e.preventDefault();
         let categoryValue = $('#category_input').val();
-            // Check if categoryValue is an empty string and handle it
+        let categoryName = $('#category_input option:selected').text();
+        // Check if categoryValue is an empty string and handle it (no need to check keyphrase, it's checked by the form)
         if(!categoryValue) {
             $('#cbc_response').html('Please select a category before submitting.');
             return; // Don't proceed further
@@ -49,7 +56,8 @@ jQuery(document).ready(function($) {
             action: 'cbc_create_blog',
             nonce: cbc_object.single_post_nonce,
             keyphrase: $('input[name="keyphrase"]').val(),
-            category: categoryValue === 'other' ? $('input[name="category"]').val() : categoryValue
+            category: categoryValue,
+            //category_name: categoryName
         };
 
         $.post(cbc_object.ajax_url, data, function(response) {
@@ -75,12 +83,19 @@ jQuery(document).ready(function($) {
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {
             let parsedData = (jqXHR.responseJSON && jqXHR.responseJSON.data) ? JSON.parse(jqXHR.responseJSON.data) : null;
-            let errorMessage = (parsedData && parsedData.message) ? parsedData.message : 'Failed to connect to the backend.';
+            if (parsedData && parsedData.message){
+                let errorMessage = parsedData.message;
+            } else if (parsedData && parsedData.error){
+                let errorMessage = parsedData.error;
+            } else {
+                let errorMessage = 'Failed to connect to the backend.';
+            }
             $('#cbc_response').html(errorMessage);
             submit_single.prop('disabled', false);
         });
     });
 
+    // check if the single blog post is ready
     function pollForResults(jobId) {
         if(jobId) {
             
@@ -128,7 +143,7 @@ function goBack() {
 
 
 
-
+// Create a new category if the user selects "Other..." from the dropdown
 (function($) {
     $('#category_input, #category_input2').change(function() {
         let selected = $(this).val();
@@ -170,6 +185,7 @@ jQuery(document).ready(function($) {
         // Prevent the default form submission
         e.preventDefault();
         let categoryValue2 = $('#category_input2').val();
+        let categoryName2 = $('#category_input2 option:selected').text();
         
         // Check if categoryValue is an empty string and handle it
         if(!categoryValue2) {
@@ -187,6 +203,7 @@ jQuery(document).ready(function($) {
         form_data.append('action', 'cbc_file_upload');
         form_data.append('nonce', cbc_object.bulk_upload_nonce);
         form_data.append('category', categoryValue2);
+        form_data.append('category_name', categoryName2);
 
         $.ajax({
             url: cbc_object.ajax_url,
@@ -229,4 +246,3 @@ jQuery(document).ready(function($) {
         });
     });
 });
-

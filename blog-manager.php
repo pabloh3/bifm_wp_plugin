@@ -3,21 +3,6 @@
 // define base url for the API
 require 'bifm-config.php';
 
-// Enqueue required scripts and styles
-/*function cbc_enqueue_scripts() {
-    wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.67', true);
-
-    // Localize the script with your data
-    $translation_array = array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'single_post_nonce' => wp_create_nonce('create-single-post-action'),
-        'bulk_upload_nonce' => wp_create_nonce('bulk-upload-csv-action')
-    );
-    // error log the entire translation array
-    wp_localize_script('cbc_script', 'cbc_object', $translation_array);
-}
-add_action('admin_enqueue_scripts', 'cbc_enqueue_scripts');*/
-
 function decrypt($data, $random_key) {
     list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
     return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
@@ -32,6 +17,7 @@ function handle_cbc_create_blog() {
     // Get the keyphrase and category_id from the frontend
     $keyphrase = isset($_POST['keyphrase']) ? sanitize_text_field(wp_unslash($_POST['keyphrase'])) : '';
     $category = isset($_POST['category']) ? sanitize_text_field(wp_unslash($_POST['category'])) : '';
+    $category_name = isset($_POST['category_name']) ? sanitize_text_field(wp_unslash($_POST['category_name'])) : '';
     $website = home_url();  // Current website URL
     $user_id = get_current_user_id();
     $current_user = wp_get_current_user();
@@ -67,7 +53,7 @@ function handle_cbc_create_blog() {
         $image_height = "";
     }
     global $API_URL;
-    $url = $API_URL . "/create-blog";
+    $url = $API_URL . "create-blog";
     
     /*// for  debugging DELETE!!!!!!!!!!!!!!!!!!!
     wp_send_json(array(
@@ -75,11 +61,13 @@ function handle_cbc_create_blog() {
         'status' => 500
     ), 500);*/
     
+
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
         'body' => json_encode(array(
             'keyphrase' => $keyphrase,
             'category' => $category,
+            'category_name' => $category_name,
             'website' => $website,
             'requester' => $user_email,
             'related_links' => $related_links,
@@ -103,7 +91,6 @@ function handle_cbc_create_blog() {
         wp_send_json_error(array('message' => "Something went wrong: $error_message"));
     } else {
         $status_code = wp_remote_retrieve_response_code($response);
-        error_log("Response: ");
         wp_send_json(array(
             'data' => wp_remote_retrieve_body($response),
             'status' => $status_code
@@ -116,15 +103,14 @@ function handle_cbc_create_blog() {
 
 add_action('wp_ajax_cbc_poll_for_results', 'handle_cbc_poll_for_results');
 function handle_cbc_poll_for_results() {
-    error_log("called to poll for results");
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
     
     // Get the jobId from the frontend
     $jobId = isset($_POST['jobId']) ? sanitize_text_field(wp_unslash($_POST['jobId'])) : '';
-    
+    global $API_URL;
     // Construct the URL for the external service
-    $url = $API_URL . "/poll-blog-results/{$jobId}";
+    $url = $API_URL . "poll-blog-results/{$jobId}";
 
     // Send a GET request to the external service
     $response = wp_remote_get($url);
@@ -240,6 +226,7 @@ function handle_cbc_file_upload() {
     
     // get the category
     $category_id = isset($_POST['category']) ? sanitize_text_field(wp_unslash($_POST['category'])) : '';
+    $category_name = isset($_POST['category_name']) ? sanitize_text_field(wp_unslash($_POST['category_name'])) : '';
     
     #This is checking if the file upload field (named 'cbc_csv_file') exists within the $_FILES superglobal array
     if (isset($_FILES['cbc_csv_file'])) {
@@ -255,7 +242,7 @@ function handle_cbc_file_upload() {
         
         // Process the CSV file
         $file_path = $file['file'];
-        $response = cbc_process_csv($file_path, $category_id);
+        $response = cbc_process_csv($file_path, $category_id, $category_name);
         $status_code = $response['status'];
         wp_send_json(array(
             'data' => $response['data'],
@@ -265,10 +252,10 @@ function handle_cbc_file_upload() {
 }
 
 
-function cbc_process_csv($file_path, $category_id) {
-
+function cbc_process_csv($file_path, $category_id, $category_name) {
     // Assume the API expects a multipart/form-data request with a file field
-    $url = $API_URL . "/create-blog-batch";
+    global $API_URL;
+    $url = $API_URL . "create-blog-batch";
     
     // Fetch additional data
     $website = home_url();  // Current website URL
@@ -324,6 +311,7 @@ function cbc_process_csv($file_path, $category_id) {
         'requester' => $user_email,
         'related_links' => $related_links,
         'category_id' => $category_id, 
+        'category_name' => $category_name,
         'username' => $username,
         'password' => $password,
         'website_description' => $website_description,

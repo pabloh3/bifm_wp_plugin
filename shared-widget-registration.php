@@ -1,4 +1,3 @@
-
 <?php
 
 // Register custom widget: smart_chat
