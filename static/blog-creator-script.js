@@ -57,7 +57,7 @@ jQuery(document).ready(function($) {
             nonce: cbc_object.single_post_nonce,
             keyphrase: $('input[name="keyphrase"]').val(),
             category: categoryValue,
-            //category_name: categoryName
+            category_name: categoryName
         };
 
         $.post(cbc_object.ajax_url, data, function(response) {
