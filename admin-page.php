@@ -91,7 +91,7 @@
 
     // Blog author's password
     echo '<div class="input-field col s12 l4">';
-    echo '<input id="blog_author_password" type="password" name="blog_author_password" class="validate materialize-textarea" required>';
+    echo '<input id="blog_author_password" type="password" name="blog_author_password" class="validate materialize-textarea">';
     echo '<label for="blog_author_password">Blog author\'s password</label>';
     echo '</div></div>';
 
