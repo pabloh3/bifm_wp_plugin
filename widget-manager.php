@@ -2,7 +2,7 @@
 /*
 Plugin Name: Build It For Me - Widget creator
 Description: Ask a bot to create Elementor widgets for you.
-Version: 1.03
+Version: 1.04
 Author: Build It For Me
 */
 // include the WordPress HTTP API
