@@ -155,8 +155,20 @@
     echo '<div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>';
     echo '</div>'; // Close the container
 
-    // load my script object
+    // Inline JavaScript for Tab and multiple choice Functionality
+    echo '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var elems = document.querySelectorAll(".tabs");
+            var instances = M.Tabs.init(elems, {});
+            var elems2 = document.querySelectorAll("select");
+            var instances2 = M.FormSelect.init(elems2, {});
+        });
+    </script>';
+
+
     echo '<script>var my_script_object = { ajax_url: "' . esc_js(admin_url('admin-ajax.php')) . '", nonce: "' . esc_js($nonce) . '" };</script>';
+
+
     // Materialize JavaScript
     echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>';
     ?>

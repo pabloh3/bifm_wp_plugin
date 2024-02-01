@@ -6,8 +6,7 @@
         console.log("tab clicked");
         var elems = document.querySelectorAll(".tabs");
         var instances = M.Tabs.init(elems, {});
-        var elems2 = document.querySelectorAll("select");
-        var instances2 = M.FormSelect.init(elems2, {});
+
 
         //fetch the categories
         $.ajax({
