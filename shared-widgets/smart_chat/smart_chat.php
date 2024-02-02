@@ -44,7 +44,7 @@ class smart_chat extends \Elementor\Widget_Base {
             'setup_message',
             [
                 'type' => \Elementor\Controls_Manager::RAW_HTML,
-                'raw' => '<p> In the "Advanced" section select "width: inline".<br/>Change position from "default" to "fixed" to see the chat bubble in a corner. </p>',
+                'raw' => '<p> In the "Advanced" section select "width: default" to match container.<br/>Change position from "default" to "fixed" to see the chat bubble in a corner. Also set width: custom 300px.</p>',
                 'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
             ]
         );
