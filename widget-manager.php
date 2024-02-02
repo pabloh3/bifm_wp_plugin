@@ -312,6 +312,11 @@ function custom_update_post_meta_for_api($value, $object, $field_name) {
     return update_post_meta($object->ID, $field_name, $sanitized_value);
 }
 
+// Elementor ads a meta tag by default to pages from the excerpt. This results in duplicate descriptions with Yoast. This function removes the elementor meta tag.
+function remove_hello_elementor_description_meta_tag() {
+	remove_action( 'wp_head', 'hello_elementor_add_description_meta_tag' );
+}
+add_action( 'after_setup_theme', 'remove_hello_elementor_description_meta_tag' );
 
 
 require_once( __DIR__ . '/blog-manager.php' );

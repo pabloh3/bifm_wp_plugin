@@ -290,8 +290,12 @@ class smart_chat extends \Elementor\Widget_Base {
 
         // Enqueue the JS files
         wp_enqueue_script('smart_chat_js_0', plugins_url('main.js', __FILE__, array('jquery'), '1.0.9', true));
-        wp_localize_script('smart_chat_js_0', 'ajax_object', array( 'ajaxurl' => admin_url('admin-ajax.php') ));
+
+        $sch_nonce = wp_create_nonce('sch_widget_nonce');
+        wp_localize_script('smart_chat_js_0', 'ajax_object', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => $sch_nonce));
+        //wp_localize_script('smart_chat_js_0', 'ajax_object', array( 'ajaxurl' => admin_url('admin-ajax.php') ));
         // Localize the script with new data
+
         
 
     }

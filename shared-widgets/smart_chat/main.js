@@ -53,12 +53,14 @@ jQuery(document).ready(function($) {
             document.getElementById('responding').style.display = 'block'; // Show responding animation
         }
         ajaxurl = ajax_object.ajaxurl;
+        console.log("ajax_object: ", ajax_object);
         $.ajax({
             url: ajaxurl, // This variable is automatically defined by WordPress
             type: 'POST',
             data: {
                 'action': 'send_chat_message', // This should match the action in add_action
-                'message': message
+                'message': message,
+                'nonce': ajax_object.nonce,
             },
             success: function(response) {
                 // Handling the response here
