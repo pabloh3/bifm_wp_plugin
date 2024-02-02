@@ -243,15 +243,20 @@ function handle_bifm_save_settings() {
             throw new Exception('Nonce verification failed!');
         }
         $user_id = get_current_user_id();
-        // Your encryption and data handling logic
-        if (isset($_POST['blog_author_username'], $_POST['blog_author_password'])) {
-            $random_key = bin2hex(random_bytes(32));
-            $password = encrypt_data($_POST['blog_author_password'], $random_key);
+        // Update username and password only if username is provided
+        if (isset($_POST['blog_author_username'])) {
             update_user_meta($user_id, 'username', $_POST['blog_author_username']);
-            update_user_meta($user_id, 'encrypted_password', $password);
-            update_user_meta($user_id, 'random_key', $random_key);
+            
+            // Update password only if it's provided
+            if (!empty($_POST['blog_author_password'])) {
+                $random_key = bin2hex(random_bytes(32));
+                $password = encrypt_data($_POST['blog_author_password'], $random_key);
+                update_user_meta($user_id, 'encrypted_password', $password);
+                update_user_meta($user_id, 'random_key', $random_key);
+            }
         }
         
+        // Always update these settings
         update_user_meta($user_id, 'website_description', $_POST['website_description']);
         update_user_meta($user_id, 'image_style', $_POST['image_style']);
         update_user_meta($user_id, 'blog_language', $_POST['blog_language']);

@@ -55,8 +55,9 @@ function handle_cbc_create_blog() {
     global $API_URL;
     $url = $API_URL . "create-blog";
     
-    /*// for  debugging DELETE!!!!!!!!!!!!!!!!!!!
-    wp_send_json(array(
+
+    // for  debugging DELETE!!!!!!!!!!!!!!!!!!!
+    /*wp_send_json(array(
         'data' => '{"message": "test error message", "jobId": 123}',
         'status' => 500
     ), 500);*/
