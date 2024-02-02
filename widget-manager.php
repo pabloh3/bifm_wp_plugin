@@ -247,11 +247,11 @@ function handle_bifm_save_settings() {
         if (isset($_POST['blog_author_username'], $_POST['blog_author_password'])) {
             $random_key = bin2hex(random_bytes(32));
             $password = encrypt_data($_POST['blog_author_password'], $random_key);
+            update_user_meta($user_id, 'username', $_POST['blog_author_username']);
+            update_user_meta($user_id, 'encrypted_password', $password);
             update_user_meta($user_id, 'random_key', $random_key);
         }
-
-        update_user_meta($user_id, 'username', $_POST['blog_author_username']);
-        update_user_meta($user_id, 'encrypted_password', $password);
+        
         update_user_meta($user_id, 'website_description', $_POST['website_description']);
         update_user_meta($user_id, 'image_style', $_POST['image_style']);
         update_user_meta($user_id, 'blog_language', $_POST['blog_language']);
