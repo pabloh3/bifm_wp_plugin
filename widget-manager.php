@@ -58,7 +58,7 @@ function bifm_enqueue_scripts() {
     if (isset($_GET['page'])) {
         if ($_GET['page'] == 'create-blog') {
             // Enqueue scripts for the blog page
-            wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.67', true);
+            wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.68', true);
 
             // Localize the script with your data
             $translation_array = array(
@@ -71,7 +71,7 @@ function bifm_enqueue_scripts() {
             
         } elseif ($_GET['page'] == 'create-chat') {
             // Enqueue scripts for the chat page
-            wp_enqueue_script('cbc_script_chat', plugins_url('/static/smart-chat-script.js', __FILE__), array('jquery'), '1.0.2', true); 
+            wp_enqueue_script('cbc_script_chat', plugins_url('/static/smart-chat-script.js', __FILE__), array('jquery'), '1.0.3', true); 
             // Localize the script with your data
             $translation_array = array(
                 'ajax_url' => admin_url('admin-ajax.php'),

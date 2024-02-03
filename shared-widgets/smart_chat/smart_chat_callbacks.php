@@ -12,7 +12,7 @@ function handle_chat_message() {
     error_log("nonce received: " . $_POST['nonce']);
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'sch_widget_nonce')) {
         wp_send_json_error(array('message' => "Couldn't verify user"), 500);
-     }
+    }
     error_log("back end handle message called");
     $message = $_POST['message'];
     // Send the message to AI API
