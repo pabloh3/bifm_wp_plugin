@@ -4,6 +4,42 @@ require 'bifm-config.php';
 // Handle change smart chat settings
 // Add action for logged-in users
 add_action('wp_ajax_bifm_smart_chat_settings', 'handle_bifm_smart_chat_settings');
+add_action("wp_ajax_bifm_smart_chat_reset", "handle_bifm_smart_chat_reset");
+
+function handle_bifm_smart_chat_reset() {
+    error_log("requested handle_bifm_smart_chat_reset");
+    try {
+        // Check for nonce security
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'update-chat-settings-nonce')) {
+            throw new Exception('Nonce verification failed!');
+        }
+        //delete any files in the directory
+        $dirPath = plugin_dir_path(__FILE__) . 'shared-widgets/smart_chat/chat_files/';
+        // Check if directory exists and is readable
+        if (is_dir($dirPath) && is_readable($dirPath)) {
+            // Open the directory
+            if ($dh = opendir($dirPath)) {
+                // Read files from the directory
+                while (($file = readdir($dh)) !== false) {
+                    if ($file != "." && $file != "..") { // Exclude current and parent directory links
+                        unlink($dirPath . $file);
+                    }
+                }
+                closedir($dh);
+            }
+        }
+        //reset the assistant
+        $assistant_id = get_option('assistant_id');
+        update_option('assistant_instructions', '');
+        update_option('uploaded_file_names', array());
+        update_option('assistant_id', '');
+        // return confirmation
+        wp_send_json_success('Chatbot reset successfully.');
+    } catch (Exception $e) {
+        wp_send_json_error($e->getMessage(), 400);
+    }
+}
+
 
 // Function to handle form submission
 function handle_bifm_smart_chat_settings() {

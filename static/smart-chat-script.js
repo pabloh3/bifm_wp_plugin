@@ -90,6 +90,34 @@ function removeFile(element) {
     }
 }
 
+
+document.getElementById('reset_chat').addEventListener('click', resetChat);
+function resetChat(event){
+    //prevent default
+    event.preventDefault();
+    //alert the user this will delete the chatbot, are they sure?
+    if (!confirm('Are you sure you want to delete the chatbot? This is irreversible.')) {
+        return;
+    }
+    // submit an ajax request to reset the chat, don't send form data
+    console.log("asking to delete chatbot");
+    fetch(cbc_script_object_chat.ajax_url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'action=bifm_smart_chat_reset&nonce=' + cbc_script_object_chat.nonce,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Chatbot deleted successfully.');
+        } else {
+            alert("Chatbot couldn't be deleted.");
+        }
+    });
+}
+
 // process clicks on back button
 document.getElementById('backButton').addEventListener('click', goBack);
 function goBack() {

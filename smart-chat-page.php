@@ -82,6 +82,8 @@ echo '</div>';
 // Submit button
 echo '<button class="btn waves-effect waves-light" type="submit" name="action" >Save Changes</button>';
 
+echo '<button class="btn waves-effect waves-light red lighten-2" type="submit" name="action" id="reset_chat">Reset chatbot</button>';
+
 echo '</form>';
 echo '</div>'; // Close the settings tab
 echo '</div>'; // Close the container
