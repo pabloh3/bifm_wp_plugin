@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
+        var warningDiv = document.getElementById('warningMessage');
+        warningDiv.textContent = 'Saving...';
+        warningDiv.style.display = 'flex';
 
         var formData = new FormData(form);
         formData.append('action', 'bifm_smart_chat_settings');
