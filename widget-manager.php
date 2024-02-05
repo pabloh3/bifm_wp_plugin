@@ -58,7 +58,7 @@ function bifm_enqueue_scripts() {
     if (isset($_GET['page'])) {
         if ($_GET['page'] == 'create-blog') {
             // Enqueue scripts for the blog page
-            wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.68', true);
+            wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.69', true);
 
             // Localize the script with your data
             $translation_array = array(

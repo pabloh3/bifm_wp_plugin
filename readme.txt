@@ -3,23 +3,25 @@ Contributors: pablobifm
 Donate link: https://www.builditforme.ai/donate
 Tags: widgets, elementor, AI, automation, management
 Requires at least: 5.0
-Tested up to: 6.3.1
+Tested up to: 6.4.3
 Requires PHP: 7.0
-Stable tag: 1.02
+Stable tag: 1.04
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Ask a bot to build Elementor widgets for you. See the changes in real time. Save your widgets and include them in any of your pages with the Elementor editor.
+Ask a bot to build Elementor widgets, or blog posts for you. See the changes in real time. Save your widgets and include them in any of your pages with the Elementor editor.
 
 == Description ==
 
-BIFM Widget Manager allows WordPress users to efficiently manage and view AI-generated widgets for Elementor. The plugin connects with Build It For Me's API to facilitate the generation and management of these widgets.
+Build It For me Widget Manager allows WordPress users to efficiently manage and view AI-generated widgets for Elementor. The plugin connects with Build It For Me's API to facilitate the generation and management of these widgets.
+Our blog creator allows you to create blog posts with a single prompt.
 
 Features:
 * **Just ask a bot**: The bot will build any front end widget you want. Ask for interactive widgets!
 * **Add the widget to a page**: Save the widget, and use elementor's editor to drag the widget into your page.
 * **Simple Management Interface**: Easily view and manage AI-generated widgets directly from your WordPress dashboard.
-
+* **Blog creator**: The bot will build any blog posts to target a specific keyphrase.
+* **Smart chat**: Share your documents with a bot and train it to answer questions about your product.
 
 
 == Installation ==
@@ -27,6 +29,8 @@ Features:
 1. Install the plugin through the WordPress plugins screen directly, or upload the plugin files to the `/wp-content/plugins/bifm-widget-manager` directory.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Navigate to the 'Build It For Me' menu in your dashboard to create and manage AI-generated widgets.
+4. If you want to use the blog creator, configure your blog creator on the "Blog Settings".
+5. To use the smart chat, configure the "Smart Chat" tab.
 
 == Frequently Asked Questions ==
 
@@ -58,11 +62,38 @@ Your wordpress users with editor permissions and higher.
 = How can I get help? =
 We appreciate any feedback at pablo@builditforme.ai
 
+= How to setup the blog generator =
+Step 1: Access your wordpress environment, on the left hand side select “Build It For Me”.
+Step 2: Go to the “Settings” tab and fill out the settings for your blog post
+Author’s username and password: We strongly recommend you don’t use your own password here, create a new user as “Author” to use for this purpose.
+Describe your website / company: These are the instructions for the bot that generates text. Explain to it what your company does, share any links you want it to promote. We encourage you to also use the phrase “Avoid talking about us unless strictly necessary” so it creates content that targets the keyphrase instead of trying to promote you across the blog posts. Ideally, match the language you want to generate the posts in.
+Describe the image style: These are the instructions for the bot that generates images. Specify the style of the images. Because this bot doesn’t generate text, the language is less relevant.
+Hit UPDATE
+Settings are configured at the user level. Two users in the same company can have different settings.
+
+= How to create a post =
+Log in to Wordpress with your own account. If you haven’t configured the “Settings” section, configure it as indicated here.
+Go to the Build It For Me plugin (left hand side bar). And click “Blog Generator” -> Create New Blog Post.
+You have two choices
+Generate an individual post
+Keyphrase: Fill out the first field with the text that you think users will google, and you want to target.
+Category: Select the blog category it will be generated in
+Hit “Submit” 
+YOU DO NOT NEED TO FILL OUT THE FIELDS ON THE “CREATE BLOG POSTS IN BULK” SECTION
+Wait for the red bar at the bottom to confirm the post has been generated, follow the link to review your post
+Generate many posts at once
+Upload a CSV, with a single column, where each line is a keyphrase. The bot will create a blog post for each line in the CSV
+Select the category
+Hit the second submit button
+Wait at least 3 minutes for each line that you included, then visit the “Entradas” or “Posts” section of Wordpress and you will find the posts, one will show up every 3 minutes or so.
+
 
 == Screenshots ==
 
 1. Main management interface showcasing all AI-generated widgets.
 2. The 'Create Widget' interface where users can generate new widgets using AI.
+3. Blog creator
+4. Smart chat
 
 == Changelog ==
 
@@ -99,17 +130,4 @@ This integration is crucial for providing our users with a seamless and efficien
 
 == Arbitrary section ==
 
-A special thanks to the Build It For Me team for their API, which powers the AI widget generation.
-
-
-
-Reviewed:
-admin-page.php 
-bifm_action_hooks.php
-blog-creator-page.php
-blog-manager.php
-chat.php
-client.php
-readme.txt
-widget-manager.php
-blog-creator-script.js
+A special thanks to the Build It For Me team for their API, which powers the AI generation.

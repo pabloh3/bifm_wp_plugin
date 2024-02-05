@@ -77,17 +77,17 @@ jQuery(document).ready(function($) {
                     $('#cbc_response').html(response.data.message);
                 }
                 else{
+                    console.log("Error response from submitting single post");
                     $('#cbc_response').html(response.message ? response.message : 'An unknown error occurred.');
                 }
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {
             let parsedData = (jqXHR.responseJSON && jqXHR.responseJSON.data) ? JSON.parse(jqXHR.responseJSON.data) : null;
+            errorMessage = 'Failed to connect to the backend.';
             if (parsedData && parsedData.message){
-                let errorMessage = parsedData.message;
+                errorMessage = parsedData.message;
             } else if (parsedData && parsedData.error){
-                let errorMessage = parsedData.error;
-            } else {
-                let errorMessage = 'Failed to connect to the backend.';
+                errorMessage = parsedData.error;
             }
             $('#cbc_response').html(errorMessage);
             submit_single.prop('disabled', false);
