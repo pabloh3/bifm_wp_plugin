@@ -9,7 +9,7 @@ Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Ask a bot to build Elementor widgets, or blog posts for you. See the changes in real time. Save your widgets and include them in any of your pages with the Elementor editor.
+Ask a bot to build Elementor widgets or blog posts for you. See the changes in real time. Save your widgets and include them in any of your pages with the Elementor editor.
 
 == Description ==
 
