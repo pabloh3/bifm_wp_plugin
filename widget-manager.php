@@ -440,9 +440,17 @@ function my_plugin_recursive_copy($src, $dst) {
 
 require_once( __DIR__ . '/blog-manager.php' );
 require_once( __DIR__ . '/smart-chat-manager.php' );
+// check if widget-registration.php exists, if not create it with "<?php" as content
+if (!file_exists(__DIR__ . '/widget-registration.php')) {
+    file_put_contents(__DIR__ . '/widget-registration.php', "<?php\n");
+}
 require_once( __DIR__ . '/widget-registration.php' );
 require_once( __DIR__ . '/shared-widget-registration.php' );
 require_once( __DIR__ . '/chat.php' );
+// check if bifm_action_hooks.php exists, if not create it with "<?php" as content
+if (!file_exists(__DIR__ . '/bifm_action_hooks.php')) {
+    file_put_contents(__DIR__ . '/bifm_action_hooks.php', "<?php\n");
+}
 require_once( __DIR__ . '/bifm_action_hooks.php' );
 require_once( __DIR__ . '/shared-bifm_action_hooks.php' );
 
