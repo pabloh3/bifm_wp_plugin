@@ -1,14 +1,14 @@
 <?php
 /*
-Plugin Name: Build It For Me - Widget creator
-Description: Ask a bot to create Elementor widgets for you.
-Version: 1.04
+Plugin Name: Build It For Me - AI creator
+Description: Ask a bot to create for you.
+Version: 1.0.4
 Author: Build It For Me
 */
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-
+$current_version = '1.0.4';
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,10 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 function builditforme_ewm_admin_menu() {
     add_menu_page(
-        'Elementor Widget Manager',
+        'Build It For Me AI',
         'Build It For Me',
         'edit_posts',
-        'elementor-widget-manager',
+        'bifm-plugin', //this is the slug used for updates
         'ewm_admin_page_content',
         'dashicons-welcome-widgets-menus'
     );
@@ -317,6 +317,96 @@ function remove_hello_elementor_description_meta_tag() {
 	remove_action( 'wp_head', 'hello_elementor_add_description_meta_tag' );
 }
 add_action( 'after_setup_theme', 'remove_hello_elementor_description_meta_tag' );
+
+// Update the plugin based on the most recent tag on github
+
+
+// Filter the update_plugins transient just before it's updated
+add_filter('pre_set_site_transient_update_plugins', 'my_plugin_pre_set_site_transient_update_plugins');
+
+function my_plugin_pre_set_site_transient_update_plugins($transient) {
+    //delete_transient('my_plugin_last_update_check');
+    // Don't do anything if we are not checking for plugin updates
+    if (empty($transient->checked)) return $transient;
+    $last_checked = get_transient('my_plugin_last_update_check');
+    if ($last_checked && (time() - $last_checked) < 12 * HOUR_IN_SECONDS) {
+        // It's been less than 12 hours since the last check.
+        return;
+    }
+    // Define your plugin data
+    global $current_version;  // Your current plugin version
+    $plugin_slug = plugin_basename(__DIR__) . '/widget-manager.php';  // Path to your main plugin file
+    $github_repo = 'https://api.github.com/repos/pabloh3/bifm_wp_plugin/releases/latest';  // Your GitHub repo URL
+
+    // Use WordPress HTTP API to send a request to GitHub API
+    $response = wp_remote_get($github_repo, array(
+        'headers' => array('Accept' => 'application/vnd.github.v3+json')
+    ));
+
+    if (is_wp_error($response) || wp_remote_retrieve_response_code($response) != 200) {
+        // Handle errors
+        return $transient;
+    }
+
+    $release_data = json_decode(wp_remote_retrieve_body($response), true);
+    /*$release_data = json_decode('{
+        "url": "https://api.github.com/repos/pabloh3/bifm_wp_plugin/releases/140187649",
+        "assets_url": "https://api.github.com/repos/pabloh3/bifm_wp_plugin/releases/140187649/assets",
+        "upload_url": "https://uploads.github.com/repos/pabloh3/bifm_wp_plugin/releases/140187649/assets{?name,label}",
+        "html_url": "https://github.com/pabloh3/bifm_wp_plugin/releases/tag/1.0.4",
+        "id": 140187649,
+        "author": {
+            "login": "pabloh3",
+            "id": 25391322,
+            "node_id": "MDQ6VXNlcjI1MzkxMzIy",
+            "avatar_url": "https://avatars.githubusercontent.com/u/25391322?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/pabloh3",
+            "html_url": "https://github.com/pabloh3",
+            "followers_url": "https://api.github.com/users/pabloh3/followers",
+            "following_url": "https://api.github.com/users/pabloh3/following{/other_user}",
+            "gists_url": "https://api.github.com/users/pabloh3/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/pabloh3/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/pabloh3/subscriptions",
+            "organizations_url": "https://api.github.com/users/pabloh3/orgs",
+            "repos_url": "https://api.github.com/users/pabloh3/repos",
+            "events_url": "https://api.github.com/users/pabloh3/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/pabloh3/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "node_id": "RE_kwDOKzOO7c4IWxgB",
+        "tag_name": "1.0.4",
+        "target_commitish": "master",
+        "name": "Blog and widget creator release",
+        "draft": false,
+        "prerelease": false,
+        "created_at": "2024-02-06T23:24:27Z",
+        "published_at": "2024-02-07T00:46:01Z",
+        "assets": [
+        
+        ],
+        "tarball_url": "https://api.github.com/repos/pabloh3/bifm_wp_plugin/tarball/1.0.4",
+        "zipball_url": "https://api.github.com/repos/pabloh3/bifm_wp_plugin/zipball/1.0.4",
+        "body": "Initial release"
+    }', true);*/
+    $latest_version = ltrim($release_data['tag_name'], 'v');  // Remove 'v' prefix if present
+
+    // Check if the latest version from GitHub is newer than the current version
+    if (version_compare($current_version, $latest_version, '<')) {
+        error_log("new version found");
+        // Update the transient to include new version information
+        $transient->response[$plugin_slug] = (object) array(
+            'slug'        => $plugin_slug,
+            'new_version' => $latest_version,
+            'url'         => $release_data['html_url'],
+            'package'     => 'https://github.com/pabloh3/bifm_wp_plugin/archive/refs/tags/' . $latest_version . '.zip',
+        );
+    }
+    set_transient('my_plugin_last_update_check', time(), 12 * HOUR_IN_SECONDS);
+    // get updated transient
+    return $transient;
+}
 
 
 require_once( __DIR__ . '/blog-manager.php' );
