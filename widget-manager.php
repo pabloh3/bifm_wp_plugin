@@ -358,7 +358,7 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
             'slug'        => $plugin_slug,
             'new_version' => $latest_version,
             'url'         => $release_data['html_url'],
-            'package'     => 'https://github.com/pabloh3/bifm-plugin/releases/download/'. $latest_version .'/bifm-plugin.zip'
+            'package'     => $release_data['assets'][0]['browser_download_url'],
         );
     }
     set_transient('my_plugin_last_update_check', time(), 12 * HOUR_IN_SECONDS);
