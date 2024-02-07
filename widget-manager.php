@@ -336,8 +336,7 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
     // Define your plugin data
     global $current_version;  // Your current plugin version
     $plugin_slug = plugin_basename(__DIR__) . '/widget-manager.php';  // Path to your main plugin file
-    $github_repo = 'https://api.github.com/repos/pabloh3/bifm_wp_plugin/releases/latest';  // Your GitHub repo URL
-
+    $github_repo = 'https://api.github.com/repos/pabloh3/bifm-plugin/releases/latest';  // Your GitHub repo URL
     // Use WordPress HTTP API to send a request to GitHub API
     $response = wp_remote_get($github_repo, array(
         'headers' => array('Accept' => 'application/vnd.github.v3+json')
@@ -359,7 +358,7 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
             'slug'        => $plugin_slug,
             'new_version' => $latest_version,
             'url'         => $release_data['html_url'],
-            'package'     => 'https://github.com/pabloh3/bifm_wp_plugin/archive/refs/tags/' . $latest_version . '.zip',
+            'package'     => 'https://github.com/pabloh3/bifm-plugin/releases/download/'. $latest_version .'/bifm-plugin.zip'
         );
     }
     set_transient('my_plugin_last_update_check', time(), 12 * HOUR_IN_SECONDS);
