@@ -349,47 +349,6 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
     }
 
     $release_data = json_decode(wp_remote_retrieve_body($response), true);
-    /*$release_data = json_decode('{
-        "url": "https://api.github.com/repos/pabloh3/bifm_wp_plugin/releases/140187649",
-        "assets_url": "https://api.github.com/repos/pabloh3/bifm_wp_plugin/releases/140187649/assets",
-        "upload_url": "https://uploads.github.com/repos/pabloh3/bifm_wp_plugin/releases/140187649/assets{?name,label}",
-        "html_url": "https://github.com/pabloh3/bifm_wp_plugin/releases/tag/1.0.4",
-        "id": 140187649,
-        "author": {
-            "login": "pabloh3",
-            "id": 25391322,
-            "node_id": "MDQ6VXNlcjI1MzkxMzIy",
-            "avatar_url": "https://avatars.githubusercontent.com/u/25391322?v=4",
-            "gravatar_id": "",
-            "url": "https://api.github.com/users/pabloh3",
-            "html_url": "https://github.com/pabloh3",
-            "followers_url": "https://api.github.com/users/pabloh3/followers",
-            "following_url": "https://api.github.com/users/pabloh3/following{/other_user}",
-            "gists_url": "https://api.github.com/users/pabloh3/gists{/gist_id}",
-            "starred_url": "https://api.github.com/users/pabloh3/starred{/owner}{/repo}",
-            "subscriptions_url": "https://api.github.com/users/pabloh3/subscriptions",
-            "organizations_url": "https://api.github.com/users/pabloh3/orgs",
-            "repos_url": "https://api.github.com/users/pabloh3/repos",
-            "events_url": "https://api.github.com/users/pabloh3/events{/privacy}",
-            "received_events_url": "https://api.github.com/users/pabloh3/received_events",
-            "type": "User",
-            "site_admin": false
-        },
-        "node_id": "RE_kwDOKzOO7c4IWxgB",
-        "tag_name": "1.0.4",
-        "target_commitish": "master",
-        "name": "Blog and widget creator release",
-        "draft": false,
-        "prerelease": false,
-        "created_at": "2024-02-06T23:24:27Z",
-        "published_at": "2024-02-07T00:46:01Z",
-        "assets": [
-        
-        ],
-        "tarball_url": "https://api.github.com/repos/pabloh3/bifm_wp_plugin/tarball/1.0.4",
-        "zipball_url": "https://api.github.com/repos/pabloh3/bifm_wp_plugin/zipball/1.0.4",
-        "body": "Initial release"
-    }', true);*/
     $latest_version = ltrim($release_data['tag_name'], 'v');  // Remove 'v' prefix if present
 
     // Check if the latest version from GitHub is newer than the current version
