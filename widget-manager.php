@@ -2,13 +2,13 @@
 /*
 Plugin Name: Build It For Me - AI creator
 Description: Ask a bot to create for you.
-Version: 1.0.6
+Version: 1.0.8
 Author: Build It For Me
 */
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-$current_version = '1.0.6';
+$current_version = '1.0.8';
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -364,6 +364,77 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
     set_transient('my_plugin_last_update_check', time(), 12 * HOUR_IN_SECONDS);
     // get updated transient
     return $transient;
+}
+
+// Backup before the update
+add_filter('upgrader_pre_install', 'my_plugin_backup', 10, 2);
+
+function my_plugin_backup($true, $hook_extra) {
+    if (isset($hook_extra['plugin']) && $hook_extra['plugin'] == plugin_basename(__DIR__) . '/widget-manager.php') {
+        $backup_dir = WP_CONTENT_DIR . '/uploads/my_plugin_backup/';
+        if (!is_dir($backup_dir)) {
+            mkdir($backup_dir, 0755, true);
+        }
+        
+        $gitignore_path = __DIR__ . '/.gitignore';
+        if (file_exists($gitignore_path)) {
+            $gitignore = file($gitignore_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($gitignore as $pattern) {
+                // Simplified: Assuming $pattern is a direct file or directory name, not a regex pattern
+                $path = __DIR__ . '/' . $pattern;
+                if (file_exists($path)) {
+                    $dest = $backup_dir . $pattern;
+                    if (is_dir($path)) {
+                        // Recursively copy directories
+                        my_plugin_recursive_copy($path, $dest);
+                    } else {
+                        copy($path, $dest);
+                    }
+                }
+            }
+        }
+    }
+    return $true;
+}
+
+// Restore after the update
+add_filter('upgrader_post_install', 'my_plugin_restore', 10, 2);
+
+function my_plugin_restore($true, $hook_extra) {
+    if (isset($hook_extra['plugin']) && $hook_extra['plugin'] == plugin_basename(__DIR__) . '/widget-manager.php') {
+        $backup_dir = WP_CONTENT_DIR . '/uploads/my_plugin_backup/';
+        $it = new RecursiveDirectoryIterator($backup_dir, RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $file) {
+            if ($file->isDir()){
+                rmdir($file->getRealPath());
+            } else {
+                $relativePath = str_replace($backup_dir, '', $file->getRealPath());
+                $originalPath = __DIR__ . '/' . $relativePath;
+                copy($file->getRealPath(), $originalPath);
+                unlink($file->getRealPath());
+            }
+        }
+        // Optionally, remove the backup directory after restoring
+        rmdir($backup_dir);
+    }
+    return $true;
+}
+
+// Helper function to recursively copy files/directories
+function my_plugin_recursive_copy($src, $dst) {
+    $dir = opendir($src);
+    @mkdir($dst);
+    while (false !== ($file = readdir($dir))) {
+        if (($file != '.') && ($file != '..')) {
+            if (is_dir($src . '/' . $file)) {
+                my_plugin_recursive_copy($src . '/' . $file, $dst . '/' . $file);
+            } else {
+                copy($src . '/' . $file, $dst . '/' . $file);
+            }
+        }
+    }
+    closedir($dir);
 }
 
 
