@@ -1,0 +1,143 @@
+.elementor-widget-smart_chat {
+    /*when position setting is set to fixed, this will make the widget apepar in the bottom right*/
+    bottom: 20px; 
+    right: 20px; 
+}
+
+#chat-widget {
+    min-width: 300px;
+    border: 1px solid #ccc;
+    background: white;
+    padding: 10px;
+}
+
+#chat-bubble {
+    padding: 10px;
+    width: 60px; /* Size of the circular background */
+    height: 60px; /* Size of the circular background */
+    border-radius: 50%; /* Make it circular */
+    background-color: #467ff7; /* The color you want for the background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: adds a shadow for depth */
+}
+
+#chat-bubble-img {
+    width: 40px; /* Example width */
+    height: auto;
+    /*position: absolute;*/
+    left: 10px;
+    bottom: 10px;
+    /* Additional styling here */
+}
+
+
+#chat-messages {
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.bubble {
+    padding: 10px 15px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+    display: block; /* Change to block for full-width bubbles */
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.user {
+    background-color: #007bff;
+    color: white;
+    text-align: right;
+    margin-left: auto; /* Align to the right */
+}
+
+.bot {
+    background-color: #f1f1f1;
+    color: black;
+    text-align: left;
+    margin-right: auto; /* Align to the left */
+}
+
+.message-info {
+    font-size: 0.8em;
+    opacity: 0.7;
+}
+
+
+/* Enhanced "responding" div styles */
+#responding {
+    display: none; /* Initially hidden */
+    background-color: #f1f1f1; /* Light gray background */
+    color: #333; /* Darker text color for contrast */
+    padding: 10px; /* Padding around the text */
+    border-radius: 10px; /* Rounded corners */
+    margin-bottom: 10px; /* Space below the div */
+    text-align: center; /* Center the text */
+    font-weight: bold; /* Bold text for prominence */
+}
+
+/* Enhanced style for the dots in the "responding" animation */
+#responding .dots {
+    font-size: 20px; /* Larger font size for the dots */
+    animation: blink 1.4s infinite both; /* Reuse existing blink animation */
+}
+
+/* Existing blink keyframes animation */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    28%, 70% { opacity: 0; }
+}
+
+#welcome-message {
+    margin-bottom: 10px;
+    font-style: italic;
+    color: grey;
+    text-align: center;
+}
+
+textarea#chat-input {
+    width: calc(100% - 57px);
+    padding: 5px;
+    margin-right: 5px;
+    box-sizing: border-box;
+    overflow-y: hidden; /* Prevents scrollbar */
+    resize: none; /* Disables manual resizing */
+    vertical-align: bottom;
+}
+
+button#chat-submit {
+    width: 50px;
+    height: 36px;
+    line-height: 20px;
+}
+
+/* Error message style */
+div[style*='color: red;'] {
+    color: red;
+    border: 1px solid red;
+    background-color: #ffdada;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+#chat-top-bar {
+    background-color: #467ff7; /* Light gray background */
+    padding: 5px 10px; /* Padding inside the bar */
+    text-align: right; /* Align the minimize button to the right */
+    margin-top: -10px;
+    margin-left: -10px;
+    margin-right: -10px;
+    margin-bottom: 5px;
+}
+
+#chat-minimize {
+    cursor: pointer;
+    color: white;
+    font-size: 18px; 
+}
+
