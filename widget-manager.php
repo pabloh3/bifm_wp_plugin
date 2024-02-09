@@ -2,13 +2,13 @@
 /*
 Plugin Name: Build It For Me - AI creator
 Description: Ask a bot to create for you.
-Version: 1.0.9
+Version: 1.0.10
 Author: Build It For Me
 */
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-$current_version = '1.0.9';
+$current_version = '1.0.10';
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -388,6 +388,7 @@ function register_custom_widgets_from_db() {
     $widget_names = get_option('bifm_widget_names', []);
     foreach ($widget_names as $widget_name) {
         $widget_path = wp_upload_dir()['basedir'] . "/bifm-files/bifm-widgets/{$widget_name}/{$widget_name}.php";
+        error_log("widget path: " . $widget_path);
         if (file_exists($widget_path)) {
             require_once($widget_path);
             $class_name = "\\{$widget_name}";
