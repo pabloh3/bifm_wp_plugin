@@ -156,9 +156,12 @@ function bifm_handle_plugin_save() {
      try {
 
         // Create the directory if it doesn't exist
+        // check if the directory already exists, if so return a message
         $dir_path = wp_upload_dir()['basedir'] . '/bifm-files/bifm-widgets/' . $widget_name;
-        
-        if (!file_exists($dir_path)) {
+        if (file_exists($dir_path)) {
+            $error_encountered = true;
+            wp_send_json_error(array('message' => 'A widget with this name already exists.'));
+        } else {
             if (!mkdir($dir_path, 0755, true)) {
                 $error_encountered = true;
                 wp_send_json_error(array('message' => 'Failed to create directory.'));
@@ -199,33 +202,21 @@ function bifm_handle_plugin_save() {
             }
         
             if (!empty($saved_files)) {
-                // Check if the widget is already registered
-                $widget_registration_file = plugin_dir_path(__FILE__) . 'widget-registration.php';
-                $widget_registration_content = file_get_contents($widget_registration_file);
-                $widget_function_name = "register_custom_widget_{$widget_name}";
+                // Retrieve the existing widget names
+                $widget_names = get_option('bifm_widget_names', []);
             
-                if (strpos($widget_registration_content, $widget_function_name) === false) {
-                    // Widget not registered, so append the registration script
-                    $widget_registration_script = "\n// Register custom widget: {$widget_name}\n";
-                    $widget_registration_script .= "add_action('elementor/widgets/widgets_registered', '{$widget_function_name}');\n";
-                    $widget_registration_script .= "function {$widget_function_name}() {\n";
-                    $widget_registration_script .= "    // Include the widget class file\n";
-                    $widget_registration_script .= "    require_once(wp_upload_dir()['basedir'] . '/bifm-files/bifm-widgets/{$widget_name}/{$widget_name}.php');\n";
-                    $widget_registration_script .= "    \Elementor\Plugin::instance()->widgets_manager->register_widget_type(new " . '\\' . "{$widget_name}());\n";
-                    $widget_registration_script .= "}\n";
-                    
-                    // check that the new file doesn't return errors
-                    if (!lint_php_code($widget_registration_script)) {
-                        error_log("New widget failed lint");
-                        // Delete all files created for this widget to ensure consistency
-                        remove_widget($dir_path, $widget_name);
-                        $error_encountered = true;
-                        wp_send_json_error(array('message' => "The widget's code contains errors and cannot be saved."));
-                    } else {
-                        file_put_contents($widget_registration_file, $widget_registration_script, FILE_APPEND);
-                    }
-                }
-    
+                // Check for duplicate widget names
+                if (!in_array($widget_name, $widget_names)) {
+                    // Add the new widget name
+                    $widget_names[] = $widget_name;
+            
+                    // Update the option with the new list of widget names
+                    update_option('bifm_widget_names', $widget_names);
+                } else {
+                    // Handle the case where a widget with the same name already exists
+                    // You might want to return an error message or perform some other action
+                    wp_send_json_error(array('message' => 'A widget with that name already exists.'));
+                }    
             } else {
                 $error_encountered = true;
                 wp_send_json_error(array('message' => 'No valid file data received from the server.'));

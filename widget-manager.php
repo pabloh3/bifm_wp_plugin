@@ -2,13 +2,13 @@
 /*
 Plugin Name: Build It For Me - AI creator
 Description: Ask a bot to create for you.
-Version: 1.0.7
+Version: 1.0.9
 Author: Build It For Me
 */
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-$current_version = '1.0.7';
+$current_version = '1.0.9';
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -132,7 +132,7 @@ add_action('admin_enqueue_scripts', 'builditforme_ewm_enqueue_admin_scripts');
 
 // handle deleting widgets
 add_action('wp_ajax_delete_custom_widget', 'delete_custom_widget_callback');
-function delete_custom_widget_callback() {
+function delete_custom_widget_callback() {    
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'my_custom_action')) {
         wp_send_json_error('Invalid nonce');
         exit;
@@ -143,20 +143,37 @@ function delete_custom_widget_callback() {
     $widget_folder_path = wp_upload_dir()['basedir'] . '/bifm-files/bifm-widgets/' . $widget_name;
 
     // Delete the widget folder
-    remove_widget($widget_folder_path, $widget_name);
-
+    try {
+        remove_widget($widget_folder_path, $widget_name);
+    } catch (Exception $e) {
+        wp_send_json_error($e->getMessage());
+    }
     wp_send_json_success();
 }
 
 function remove_widget($dir,  $widget_name) {
-    // Remove registration from widget-registration.php
-    $registration_file = __DIR__ . '/widget-registration.php';
-    $file_contents = file_get_contents($registration_file);
-    $pattern = "/\/\/ Register custom widget: " . preg_quote($widget_name, '/') . ".*?\}/s";
-    $file_contents = preg_replace($pattern, '', $file_contents);
-    file_put_contents($registration_file, $file_contents);
-    error_log("widget removed from widget_registration.php");
+    // delete corresponding widget folder
     rrmdir($dir);
+    error_log("widget removed from widget_registration.php");
+
+    // Retrieve the existing widget names
+    $widget_names = get_option('bifm_widget_names', []);
+    if (in_array($widget_name, $widget_names)) {
+        // Remove the widget name from the array
+        $widget_names = array_filter($widget_names, function($name) use ($widget_name) {
+            return $name !== $widget_name;
+        });
+
+        // Update the option with the modified list of widget names
+        update_option('bifm_widget_names', array_values($widget_names));
+
+        // Optionally log this action
+        error_log("Deleted widget name: {$widget_name}");
+
+    } else {
+        // Log a message if the widget name does not exist
+        error_log("The widget named '{$widget_name}' does not exist and cannot be deleted.");
+    }
 }
 
 function rrmdir($dir){
@@ -367,6 +384,77 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
     return $transient;
 }
 
+function register_custom_widgets_from_db() {
+    $widget_names = get_option('bifm_widget_names', []);
+    foreach ($widget_names as $widget_name) {
+        $widget_path = wp_upload_dir()['basedir'] . "/bifm-files/bifm-widgets/{$widget_name}/{$widget_name}.php";
+        if (file_exists($widget_path)) {
+            require_once($widget_path);
+            $class_name = "\\{$widget_name}";
+            \Elementor\Plugin::instance()->widgets_manager->register_widget_type(new $class_name());
+        } else {
+            // Handle the case where the widget file does not exist
+            error_log("Tried to register widget file does not exist: " . $widget_path);
+            // This could be logging an error or notifying an administrator
+        }
+    }
+}
+add_action('elementor/widgets/widgets_registered', 'register_custom_widgets_from_db');
+
+//delete after migration
+
+function bifm_extract_and_store_widget_names() {
+    $file_path = __DIR__ . '/widget-registration.php';
+    if (!file_exists($file_path)) {
+        error_log("File not found: {$file_path}");
+        return;
+    }
+
+    $file_content = file_get_contents($file_path);
+    
+    // Pattern to match the widget name in your registration lines
+    // Adjust this pattern to match your file's specific format
+    $pattern = "/register_custom_widget_(.*?)\(\)/";
+
+    preg_match_all($pattern, $file_content, $matches);
+    $widget_names = $matches[1] ?? [];
+
+    if (empty($widget_names)) {
+        error_log('No widget names found in widget-registration.php');
+        return;
+    }
+
+    foreach ($widget_names as $widget_name) {
+        // Check and store each widget name
+        bifm_add_widget_name($widget_name);
+        // Log the widget name
+        error_log("Stored widget name: {$widget_name}");
+    }
+}
+
+function bifm_add_widget_name($widget_name) {
+    // Retrieve the existing widget names
+    $widget_names = get_option('bifm_widget_names', []);
+
+    // Check for duplicate widget names
+    if (!in_array($widget_name, $widget_names)) {
+        // Add the new widget name
+        $widget_names[] = $widget_name;
+        // Update the option with the new list of widget names
+        update_option('bifm_widget_names', $widget_names);
+    } else {
+        // Log a message if the widget name already exists
+        error_log("The widget named '{$widget_name}' already exists.");
+    }
+}
+//migration script, remove after updating to 1.0.9
+add_action('init', 'bifm_extract_and_store_widget_names');
+//end delete after migration
+
+
+
+
+
 require_once( __DIR__ . '/blog-manager.php' );
 require_once( __DIR__ . '/smart-chat-manager.php' );
 // check if widget-registration exists, if not, create with content <?php
@@ -377,8 +465,12 @@ require_once( __DIR__ . '/widget-registration.php' );
 require_once( __DIR__ . '/shared-widget-registration.php' );
 require_once( __DIR__ . '/chat.php' );
 // check if bifm_action_hooks exists, if not, create with content <?php
-if (!file_exists(__DIR__ . '/bifm_action_hooks.php')) {
-    file_put_contents(__DIR__ . '/bifm_action_hooks.php', "<?php\n");
+if (!file_exists(wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php')) {
+    file_put_contents(wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php', "<?php\n");
 }
-require_once( __DIR__ . '/bifm_action_hooks.php' );
-require_once( __DIR__ . '/shared-bifm_action_hooks.php' );
+require_once( wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php' );
+//create shared-bifm_action_hooks.php
+if (!file_exists(wp_upload_dir()['basedir'] . '/bifm-files/shared-bifm_action_hooks.php')) {
+    file_put_contents(wp_upload_dir()['basedir'] . '/bifm-files/shared-bifm_action_hooks.php', "<?php\n");
+}
+require_once( wp_upload_dir()['basedir'] . '/bifm-files/shared-bifm_action_hooks.php' );
