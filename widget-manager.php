@@ -457,11 +457,6 @@ add_action('init', 'bifm_extract_and_store_widget_names');
 
 require_once( __DIR__ . '/blog-manager.php' );
 require_once( __DIR__ . '/smart-chat-manager.php' );
-// check if widget-registration exists, if not, create with content <?php
-if (!file_exists(__DIR__ . '/widget-registration.php')) {
-    file_put_contents(__DIR__ . '/widget-registration.php', "<?php\n");
-}
-require_once( __DIR__ . '/widget-registration.php' );
 require_once( __DIR__ . '/shared-widget-registration.php' );
 require_once( __DIR__ . '/chat.php' );
 // check if bifm_action_hooks exists, if not, create with content <?php
