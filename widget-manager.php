@@ -468,7 +468,7 @@ require_once( __DIR__ . '/chat.php' );
 if (!file_exists(wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php')) {
     file_put_contents(wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php', "<?php\n");
 }
-require_once( __DIR__ . '/bifm_action_hooks.php' );
+require_once(wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php' );
 //create shared-bifm_action_hooks.php
 if (!file_exists( __DIR__ . '/shared-bifm_action_hooks.php')) {
     file_put_contents(  __DIR__ . '/shared-bifm_action_hooks.php', "<?php\n");
