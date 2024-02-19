@@ -408,6 +408,16 @@ require_once( __DIR__ . '/smart-chat-manager.php' );
 require_once( __DIR__ . '/shared-widget-registration.php' );
 require_once( __DIR__ . '/chat.php' );
 // check if bifm_action_hooks exists, if not, create with content <?php
+$dirPath = wp_upload_dir()['basedir'] . '/bifm-files';
+// Check if the directory exists, and if not, create it
+if (!is_dir($dirPath)) {
+    // Attempt to create the directory recursively
+    if (!mkdir($dirPath, 0755, true)) {
+        // Handle the error if the directory cannot be created
+        error_log("Failed to create directory: $dirPath");
+        // Optionally, you can communicate the error back to the user or admin
+    }
+}
 if (!file_exists(wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php')) {
     file_put_contents(wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php', "<?php\n");
 }
