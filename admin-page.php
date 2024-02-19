@@ -5,7 +5,8 @@
     echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">';
     echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
 
-    //echo '<div style="color:red">API url in blog-manager.</div>';
+    //echo '<div style="color:red">Using local API.</div>';
+    //echo '<div style="color:red">Validate https in new_blogpost and upload_image.</div>';
 
     // Tabs structure
     echo '<div class="row">';

@@ -112,10 +112,10 @@ jQuery(document).ready(function($) {
                         $('#cbc_response').html('Your post failed to be created. <br>'+innerData.message);
                     }
                     else if(innerData.message){
-                        $('#cbc_response').html('Your post was successfully created. <a href="' + '/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>'+innerData.message);    
+                        $('#cbc_response').html('Your post was successfully created. <a href="' + '/?p='+ innerData.blogpost_id + '">Review Post</a><br>'+innerData.message);    
                     }
                     else{
-                        $('#cbc_response').html('Your post was successfully created. <a href="' + '/wp-admin/post.php?post='+ innerData.blogpost_id + '&action=elementor' + '">Review Post</a><br>');    
+                        $('#cbc_response').html('Your post was successfully created. <a href="' + '/?p='+ innerData.blogpost_id + '">Review Post</a><br>');    
                     }
                 } else if(response.status === 202) {
                     setTimeout(() => pollForResults(jobId), 5000);

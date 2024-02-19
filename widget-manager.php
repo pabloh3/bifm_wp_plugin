@@ -402,59 +402,6 @@ function register_custom_widgets_from_db() {
 }
 add_action('elementor/widgets/widgets_registered', 'register_custom_widgets_from_db');
 
-//delete after migration
-
-function bifm_extract_and_store_widget_names() {
-    $file_path = __DIR__ . '/widget-registration.php';
-    if (!file_exists($file_path)) {
-        error_log("File not found: {$file_path}");
-        return;
-    }
-
-    $file_content = file_get_contents($file_path);
-    
-    // Pattern to match the widget name in your registration lines
-    // Adjust this pattern to match your file's specific format
-    $pattern = "/register_custom_widget_(.*?)\(\)/";
-
-    preg_match_all($pattern, $file_content, $matches);
-    $widget_names = $matches[1] ?? [];
-
-    if (empty($widget_names)) {
-        error_log('No widget names found in widget-registration.php');
-        return;
-    }
-
-    foreach ($widget_names as $widget_name) {
-        // Check and store each widget name
-        bifm_add_widget_name($widget_name);
-        // Log the widget name
-        error_log("Stored widget name: {$widget_name}");
-    }
-}
-
-function bifm_add_widget_name($widget_name) {
-    // Retrieve the existing widget names
-    $widget_names = get_option('bifm_widget_names', []);
-
-    // Check for duplicate widget names
-    if (!in_array($widget_name, $widget_names)) {
-        // Add the new widget name
-        $widget_names[] = $widget_name;
-        // Update the option with the new list of widget names
-        update_option('bifm_widget_names', $widget_names);
-    } else {
-        // Log a message if the widget name already exists
-        error_log("The widget named '{$widget_name}' already exists.");
-    }
-}
-//migration script, remove after updating to 1.0.9
-add_action('init', 'bifm_extract_and_store_widget_names');
-//end delete after migration
-
-
-
-
 
 require_once( __DIR__ . '/blog-manager.php' );
 require_once( __DIR__ . '/smart-chat-manager.php' );
