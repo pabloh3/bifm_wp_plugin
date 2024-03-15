@@ -2,7 +2,7 @@
 /*
 Plugin Name: Build It For Me - AI creator
 Description: Ask a bot to create for you.
-Version: 1.0.9
+Version: 1.0.11
 Author: Build It For Me
 */
 // include the WordPress HTTP API
