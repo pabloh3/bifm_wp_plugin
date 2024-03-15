@@ -3,7 +3,8 @@
     $folderName = isset($_GET['foldername']) ? sanitize_text_field($_GET['foldername']) : '';
     $client_folder = preg_replace("/[a-zA-Z]/", "", $folderName); // Remove any letters
     require 'bifm-config.php';
-    $url = $API_URL ."/instance/". esc_attr($folderName) . "/widget.php";
+    $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php ";
+    //localhost:3013/<foldername>/widget.php
     // for testing
     
     echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2";"><i class="material-icons left">arrow_back</i>Back</button>';
