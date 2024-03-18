@@ -339,11 +339,13 @@ add_action( 'after_setup_theme', 'remove_hello_elementor_description_meta_tag' )
 // Filter the update_plugins transient just before it's updated
 add_filter('pre_set_site_transient_update_plugins', 'my_plugin_pre_set_site_transient_update_plugins');
 function my_plugin_pre_set_site_transient_update_plugins($transient) {
+    //following line commented out, is used for debugging since deleting transient checks for new updates immediately
     //delete_transient('my_plugin_last_update_check');
     // Don't do anything if we are not checking for plugin updates
     if (empty($transient->checked)) return $transient;
     $last_checked = get_transient('my_plugin_last_update_check');
-    if ($last_checked && (time() - $last_checked) < 1 * HOUR_IN_SECONDS) {
+    $check_each_hours = 1;
+    if ($last_checked && (time() - $last_checked) <= $check_each_hours * HOUR_IN_SECONDS) {
         // It's been less than 1 hours since the last check.
         return;
     }
@@ -376,7 +378,7 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
             'package'     => 'https://github.com/pabloh3/bifm_wp_plugin/archive/refs/tags/' . $latest_version . '.zip',
         );
     }
-    set_transient('my_plugin_last_update_check', time(), 12 * HOUR_IN_SECONDS);
+    set_transient('my_plugin_last_update_check', time(), $check_each_hours * HOUR_IN_SECONDS);
     // get updated transient
     return $transient;
 }
