@@ -336,18 +336,15 @@ function remove_hello_elementor_description_meta_tag() {
 add_action( 'after_setup_theme', 'remove_hello_elementor_description_meta_tag' );
 
 // Update the plugin based on the most recent tag on github
-
-
 // Filter the update_plugins transient just before it's updated
 add_filter('pre_set_site_transient_update_plugins', 'my_plugin_pre_set_site_transient_update_plugins');
-
 function my_plugin_pre_set_site_transient_update_plugins($transient) {
     //delete_transient('my_plugin_last_update_check');
     // Don't do anything if we are not checking for plugin updates
     if (empty($transient->checked)) return $transient;
     $last_checked = get_transient('my_plugin_last_update_check');
-    if ($last_checked && (time() - $last_checked) < 12 * HOUR_IN_SECONDS) {
-        // It's been less than 12 hours since the last check.
+    if ($last_checked && (time() - $last_checked) < 1 * HOUR_IN_SECONDS) {
+        // It's been less than 1 hours since the last check.
         return;
     }
     // Define your plugin data
