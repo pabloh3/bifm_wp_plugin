@@ -2,13 +2,13 @@
 /*
 Plugin Name: Build It For Me - AI creator
 Description: Ask a bot to create for you.
-Version: 1.0.11
+Version: 1.0.12
 Author: Build It For Me
 */
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-$current_version = '1.0.9';
+$current_version = '1.0.12';
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -366,17 +366,27 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
 
     $release_data = json_decode(wp_remote_retrieve_body($response), true);
     $latest_version = ltrim($release_data['tag_name'], 'v');  // Remove 'v' prefix if present
-
-    // Check if the latest version from GitHub is newer than the current version
-    if (version_compare($current_version, $latest_version, '<')) {
-        error_log("new version found");
-        // Update the transient to include new version information
-        $transient->response[$plugin_slug] = (object) array(
-            'slug'        => $plugin_slug,
-            'new_version' => $latest_version,
-            'url'         => $release_data['html_url'],
-            'package'     => 'https://github.com/pabloh3/bifm_wp_plugin/archive/refs/tags/' . $latest_version . '.zip',
-        );
+    $assets = $release_data['assets'];
+    if (!empty($assets)) {
+        // Find the browser_download_url for your specific asset, e.g., bifm-plugin.zip
+        foreach ($assets as $asset) {
+            if ($asset['name'] == "bifm-plugin.zip") {
+                $download_url = $asset['browser_download_url'];
+                break;
+            }
+        }
+        
+        // Check if we found a matching asset and have a download URL
+        if (!empty($download_url) && version_compare($current_version, $latest_version, '<')) {
+            error_log("new version found");
+            // Update the transient to include new version information with the correct package URL
+            $transient->response[$plugin_slug] = (object) array(
+                'slug'        => $plugin_slug,
+                'new_version' => $latest_version,
+                'url'         => $release_data['html_url'],
+                'package'     => $download_url,  // Use the direct URL to the uploaded ZIP file
+            );
+        }
     }
     set_transient('my_plugin_last_update_check', time(), $check_each_hours * HOUR_IN_SECONDS);
     // get updated transient
