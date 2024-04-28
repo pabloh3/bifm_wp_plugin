@@ -303,8 +303,22 @@ function decrypt_data($data, $random_key) {
 }
 
 
-# expose Yoast values in the API that usually wouldn't be exposed
-function register_yoast_fields() {
+# expose Yoast and Elementor values in the API that usually wouldn't be exposed
+function register_custom_fields() {
+    // Register Elementor fields
+    register_rest_field('page', '_elementor_data', array(
+        'get_callback'    => 'custom_get_post_meta_for_api',
+        'update_callback' => 'custom_update_post_meta_for_api',
+        'schema'          => null,
+    ));
+
+    register_rest_field('page', '_elementor_edit_mode', array(
+        'get_callback'    => 'custom_get_post_meta_for_api',
+        'update_callback' => null,  // Assuming edit mode might not need to be updated via API
+        'schema'          => null,
+    ));
+
+    // Register Yoast fields
     register_rest_field('post', '_yoast_wpseo_focuskw',  array(
         'get_callback'    => 'custom_get_post_meta_for_api',
         'update_callback' => 'custom_update_post_meta_for_api',
@@ -317,7 +331,7 @@ function register_yoast_fields() {
         'schema'          => null,
     ));
 }
-add_action('rest_api_init', 'register_yoast_fields');
+add_action('rest_api_init', 'register_custom_fields');
 
 function custom_get_post_meta_for_api($object, $field_name, $request) {
     return get_post_meta($object['id'], $field_name, true);
@@ -328,6 +342,8 @@ function custom_update_post_meta_for_api($value, $object, $field_name) {
     $sanitized_value = sanitize_text_field($value);
     return update_post_meta($object->ID, $field_name, $sanitized_value);
 }
+
+
 
 // Elementor ads a meta tag by default to pages from the excerpt. This results in duplicate descriptions with Yoast. This function removes the elementor meta tag.
 function remove_hello_elementor_description_meta_tag() {
@@ -345,7 +361,7 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
     if (empty($transient->checked)) return $transient;
     $last_checked = get_transient('my_plugin_last_update_check');
     $check_each_hours = 1;
-    if ($last_checked && (time() - $last_checked) <= $check_each_hours * HOUR_IN_SECONDS) {
+    if ($last_checked && (time() - $last_checked) < $check_each_hours * HOUR_IN_SECONDS) {
         // It's been less than 1 hours since the last check.
         return;
     }

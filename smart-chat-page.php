@@ -91,3 +91,19 @@ echo '</div>'; // Close the container
 echo '<div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>';
 
 echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>';
+
+
+
+$elementor_page_id = 31; // Example page ID
+$elementor_data = get_post_meta($elementor_page_id, '_elementor_data', true);
+
+$elementor_data = json_decode($elementor_data, true);
+// print all elements of the elementor data
+echo '<pre>';
+print_r($elementor_data);
+echo '</pre>';
+echo $elementor_data;
+
+// Modify $elementor_data as needed
+
+#update_post_meta($elementor_page_id, '_elementor_data', json_encode($elementor_data));

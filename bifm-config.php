@@ -9,9 +9,9 @@ if (strpos($host, 'stg-') === 0 ||
 }
 
 // Define the API URL based on the environment
-$API_URL = $environment === 'staging' ? 'https://staging-wp.builditforme.ai/' : 'https://wp.builditforme.ai/';
-$WIDGET_URL = $API_URL . "widget-page/";
-//$API_URL = 'http://localhost:5001/';
-//$WIDGET_URL = 'http://localhost:3013/';
+//$API_URL = $environment === 'staging' ? 'https://staging-wp.builditforme.ai/' : 'https://wp.builditforme.ai/';
+//$WIDGET_URL = $API_URL . "widget-page/";
+$API_URL = 'http://localhost:5001/';
+$WIDGET_URL = 'http://localhost:3013/';
 
 // Use $API_URL wherever needed in your script
