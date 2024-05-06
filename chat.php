@@ -153,7 +153,7 @@ function bifm_handle_plugin_save() {
     $rollback_required = false;
     $backup_directory = null;
     
-     try {
+    try {
 
         // Create the directory if it doesn't exist
         // check if the directory already exists, if so return a message
@@ -200,7 +200,22 @@ function bifm_handle_plugin_save() {
                     }
                 }
             }
-        
+            if (isset($decoded_response['action_hooks_code']) && !empty($decoded_response['action_hooks_code'])) {
+                $hook_names = $decoded_response['action_hooks_code'];
+                error_log("hook names returned: " . print_r($hook_names, true));
+                //save each hook in array $hooks_names where hooks names is an array of hook name strings
+                foreach ($hook_names as $hook_name) {
+                    error_log("hook name: " . $hook_name);
+                    // Check and save the hook
+                    if (!save_hook($hook_name, $widget_name)) {
+                        $error_encountered = true;
+                        error_log("Tried to save action hook but one with same name already exists");
+                        // Delete all files created for this widget to ensure consistency
+                        remove_widget($dir_path, $widget_name);
+                        wp_send_json_error(array('message' => "An action hook with this name already exists."));
+                    }
+                }
+            }                    
             if (!empty($saved_files)) {
                 // Retrieve the existing widget names
                 $widget_names = get_option('bifm_widget_names', []);
@@ -225,7 +240,7 @@ function bifm_handle_plugin_save() {
             $error_encountered = true;
             wp_send_json_error(array('message' => 'No file data received from the server.'));
         }
-     } catch (Exception $e) {
+    } catch (Exception $e) {
         $rollback_required = true;
         wp_send_json_error(array('message' => 'An error occurred: ' . esc_html__($e->getMessage())));
     
@@ -244,6 +259,22 @@ function bifm_handle_plugin_save() {
     
     // Always die at the end of AJAX functions in WordPress
     wp_die('Save ended without a response');
+}
+
+function get_hooks() {
+    return get_option('bifm_action_hooks', []);
+}
+
+function save_hook($hook_name, $widget_name) {
+    error_log("Saving hook: " . $hook_name);
+    $hooks = get_hooks();
+    if (isset($hooks[$hook_name])) {
+        return false; // Hook name already exists
+    }
+
+    $hooks[$hook_name] = $widget_name;
+    update_option('bifm_action_hooks', $hooks);
+    return true;
 }
 
 

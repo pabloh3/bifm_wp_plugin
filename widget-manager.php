@@ -142,6 +142,24 @@ function delete_custom_widget_callback() {
     //$widget_folder_path = __DIR__ . '/bifm-widgets/' . $widget_name;
     $widget_folder_path = wp_upload_dir()['basedir'] . '/bifm-files/bifm-widgets/' . $widget_name;
 
+    // Delete the widget action hook in the uploads /backend_functions.php file
+    $action_hooks_file = wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php';
+    $action_hooks_content = file_get_contents($action_hooks_file);
+    /*Find teh string that starts with "include_once plugin_dir_path( __FILE__ ) . './bifm-widgets/{$widget_name}/backend_functions.php';...<a bunch of content>" and ends with two consecutive line breaks, remove it
+    */
+    $action_hooks_content = preg_replace("/include_once plugin_dir_path\( __FILE__ \) \. '\/bifm-widgets\/{$widget_name}\/backend_functions.php';.*?\n\n/s", '', $action_hooks_content);
+    file_put_contents($action_hooks_file, $action_hooks_content);
+
+    // delete any action hooks in options that start with this widget name + _
+    $hooks = get_option('bifm_action_hooks', []);
+    foreach ($hooks as $hook_name => $widget_name_in_hook) {
+        error_log("borrando hook: " . $hook_name . " widget: " . $widget_name);
+        if (strpos($widget_name_in_hook, $widget_name) === 0) {
+            unset($hooks[$hook_name]);
+        }
+    }
+    update_option('bifm_action_hooks', $hooks);
+
     // Delete the widget folder
     try {
         remove_widget($widget_folder_path, $widget_name);
@@ -397,7 +415,6 @@ function register_custom_widgets_from_db() {
     $widget_names = get_option('bifm_widget_names', []);
     foreach ($widget_names as $widget_name) {
         $widget_path = wp_upload_dir()['basedir'] . "/bifm-files/bifm-widgets/{$widget_name}/{$widget_name}.php";
-        error_log("widget path: " . $widget_path);
         if (file_exists($widget_path)) {
             require_once($widget_path);
             $class_name = "\\{$widget_name}";
@@ -435,4 +452,25 @@ require_once(wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php' );
 if (!file_exists( __DIR__ . '/shared-bifm_action_hooks.php')) {
     file_put_contents(  __DIR__ . '/shared-bifm_action_hooks.php', "<?php\n");
 }
+
+
 require_once(  __DIR__ . '/shared-bifm_action_hooks.php' );
+// Retrieve stored hooks from the option
+$hooks = get_option('bifm_action_hooks', []);
+// error log the hooks
+error_log(print_r($hooks, true));
+// Loop through each registered hook
+foreach ($hooks as $hook_name => $widget_name) {
+    // Construct the path to the backend functions file for the widget
+    $backend_functions_path = wp_upload_dir()['basedir'] . '/bifm-files/bifm-widgets/' . $widget_name . '/backend_functions.php';
+
+    // Check if the file exists before including it
+    if (file_exists($backend_functions_path)) {
+        include_once $backend_functions_path;
+
+        // Register both no-priv and priv actions for the hook
+        add_action('wp_ajax_nopriv_' . $hook_name, $hook_name);
+        add_action('wp_ajax_' . $hook_name, $hook_name);
+    }
+}
+
