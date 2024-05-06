@@ -355,25 +355,28 @@ add_action( 'after_setup_theme', 'remove_hello_elementor_description_meta_tag' )
 
 // Update the plugin based on the most recent tag on github
 // Filter the update_plugins transient just before it's updated
-add_filter('pre_set_site_transient_update_plugins', 'my_plugin_pre_set_site_transient_update_plugins');
-function my_plugin_pre_set_site_transient_update_plugins($transient) {
+add_filter('pre_set_site_transient_update_plugins', 'bifm_pre_set_site_transient_update_plugins');
+function bifm_pre_set_site_transient_update_plugins($transient) {
     //error_log("pre_set_site_transient_update_plugins called");
     //following line commented out, is used for debugging since deleting transient checks for new updates immediately
-    //delete_transient('my_plugin_last_update_check');
+    //delete_transient('bifm_last_update_check');
     // Don't do anything if we are not checking for plugin updates
     if (empty($transient->checked)) {
         //error_log("empty transient checked, this is not a plugin update check");
         return $transient;
     }
-    $last_checked = get_transient('my_plugin_last_update_check');
+    $last_checked = get_transient('bifm_last_update_check');
     $check_each_hours = 1;
     // if the transient has expired $last_checked will be false so this won't run and skip to update
     if ($last_checked && (time() - $last_checked) < $check_each_hours * HOUR_IN_SECONDS) {
-        // It's been less than 1 hours since the last check.
         $time_elapsed_minutes = (time() - $last_checked) / 60;
-        //("less than 1 hour since last check, time elapsed: " . $time_elapsed_minutes . " minutes");
-        //error_log("transient: " . print_r($transient, true));
-        return;
+        error_log("less than 1 hour since last check, time elapsed: " . $time_elapsed_minutes . " minutes");
+        // Restore the update data if it's less than an hour since the last check
+        $cached_response = get_transient('bifm_cached_response');
+        if ($cached_response) {
+            $transient->response = array_merge((array) $transient->response, (array) $cached_response);
+        }
+        return $transient;
     }
     // Define your plugin data
     global $current_version;  // Your current plugin version
@@ -407,24 +410,36 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
         if (!empty($download_url) && version_compare($current_version, $latest_version, '<')) {
             error_log("new version found");
             // Update the transient to include new version information with the correct package URL
-            $transient->response[$plugin_slug] = (object) array(
+            //error_log("new_transient: " .  print_r($transient, true));
+            $update_data = (object) array(
                 'slug'        => $plugin_slug,
                 'plugin'      => $plugin_slug,
                 'new_version' => $latest_version,
                 'url'         => $release_data['html_url'],
-                'package'     => $download_url,  // Use the direct URL to the uploaded ZIP file
+                'package'     => $download_url,
             );
-            delete_transient('my_plugin_last_update_check');
-            //error_log("new_transient: " .  print_r($transient, true));
+            $transient->response[$plugin_slug] = $update_data;
+            set_transient('bifm_cached_response', [$plugin_slug => $update_data], $check_each_hours * HOUR_IN_SECONDS);
         }
     } else {
         error_log("no assets found in github release");
     }
-    set_transient('my_plugin_last_update_check', time(), $check_each_hours * HOUR_IN_SECONDS);
+    set_transient('bifm_last_update_check', time(), $check_each_hours * HOUR_IN_SECONDS);
     //error_log("new transient returned");
     // get updated transient
     return $transient;
 }
+
+function bifm_clear_update_cache($upgrader_object, $options) {
+    if ($options['action'] == 'update' && $options['type'] == 'plugin') {
+        // Check if the plugin updated is your plugin
+        if (isset($options['plugins']) && in_array(plugin_basename(__DIR__) . '/widget-manager.php', $options['plugins'])) {
+            delete_transient('bifm_cached_response');
+        }
+    }
+}
+add_action('upgrader_process_complete', 'bifm_clear_update_cache', 10, 2);
+
 
 function register_custom_widgets_from_db() {
     $widget_names = get_option('bifm_widget_names', []);
