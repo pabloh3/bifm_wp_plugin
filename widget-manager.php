@@ -357,20 +357,21 @@ add_action( 'after_setup_theme', 'remove_hello_elementor_description_meta_tag' )
 // Filter the update_plugins transient just before it's updated
 add_filter('pre_set_site_transient_update_plugins', 'my_plugin_pre_set_site_transient_update_plugins');
 function my_plugin_pre_set_site_transient_update_plugins($transient) {
+    //error_log("pre_set_site_transient_update_plugins called");
     //following line commented out, is used for debugging since deleting transient checks for new updates immediately
     //delete_transient('my_plugin_last_update_check');
     // Don't do anything if we are not checking for plugin updates
     if (empty($transient->checked)) {
-        error_log("empty transient checked, this is not a plugin update check");
+        //error_log("empty transient checked, this is not a plugin update check");
         return $transient;
     }
     $last_checked = get_transient('my_plugin_last_update_check');
     $check_each_hours = 1;
     // if the transient has expired $last_checked will be false so this won't run and skip to update
-    if ($last_checked && (time() - $last_checked) <= $check_each_hours * HOUR_IN_SECONDS) {
+    if ($last_checked && (time() - $last_checked) < $check_each_hours * HOUR_IN_SECONDS) {
         // It's been less than 1 hours since the last check.
         $time_elapsed_minutes = (time() - $last_checked) / 60;
-        //error_log("less than 1 hour since last check, time elapsed: " . $time_elapsed_minutes . " minutes");
+        //("less than 1 hour since last check, time elapsed: " . $time_elapsed_minutes . " minutes");
         //error_log("transient: " . print_r($transient, true));
         return;
     }
@@ -413,12 +414,14 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
                 'url'         => $release_data['html_url'],
                 'package'     => $download_url,  // Use the direct URL to the uploaded ZIP file
             );
+            delete_transient('my_plugin_last_update_check');
             //error_log("new_transient: " .  print_r($transient, true));
         }
     } else {
         error_log("no assets found in github release");
     }
     set_transient('my_plugin_last_update_check', time(), $check_each_hours * HOUR_IN_SECONDS);
+    //error_log("new transient returned");
     // get updated transient
     return $transient;
 }
