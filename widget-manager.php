@@ -360,11 +360,18 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
     //following line commented out, is used for debugging since deleting transient checks for new updates immediately
     //delete_transient('my_plugin_last_update_check');
     // Don't do anything if we are not checking for plugin updates
-    if (empty($transient->checked)) return $transient;
+    if (empty($transient->checked)) {
+        error_log("empty transient checked, this is not a plugin update check");
+        return $transient;
+    }
     $last_checked = get_transient('my_plugin_last_update_check');
     $check_each_hours = 1;
+    // if the transient has expired $last_checked will be false so this won't run and skip to update
     if ($last_checked && (time() - $last_checked) <= $check_each_hours * HOUR_IN_SECONDS) {
         // It's been less than 1 hours since the last check.
+        $time_elapsed_minutes = (time() - $last_checked) / 60;
+        //error_log("less than 1 hour since last check, time elapsed: " . $time_elapsed_minutes . " minutes");
+        //error_log("transient: " . print_r($transient, true));
         return;
     }
     // Define your plugin data
@@ -379,6 +386,7 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
 
     if (is_wp_error($response) || wp_remote_retrieve_response_code($response) != 200) {
         // Handle errors
+        error_log("error in response from github when checking for plugin updates");
         return $transient;
     }
 
@@ -400,11 +408,15 @@ function my_plugin_pre_set_site_transient_update_plugins($transient) {
             // Update the transient to include new version information with the correct package URL
             $transient->response[$plugin_slug] = (object) array(
                 'slug'        => $plugin_slug,
+                'plugin'      => $plugin_slug,
                 'new_version' => $latest_version,
                 'url'         => $release_data['html_url'],
                 'package'     => $download_url,  // Use the direct URL to the uploaded ZIP file
             );
+            //error_log("new_transient: " .  print_r($transient, true));
         }
+    } else {
+        error_log("no assets found in github release");
     }
     set_transient('my_plugin_last_update_check', time(), $check_each_hours * HOUR_IN_SECONDS);
     // get updated transient
@@ -457,8 +469,6 @@ if (!file_exists( __DIR__ . '/shared-bifm_action_hooks.php')) {
 require_once(  __DIR__ . '/shared-bifm_action_hooks.php' );
 // Retrieve stored hooks from the option
 $hooks = get_option('bifm_action_hooks', []);
-// error log the hooks
-error_log(print_r($hooks, true));
 // Loop through each registered hook
 foreach ($hooks as $hook_name => $widget_name) {
     // Construct the path to the backend functions file for the widget
