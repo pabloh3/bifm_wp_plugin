@@ -14,15 +14,26 @@
 
     echo '<div class="col s12">';
     echo '<ul class="tabs">';
+    echo '<li class="tab col s2"><a href="#smart-chat">Smart chat</a></li>';
     echo '<li class="tab col s2"><a href="#blog-generator">Blog Generator</a></li>';
     echo '<li class="tab col s2"><a href="#settings">Blog Settings</a></li>';
     echo '<li class="tab col s2"><a href="#widget-generator">Widget Generator</a></li>';
-    echo '<li class="tab col s2"><a href="#smart-chat">Smart chat</a></li>';
-    
     echo '</ul>';
     echo '</div>';
 
     echo '<div class="container">';  // using Materialize's container for alignment and spacing
+
+    // Smart chat Tab
+    echo '<div id="smart-chat" class="col s12">';
+    echo '<h5>Ask Billy</h5>';
+    echo '<p>Ask Billy, your WordPress expert, anything about your website and he will help you out!</p>';
+    // insert billy-page.php
+    include_once 'billy-page.php';
+    // Button to modify smart chat settings
+    echo '<button id="createNewChat" class="btn waves-effect waves-light red lighten-2">Modify Smart Chat Settings</button>';
+    echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2" style="display: none;"><i class="material-icons left">arrow_back</i>Back</button>';
+    echo '</div>';
+    //end smart chat tab
 
     // Widget Generator Tab
     echo '<div id="widget-generator" class="col s12">';
@@ -57,15 +68,6 @@
     echo '<button id="createNewBlog" class="btn waves-effect waves-light red lighten-2">Create new blog post</button>';
     echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2" style="display: none;"><i class="material-icons left">arrow_back</i>Back</button>';
     echo '</div>';
-
-    // Smart chat Tab
-    echo '<div id="smart-chat" class="col s12">';
-    echo '<h5>Smart-chat</h5>';
-    // Button to create a new blog
-    echo '<button id="createNewChat" class="btn waves-effect waves-light red lighten-2">Modify Smart Chat Settings</button>';
-    echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2" style="display: none;"><i class="material-icons left">arrow_back</i>Back</button>';
-    echo '</div>';
-    //end smart chat tab
 
     // Settings Tab
     echo '<div id="settings" class="col s12">';
@@ -153,7 +155,10 @@
     echo '<button class="btn waves-effect waves-light" type="submit" name="action" >Update</button>';
     echo '</form>';
     echo '</div>'; // Close the settings tab
-    echo '<div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>';
+
+
+    // Warning message
+    echo '<div id="warningMessage" class="card-panel yellow darken-2" style="position: fixed; left: 0; bottom: 0; width: 100%; text-align: center; display: none; z-index: 1000;">This is a warning message!</div>';
     echo '</div>'; // Close the container
 
     // Inline JavaScript for Tab and multiple choice Functionality

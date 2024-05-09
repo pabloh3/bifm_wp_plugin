@@ -92,7 +92,13 @@ function ewm_admin_page_content() {
     include plugin_dir_path(__FILE__) . 'admin-page.php';
     // Externalize JavaScript Code
     wp_enqueue_script('my-custom-script', plugin_dir_url(__FILE__) . 'static/admin-page.js', array('jquery'), '1.0.2', true);
+    wp_enqueue_script('billy-script', plugin_dir_url(__FILE__) . 'static/billy.js', array('jquery'), '1.0.5', true);
+    wp_localize_script('billy-script', 'billy_localize', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('billy-nonce')
+    ));
 }
+
 
 function ewm_create_widget_content() {
     //this code was taken to admin-page.php
@@ -106,7 +112,7 @@ function ewm_create_blog_content() {
 
 function ewm_create_chat_content() {
     //this code was taken to admin-page.php
-    include plugin_dir_path(__FILE__) . 'smart-chat-page.php';
+    include plugin_dir_path(__FILE__) . 'smart-chat-settings-page.php';
 }
 
 function builditforme_ewm_enqueue_admin_scripts($hook) {
@@ -463,6 +469,7 @@ require_once( __DIR__ . '/blog-manager.php' );
 require_once( __DIR__ . '/smart-chat-manager.php' );
 require_once( __DIR__ . '/shared-widget-registration.php' );
 require_once( __DIR__ . '/chat.php' );
+require_once( __DIR__ . '/smart_chat_callbacks.php' );
 // check if bifm_action_hooks exists, if not, create with content <?php
 $dirPath = wp_upload_dir()['basedir'] . '/bifm-files';
 // Check if the directory exists, and if not, create it

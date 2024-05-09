@@ -8,7 +8,6 @@ echo '<div id="smart-chat" class="col s12">';
 echo '<h5>Smart chat</h5>';
 // Add settings content here...
 echo '<p>Here you can update the settings for smart chat.</p>';
-echo '<p>Please note that the smart chat incurrs in extra costs ($0.05 per request).</p><br/>';
 
 // Start of the form
 echo '<form id="smart-chat-form" action="#" method="post">';

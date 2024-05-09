@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../../bifm-config.php';
+include __DIR__ . '/bifm-config.php';
 
 //session info
 if (!session_id()) {
@@ -7,14 +7,16 @@ if (!session_id()) {
 }
 
 //assistant start
+add_action('wp_ajax_send_chat_message', 'handle_chat_message');
 function handle_chat_message() {
     error_log("handle_chat_message called");
     error_log("nonce received: " . $_POST['nonce']);
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'sch_widget_nonce')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
         wp_send_json_error(array('message' => "Couldn't verify user"), 500);
     }
     error_log("back end handle message called");
     $message = $_POST['message'];
+    error_log("Message: " . $message);
     // Send the message to AI API
     $response = callAPI($message);
 }
