@@ -13,8 +13,12 @@ function handle_bifm_smart_chat_reset() {
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'update-chat-settings-nonce')) {
             throw new Exception('Nonce verification failed!');
         }
-        //delete any files in the directory
+        // if directory doesn't exist, create it
         $dirPath = wp_upload_dir()['basedir'] . '/bifm-files/chat_files/';
+        if (!file_exists($dirPath)) {
+            wp_mkdir_p($dirPath);
+        }
+        //delete any files in the directory
         // Check if directory exists and is readable
         if (is_dir($dirPath) && is_readable($dirPath)) {
             // Open the directory
@@ -69,14 +73,18 @@ function handle_bifm_smart_chat_settings() {
         // Handle files that need to be deleted
         $file_list_stored_new = array();
         $files_to_delete = array();
+
+        // if directory doesn't exist, create it
+        $dirPath = wp_upload_dir()['basedir'] . '/bifm-files/chat_files/';
+        if (!file_exists($dirPath)) {
+            wp_mkdir_p($dirPath);
+        }
         // in order to manage file updates, the front end passes a list of files not deleted by the user, we iterate through the files in the directory and delete the ones not in the list
         // The deleted files are stored in array $files_to_delete to be passed to the API for deletion by OpenAI
         if (isset($_POST['files_list'])) {
             $files_list_json = $_POST['files_list'];
             $files_list_json = stripslashes($files_list_json);
             $files_list_posted = json_decode($files_list_json, true);
-
-            $dirPath = wp_upload_dir()['basedir'] . '/bifm-files/chat_files/';
             // Check if directory exists and is readable
             if (is_dir($dirPath) && is_readable($dirPath)) {
                 // Open the directory
@@ -139,9 +147,8 @@ function handle_bifm_smart_chat_settings() {
                 }
         
                 // Process each file
-                //$boundary = 'pC&5CFTcj#L33e&O%pI*xua8';
+                // in order for python to identify the file, we needed to define a boundary to indicate where the file starts, that doesn't contain special chars
                 $boundary = 'UYTvLhK1u09E5OyhWJBqEZPS';
-                //$headers = array('Content-Type' => 'multipart/form-data; boundary=' . $boundary);
                 $headers = array('Content-Type' => 'multipart/form-data; boundary=' . $boundary);
                 $file_list_query = get_option('uploaded_file_names');
                 foreach ($uploadedFiles['name'] as $key => $name) {
@@ -180,11 +187,11 @@ function handle_bifm_smart_chat_settings() {
                     
                     // Check for errors or non 200 responses
                     if (is_wp_error($file_response)) {
+                        error_log("Error when calling file upload api");
                         // delete file if there is an error
                         $targetFile = $targetDir . basename($name);
                         unlink($targetFile);
                         $error_message = $file_response->get_error_message();
-                        error_log("Error when calling file upload api");
                         wp_send_json_error(array('message' => "Something went wrong: $error_message"), 500);
                         return;
                     } else {

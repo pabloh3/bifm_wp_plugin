@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('nonce', cbc_script_object_chat.nonce);
         //extract the list of files from the uploaded_files div and append them to the form
         var uploadedFiles = document.getElementsByClassName('file-name-line');
-        
         //store files list as array
         var files_list = [];
         for (var i = 0; i < uploadedFiles.length; i++) {
@@ -34,21 +33,35 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(result => {
             if (result.success) {
-                console.log('Success:', result.data);
-                //display success message
                 var warningDiv = document.getElementById('warningMessage');
                 warningDiv.textContent = 'Smart chat settings saved successfully.';
                 warningDiv.style.display = 'flex';
             } else {
-                console.error('Error:', result.data);
-                //display error message
+                console.error('Error returned from server:', result.data);
                 var warningDiv = document.getElementById('warningMessage');
-                warningDiv.textContent = result.data.message;
-                warningDiv.style.display = 'flex';
+                if (result.data.message) {
+                    warningDiv.textContent = result.data.message;
+                }
+                else {
+                    warningDiv.textContent = 'An error occurred. Please try again.';
+                }
+                // Remove files from UI if they are not successfully saved
+                var uploadedFilesList = document.getElementById('uploadedFiles');
+                var uploadedFiles = uploadedFilesList.children;
+                // Iterate over childern of uploadedFiles and create list items
+                for (var i = 0; i < uploadedFiles.length; i++) {
+                    // only remove files if class is newfile
+                    if (uploadedFiles[i].classList.contains('newfile')) {
+                        uploadedFilesList.removeChild(uploadedFiles[i]);
+                    }
+                }
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            var warningDiv = document.getElementById('warningMessage');
+            warningDiv.textContent = 'An error occurred. Please try again.';
+            warningDiv.style.display = 'flex';
         });
     });
 });
@@ -61,22 +74,20 @@ if (uploadedFiles.innerHTML == '') {
 
 //file upload for smart chat
 var fileInput = document.getElementById('fileUpload');
-    
 if (fileInput) {
     fileInput.addEventListener('change', function() {
         var uploadedFilesList = document.getElementById('uploadedFiles');
 
         // Create a <ul> element for the list
         var list = document.createElement('ul');
-        list.className = 'collection'; // Materialize class for lists
+        list.className = 'collection newfile'; // Materialize class for lists
 
         // Iterate over files and create list items
         for (var i = 0; i < this.files.length; i++) {
             var file = this.files[i];
             var listItem = document.createElement('li');
-            listItem.className = 'collection-item'; // Materialize class for list items
-
-            listItem.innerHTML = '<div>' + file.name + '<a href="#!" class="secondary-content"><i class="material-icons" onclick="removeFile(this)">delete</i></a></div>';
+            listItem.className = 'collection-item newfile'; // Materialize class for list items
+            listItem.innerHTML = '<div class="file-name-line" file-name="' + file.name + '">' + file.name + '<a href="#!" class="secondary-content"><i class="material-icons" onclick="removeFile(this)">delete</i></a></div>';
             list.appendChild(listItem);
         }
 

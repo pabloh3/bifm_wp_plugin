@@ -13,8 +13,8 @@
     </div>
     <div class='future-column'>   
         <div class='button-container'>
-            <button class='btn waves-effect waves-light' id='billy-reset-button'>Reset</button>
-            <button class='btn waves-effect waves-light' id='billy-undo-button'>Undo</button>
+            <button class='btn waves-effect waves-light' id='billy-reset-button' style='display:none'>Reset</button>
+            <button class='btn waves-effect waves-light' id='billy-undo-button' style='display:none'>Undo</button>
         </div>        
     </div>
     ";
