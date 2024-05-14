@@ -230,7 +230,10 @@ function handle_bifm_smart_chat_settings() {
                     'assistant_id' => $assistant_id,
                     'assistant_instructions' => stripslashes($assistant_instructions),
                     'assistant_files' => $list_file_ids,
-                    'files_to_delete' => $files_to_delete
+                    'files_to_delete' => $files_to_delete,
+                    'site_url' => get_site_url(),
+                    'site_theme' => wp_get_theme()->get('Name'),
+                    
                 )),
                 'method' => 'POST',
                 'data_format' => 'body',
@@ -249,14 +252,17 @@ function handle_bifm_smart_chat_settings() {
                     update_option('assistant_id', $assistant_id);
                     $assistant_id_new = get_option('assistant_id');
                     error_log("assistant id: " . $assistant_id_new);
-                    wp_send_json_success(array('message' => $response_body['message']));
+                    // check if there's any message in the response
+                    if (isset($response_body['message'])) {
+                        wp_send_json_success(array('message' => $response_body['message']));
+                    } else {
+                        wp_send_json_success(array('message' => "Settings saved successfully."));
+                    }
                 } else {
                     error_log($response_body['message']);
-                    wp_send_json_error(array('message' => $response_body['message']), $status_code);
+                    wp_send_json_error(array('message' => $message), $status_code);
                 }
-            }
-            //end message
-            
+            }            
         }
 
         wp_send_json_success('Settings saved successfully.');

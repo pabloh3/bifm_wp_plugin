@@ -21,7 +21,7 @@ if (!is_null($assistant_instructions)) {
 } else {
     echo '<textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>';
 }
-echo '<label for="assistant_instructions">Give the bot instructions for how to respond. Start with something like "You are a support representative that...".</label>';
+echo '<label for="assistant_instructions">Give the bot instructions for how to respond. Start with something like "We use Elementor to edit our pages...".</label>';
 echo '</div></div>';
 
 // File upload section

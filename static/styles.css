@@ -121,3 +121,10 @@ code {
     padding: 2px 5px;
     border-radius: 3px;
 }
+#billy-chatbox h3 {
+    /*make font small*/
+    font-size: 1.3rem;
+}
+#billy-chatbox h1, #billy-chatbox h2{
+    font-size: 1.5rem;
+}

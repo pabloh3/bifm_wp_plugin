@@ -2,7 +2,6 @@
 // Handle submission of smart-chat form
 document.addEventListener('DOMContentLoaded', function() {
     var form = document.getElementById('smart-chat-form');
-    console.log("smart-chat-version 1.0.1");
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -23,8 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
             files_list.push(file);
         }
         formData.append('files_list', JSON.stringify(files_list));
-        console.log("files_list: " + files_list);
-
         fetch(cbc_script_object_chat.ajax_url, {
             method: 'POST',
             body: formData,
