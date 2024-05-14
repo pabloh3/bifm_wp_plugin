@@ -7,34 +7,45 @@ let processingMessage = document.createElement('div');
 let prevMessageCounts = [0];
 let retryCount = 0;
 let displayedMessageIds = new Set(); // To keep track of message ids already displayed
+
 // Extract the 'foldername' parameter from the URL
 var urlParams = new URLSearchParams(window.location.search);
 
-//stages = {visuals, functional, controls}
+// Initialize markdown-it and highlight.js
+const md = window.markdownit({
+    highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return '<pre class="hljs"><code>' +
+                    hljs.highlight(str, { language: lang }).value +
+                    '</code></pre>';
+            } catch (__) {}
+        }
+        return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+    }
+});
 
-// listens to chat submissions
+// Listens to chat submissions
 form.addEventListener('submit', (event) => {
     event.preventDefault();
     prevMessageCounts.push(chatbox.getElementsByTagName('p').length);
     if (commandCount < MAX_COMMANDS) {
         let userInput = form.name.value;
-        let p = document.createElement('p');
-        p.textContent = `You: ${userInput}`;
-        chatbox.appendChild(p);
+        let div = document.createElement('div');
+        div.innerHTML = `<b>You:</b> ${userInput}`;
+        chatbox.appendChild(div);
     }
     processingMessage.innerHTML = '<div id="billy-responding" class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
     document.getElementById('billy-chatbox').appendChild(processingMessage);
-    // to do figure out where to send message!!!
+    // Send the message to the server
     sendMessage(form.name.value);
 });
 
-
-// send the message from either submit or debug to the server
+// Send the message from either submit or debug to the server
 function sendMessage(messageBody) {
     jQuery.ajax({
         url: billy_localize.ajax_url,
         type: 'POST',
-        // to do figure out where to send message!!!
         data: {
             action: 'send_chat_message',
             nonce: billy_localize.nonce,
@@ -42,17 +53,23 @@ function sendMessage(messageBody) {
         },
         success: function(response) {
             console.log("success response");
-                document.getElementById('billy-responding').style.display = 'none'; // Hide responding animation
-                let p = document.createElement('p');
-                p.textContent = `GPT: ${response.data.message}`;
-                chatbox.appendChild(p);
+            document.getElementById('billy-responding').style.display = 'none'; // Hide responding animation
+            
+            // Convert the response message from Markdown to HTML
+            const htmlContent = md.render(response.data.message);
+            let div = document.createElement('div');
+            div.innerHTML = `<b>GPT:</b> ${htmlContent}`;
+            chatbox.appendChild(div);
+
+            // Highlight the code blocks
+            hljs.highlightAll();
         },
         error: function(error) {
             // Handle errors here
             console.log("error response");
-            error_message = error.responseJSON.data.message;
-            console.log(error_message);
-            displayWarning(error_message);
+            const errorMessage = error.responseJSON.data.message;
+            console.log(errorMessage);
+            displayWarning(errorMessage);
             document.getElementById('billy-chatbox').removeChild(processingMessage);
             form.name.disabled = false;
             submit_chat.disabled = false;
@@ -61,7 +78,6 @@ function sendMessage(messageBody) {
     form.name.value = '';
     form.name.style.height = "9px"; 
 }
-
 
 
 /*// listens for responses on messages sent.
