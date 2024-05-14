@@ -1,6 +1,5 @@
 <?php
 require 'bifm-config.php';
-$url = $WIDGET_URL . esc_attr($folderName) . "/widget.php ";
 
 echo "
 <head>
