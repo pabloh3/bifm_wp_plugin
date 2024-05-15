@@ -223,7 +223,7 @@ jQuery(document).ready(function($) {
                     // wait 2 seconds and refresh
                     setTimeout(function(){
                         location.reload();
-                    }, 2000);
+                    }, 3000);
                 }
                 else {
                     console.log("Error response from submitting csv");
