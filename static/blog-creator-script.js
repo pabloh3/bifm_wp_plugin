@@ -220,6 +220,10 @@ jQuery(document).ready(function($) {
                     }
                     // Handle success. If there are categories to validate, prompt the user.
                     $('#cbc_response').html('Upload successful! ' + inner_data.message);
+                    // wait 2 seconds and refresh
+                    setTimeout(function(){
+                        location.reload();
+                    }, 2000);
                 }
                 else {
                     console.log("Error response from submitting csv");
