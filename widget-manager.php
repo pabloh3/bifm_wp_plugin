@@ -327,7 +327,7 @@ function decrypt_data($data, $random_key) {
 }
 
 
-# expose Yoast values in the API that usually wouldn't be exposed
+// expose Yoast values in the API that usually wouldn't be exposed
 function register_yoast_fields() {
     register_rest_field('post', '_yoast_wpseo_focuskw',  array(
         'get_callback'    => 'custom_get_post_meta_for_api',
@@ -342,6 +342,23 @@ function register_yoast_fields() {
     ));
 }
 add_action('rest_api_init', 'register_yoast_fields');
+
+// Register field used to track post requests
+function register_bifm_uuid_meta() {
+    register_post_meta('post', 'bifm_uuid', array(
+        'type' => 'string',
+        'description' => 'BIFM UUID',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ));
+}
+
+add_action('init', 'register_bifm_uuid_meta');
+
 
 function custom_get_post_meta_for_api($object, $field_name, $request) {
     return get_post_meta($object['id'], $field_name, true);
@@ -509,3 +526,13 @@ foreach ($hooks as $hook_name => $widget_name) {
     }
 }
 
+
+// Hook for plugin deactivation to delete the table where post info is stored
+register_deactivation_hook(__FILE__, 'cbc_drop_requests_table');
+
+function cbc_drop_requests_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'cbc_blog_requests';
+    $sql = "DROP TABLE IF EXISTS $table_name;";
+    $wpdb->query($sql);
+}

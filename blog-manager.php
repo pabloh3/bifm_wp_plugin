@@ -23,6 +23,7 @@ function handle_cbc_create_blog() {
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
     $related_links = fetch_related_links($category);
+
     # Extract website info
     $username = get_user_meta($user_id, 'username', true);
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
@@ -62,7 +63,8 @@ function handle_cbc_create_blog() {
         'status' => 500
     ), 500);*/
     
-
+    // Generate UUID
+    $uuid = wp_generate_uuid4();
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
         'body' => json_encode(array(
@@ -78,7 +80,8 @@ function handle_cbc_create_blog() {
             'image_style' => $image_style,
             'blog_language' => $blog_language,
             'image_width' => $image_width,
-            'image_height' => $image_height
+            'image_height' => $image_height,
+            'uuid' => $uuid
         )),
         'method' => 'POST',
         'data_format' => 'body'
@@ -91,6 +94,9 @@ function handle_cbc_create_blog() {
         error_log("error when calling create-blog api");
         wp_send_json_error(array('message' => "Something went wrong: $error_message"));
     } else {
+        // Register request
+        register_request($uuid, $keyphrase, $category_name, $user_email);
+
         $status_code = wp_remote_retrieve_response_code($response);
         wp_send_json(array(
             'data' => wp_remote_retrieve_body($response),
@@ -295,16 +301,18 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
     }
     # Extract website info    
     $keyphrases = array();
+    $uuids = array();
     if (($handle = fopen($file_path, 'r')) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
             $keyphrases[] = $data[0]; // Add the first column value to keyphrases array
+            $uuids[] = wp_generate_uuid4();
         }
         fclose($handle);
     } else {
         error_log("Unable to open CSV file.");
         wp_die("Unable to open CSV file.", 'Error', array('response' => 400));
     }
-    
+
     // Prepare the headers and body of the request
     $body = array(
         'keyphrases' => $keyphrases,
@@ -319,7 +327,8 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
         'image_style' => $image_style,
         'blog_language' => $blog_language,
         'image_width' => $image_width,
-        'image_height' => $image_height
+        'image_height' => $image_height,
+        'uuids' => $uuids
     );
     
     $json_body = json_encode($body);
@@ -346,6 +355,12 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
         // Handle the successful response
         $status_code = wp_remote_retrieve_response_code($response);
         $response_body = wp_remote_retrieve_body($response);
+
+
+        for ($i = 0; $i < count($keyphrases); $i++) {
+            register_request($uuids[$i], $keyphrases[$i], $category_name, $user_email);
+        }
+
         // Do something with the response
         return array(
             'data' => $response_body,
@@ -355,8 +370,37 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
 }
 
 
+function create_requests_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'cbc_blog_requests';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        uuid varchar(36) NOT NULL,
+        requested_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        keyphrase text NOT NULL,
+        category varchar(255) NOT NULL,
+        requester varchar(100) NOT NULL,
+        PRIMARY KEY (id)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+}
 
 
+function register_request($uuid, $keyphrase, $category, $requester) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'cbc_blog_requests';
+    $wpdb->insert($table_name, array(
+        'uuid' => $uuid,
+        'requested_at' => current_time('mysql'),
+        'keyphrase' => $keyphrase,
+        'category' => $category,
+        'requester' => $requester,
+    ));
+}
 
 
 ?>

@@ -58,4 +58,75 @@ echo '<div class="card-panel red lighten-2">';
 echo '    <span class="white-text" id="cbc_response"></span>';
 echo '</div>';
 
+
+// Display old blog requests
+global $wpdb;
+$table_name = $wpdb->prefix . 'cbc_blog_requests';
+$requests = $wpdb->get_results("SELECT * FROM $table_name ORDER BY requested_at DESC");
+
+ob_start();
+echo '<br/>';
+echo '<h5>Old Blog Requests</h5>';
+echo '<table class="striped">';
+echo '<thead>';
+echo '<tr>';
+echo '<th>Post ID</th>';
+echo '<th>Title</th>';
+echo '<th>Keyphrase</th>';
+echo '<th>Category</th>';
+echo '<th>Created By</th>';
+echo '<th>Created Date</th>';
+echo '<th>Status</th>';
+echo '</tr>';
+echo '</thead>';
+echo '<tbody>';
+
+// error log a single post, and display the meta
+$post = get_posts(array(
+    'post_type' => 'post',
+    'post_status' => 'any',
+    'numberposts' => 1
+));
+// print the post's meta
+$meta = get_post_meta($post[0]->ID);
+error_log(print_r($meta, true));
+
+foreach ($requests as $request) {
+
+    $post = get_posts(array(
+        'meta_key' => 'bifm_uuid',
+        'meta_value' => $request->uuid,
+        'post_type' => 'post',
+        'post_status' => 'any',
+        'numberposts' => 1
+    ));
+
+
+    if ($post) {
+        $post_id = $post[0]->ID;
+        $title = $post[0]->post_title;
+        $status = get_post_status($post_id);
+        $status_text = $status ? ucfirst($status) : 'Not ready or deleted by user';
+        $title_link = get_permalink($post_id);
+    } else {
+        $post_id = '';
+        $title = '';
+        $status_text = 'Not ready or deleted by user';
+        $title_link = '#';
+    }
+
+    echo '<tr>';
+    echo '<td>' . esc_html($post_id) . '</td>';
+    echo '<td><a href="' . esc_url($title_link) . '">' . esc_html($title) . '</a></td>';
+    echo '<td>' . esc_html($request->keyphrase) . '</td>';
+    echo '<td>' . esc_html($request->category) . '</td>';
+    echo '<td>' . esc_html($request->requester) . '</td>';
+    echo '<td>' . esc_html($request->requested_at) . '</td>';
+    echo '<td>' . esc_html($status_text) . '</td>';
+    echo '</tr>';
+}
+
+echo '</tbody>';
+echo '</table>';
+
 ?>
