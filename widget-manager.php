@@ -2,13 +2,13 @@
 /*
 Plugin Name: Build It For Me - AI creator
 Description: Ask a bot to create for you.
-Version: 1.0.15
+Version: 1.0.16
 Author: Build It For Me
 */
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-$current_version = '1.0.15';
+$current_version = '1.0.16';
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -342,6 +342,27 @@ function register_yoast_fields() {
     ));
 }
 add_action('rest_api_init', 'register_yoast_fields');
+
+// elementor data
+add_action('rest_api_init', function () {
+    register_rest_field('page', 'elementor_data', [
+        'get_callback'    => 'get_elementor_data',
+        'update_callback' => 'update_elementor_data',
+        'schema'          => null,
+    ]);
+});
+
+function get_elementor_data($object, $field_name, $request) {
+    return get_post_meta($object['id'], '_elementor_data', true);
+}
+
+function update_elementor_data($value, $object, $field_name) {
+    if (!is_array($value) && !is_object($value)) {
+        return new WP_Error('invalid_data', 'Elementor data must be an array or object.', ['status' => 400]);
+    }
+    return update_post_meta($object->ID, '_elementor_data', $value);
+}
+
 
 // Register field used to track post requests
 function register_bifm_uuid_meta() {
