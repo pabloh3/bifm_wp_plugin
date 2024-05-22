@@ -393,6 +393,12 @@ function create_requests_table() {
 function register_request($uuid, $keyphrase, $category, $requester) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'cbc_blog_requests';
+
+    // check if table exists, if not call create_requests_table
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+        create_requests_table();
+    }
+
     $wpdb->insert($table_name, array(
         'uuid' => $uuid,
         'requested_at' => current_time('mysql'),
