@@ -286,7 +286,7 @@ document.getElementById('next-stage').addEventListener('click', function() {
     var stageDisplay = document.getElementById('stageDisplay');
     var currentStage = stageDisplay.getAttribute('data-stage');
     if (currentStage === 'visual') {
-        stageDisplay.innerHTML = 'Add controls to your widget so you can modify it when dragging it into a page.';
+        stageDisplay.innerHTML = "Add controls to your widget so you can modify it when dragging it into a page. If you add text controls, don't worry if the preview breaks. Save and test in your pages.";
         stageDisplay.setAttribute('data-stage', 'controls');
         document.getElementById('next-stage').style.display = 'none';
         document.getElementById('previous-stage').style.display = 'inline';

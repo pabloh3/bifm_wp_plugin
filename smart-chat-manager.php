@@ -40,7 +40,8 @@ function handle_bifm_smart_chat_reset() {
         $response = wp_remote_post($url, array(
             'headers' => array('Content-Type' => 'application/json'),
             'body' => json_encode(array(
-                'assistant_id' => $assistant_id
+                'assistant_id' => $assistant_id,
+                'vector_store_id' => get_option('vector_store_id'),
             )),
             'method' => 'POST',
             'data_format' => 'body',
@@ -53,6 +54,7 @@ function handle_bifm_smart_chat_reset() {
         update_option('assistant_instructions', '');
         update_option('uploaded_file_names', array());
         update_option('assistant_id', '');
+        update_option('vector_store_id', NULL);
         // return confirmation
         wp_send_json_success('Chatbot reset successfully.');
     } catch (Exception $e) {
@@ -63,7 +65,6 @@ function handle_bifm_smart_chat_reset() {
 
 // Function to handle form submission
 function handle_bifm_smart_chat_settings() {
-    error_log("in handle_bifm_smart_chat_settings");
     try {
         // Check for nonce security
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'update-chat-settings-nonce')) {
@@ -159,9 +160,15 @@ function handle_bifm_smart_chat_settings() {
 
                     if (move_uploaded_file($uploadedFiles['tmp_name'][$key], $targetFile)) {
                         // Check if the file exists and is readable
-                        error_log("file was stored in back end");
+                        //error_log("file was stored in back end");
                         if (file_exists($targetFile) && is_readable($targetFile)) {
-                        // Start building the body
+                            $vector_store_id = get_option('vector_store_id');
+                            // Start building the body
+                            // Add vector_store_id to the multipart/form-data body
+                            $body .= '--' . $boundary . "\r\n";
+                            $body .= 'Content-Disposition: form-data; name="vector_store_id"' . "\r\n\r\n";
+                            $body .= $vector_store_id . "\r\n";
+                            // Add the file to the body
                             $file_content = file_get_contents($targetFile);
                             $body .= '--' . $boundary . "\r\n";
                             $body .= 'Content-Disposition: form-data; name="file"; filename="' . basename($name) . '"' . "\r\n";
@@ -202,6 +209,8 @@ function handle_bifm_smart_chat_settings() {
                             $file_list_query[] = ['file_name' => $file['file_name'], 'file_id' => $file['file_id']];
                             // Store file names and IDs
                             update_option('uploaded_file_names', $file_list_query); // Store file data
+                            $vector_store_id = $file['vector_store_id'];
+                            update_option('vector_store_id', $vector_store_id);
                         } else {
                             // delete file if there is an error
                             error_log("deleting file: " . $name);
@@ -233,7 +242,7 @@ function handle_bifm_smart_chat_settings() {
                     'files_to_delete' => $files_to_delete,
                     'site_url' => get_site_url(),
                     'site_theme' => wp_get_theme()->get('Name'),
-                    
+                    'vector_store_id' => get_option('vector_store_id'),
                 )),
                 'method' => 'POST',
                 'data_format' => 'body',
@@ -250,8 +259,8 @@ function handle_bifm_smart_chat_settings() {
                 if ($status_code == 200) {
                     $assistant_id = $response_body['assistant_id'];
                     update_option('assistant_id', $assistant_id);
-                    $assistant_id_new = get_option('assistant_id');
-                    error_log("assistant id: " . $assistant_id_new);
+                    $vector_store_id = $response_body['vector_store_id'];
+                    update_option('vector_store_id', $vector_store_id);
                     // check if there's any message in the response
                     if (isset($response_body['message'])) {
                         wp_send_json_success(array('message' => $response_body['message']));

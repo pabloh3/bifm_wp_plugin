@@ -323,9 +323,7 @@ function lint_php_code($code) {
         ob_start();
         $result = @eval('return true; if(0){ ?>' . $code . '<?php }');
         ob_end_clean();
-        file_put_contents(WP_CONTENT_DIR . '/custom.log', print_r("\nresult of eval: " . $result . "\n", true), FILE_APPEND);
         $deb1 = shell_exec("pwd");
-        file_put_contents(WP_CONTENT_DIR . '/custom.log', print_r("\nPrinting text: " . $deb1 . "\n", true), FILE_APPEND);
 
         // Check if eval() was successful
         return $result !== false;
