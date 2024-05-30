@@ -90,8 +90,3 @@ echo '</div>'; // Close the container
 echo '<div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>';
 
 echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>';
-
-//print options update_option('uploaded_file_names', $file_list_stored_new);
-$files = get_option('uploaded_file_names');
-//print array
-echo print_r($files);
