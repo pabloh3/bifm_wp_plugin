@@ -18,6 +18,25 @@ function handle_cbc_create_blog() {
     $keyphrase = isset($_POST['keyphrase']) ? sanitize_text_field(wp_unslash($_POST['keyphrase'])) : '';
     $category = isset($_POST['category']) ? sanitize_text_field(wp_unslash($_POST['category'])) : '';
     $category_name = isset($_POST['category_name']) ? sanitize_text_field(wp_unslash($_POST['category_name'])) : '';
+    $response = create_blog($keyphrase, $category, $category_name);
+    if (is_wp_error($response)) {
+        $error_message = $response->get_error_message();
+        error_log("error when calling create-blog api");
+        wp_send_json_error(array('message' => "Something went wrong: $error_message"));
+    } else {
+        // Register request
+        $status_code = wp_remote_retrieve_response_code($response);
+        wp_send_json(array(
+            'data' => wp_remote_retrieve_body($response),
+            'status' => $status_code
+        ), $status_code);
+    }
+
+    wp_die("Reached end without success message");
+}
+
+
+function create_blog($keyphrase, $category, $category_name) {
     $website = home_url();  // Current website URL
     $user_id = get_current_user_id();
     $current_user = wp_get_current_user();
@@ -86,25 +105,14 @@ function handle_cbc_create_blog() {
         'method' => 'POST',
         'data_format' => 'body'
     ));
-
-
-
     if (is_wp_error($response)) {
-        $error_message = $response->get_error_message();
-        error_log("error when calling create-blog api");
-        wp_send_json_error(array('message' => "Something went wrong: $error_message"));
+        return $response;
     } else {
-        // Register request
         register_request($uuid, $keyphrase, $category_name, $user_email);
-
-        $status_code = wp_remote_retrieve_response_code($response);
-        wp_send_json(array(
-            'data' => wp_remote_retrieve_body($response),
-            'status' => $status_code
-        ), $status_code);
+        return $response;
     }
 
-    wp_die("Reached end without success message");
+    return $response;
 }
 
 

@@ -268,7 +268,7 @@ function handle_bifm_smart_chat_settings() {
                         wp_send_json_success(array('message' => "Settings saved successfully."));
                     }
                 } else {
-                    error_log($response_body['message']);
+                    error_log("got a non 200 response on handle chat settings: " . $response_body['message']);
                     wp_send_json_error(array('message' => $message), $status_code);
                 }
             }            

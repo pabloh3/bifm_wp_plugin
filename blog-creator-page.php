@@ -87,9 +87,6 @@ $post = get_posts(array(
     'post_status' => 'any',
     'numberposts' => 1
 ));
-// print the post's meta
-$meta = get_post_meta($post[0]->ID);
-error_log(print_r($meta, true));
 
 foreach ($requests as $request) {
 

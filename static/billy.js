@@ -38,11 +38,11 @@ form.addEventListener('submit', (event) => {
     processingMessage.innerHTML = '<div id="billy-responding" class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
     document.getElementById('billy-chatbox').appendChild(processingMessage);
     // Send the message to the server
-    sendMessage(form.name.value);
+    sendMessage(form.name.value, null, null, null);
 });
 
 // Send the message from either submit or debug to the server
-function sendMessage(messageBody) {
+function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
     jQuery.ajax({
         url: billy_localize.ajax_url,
         type: 'POST',
@@ -50,6 +50,9 @@ function sendMessage(messageBody) {
             action: 'send_chat_message',
             nonce: billy_localize.nonce,
             message: messageBody,
+            widget_name: widget_name,
+            run_id: run_id,
+            tool_call_id: tool_call_id
         },
         success: function(response) {
             console.log("success response");
@@ -58,8 +61,25 @@ function sendMessage(messageBody) {
             // Convert the response message from Markdown to HTML
             const htmlContent = md.render(response.data.message);
             let div = document.createElement('div');
-            div.innerHTML = `<b>GPT:</b> ${htmlContent}`;
+            div.innerHTML = `<b>Billy:</b> ${htmlContent}`;
             chatbox.appendChild(div);
+
+            // if response contain widget, append as html
+            if (response.data.widget_object) {
+                console.log("contains widget");
+                let div = document.createElement('div');
+                div.innerHTML = response.data.widget_object.widget;
+                chatbox.appendChild(div);
+                if (response.data.widget_object.script) {
+                    console.log("contains script");
+                    // if response contain script, append to the document's existing <script> tag
+                    let script = document.createElement('script');
+                    script.innerHTML = response.data.widget_object.script;
+                    document.body.appendChild(script);
+                }
+                return;
+            }
+
 
             // Highlight the code blocks
             hljs.highlightAll();
