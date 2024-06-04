@@ -1,10 +1,12 @@
 <?php
 include __DIR__ . '/bifm-config.php';
 
+$custom_log_file = WP_CONTENT_DIR . '/custom.log';
 //session info
 if (!session_id()) {
     session_start();
 }
+
 
 //assistant start
 add_action('wp_ajax_send_chat_message', 'handle_chat_message');
@@ -68,7 +70,13 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
             handle_response($response_body);
         } else {
             error_log("Got a not 200 response" . $status_code);
-            $error_response = isset($response_body['message']) ? $response_body['message'] : "Unknown error occurred";
+            if (isset($response_body['message'])){
+                $error_response = $response_body['message'];
+            } elseif (isset($response_body['error'])){
+                $error_response =  $response_body['error'];
+            } else{
+                $error_response = "API for chat returned an error with code: " .  $status_code;
+            }        
             error_log("Error_message: ");
             error_log($error_response);
             wp_send_json_error(array('message' => $error_response), $status_code > 0 ? $status_code : 500);
@@ -80,6 +88,9 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
 //handle response from API
 function handle_response($body) {
     // case where just a regular chat response
+    if (isset($body['thread_id'])) {
+        $_SESSION['thread_id'] = $body['thread_id'];
+    }
     if (!isset($body['status']) || $body['status'] == 'chatting' || $body['status'] == 'error') {
         if (isset($body['data'])) {
             wp_send_json_success(array('message' => $body['data']));
@@ -90,20 +101,20 @@ function handle_response($body) {
     } else {
         if ($body['status'] == 'needs_authorization') {
             $tool_name = $body['tool_name'];
+            // eventually get rid of this filter, might want a list of approved tools to check against
             if ($tool_name == 'writer') {
                 $parameters = $body['data']['parameters'];
                 $tool_call_id = $body['tool_call_id'];
                 $run_id = $body['run_id'];
                 // to do, estamos pasando empty run id y tool call id 
                 $response = include_widget($tool_name, $parameters, $run_id, $tool_call_id);
+                if (isset($response['thread_id'])) {
+                    $_SESSION['thread_id'] = $response['thread_id'];
+                }
                 wp_send_json_success(array('tool' => true, 'message' => "", 'widget_object' => $response));
             } else {
                 wp_send_json_success(array('message' => 'Please authorize ' . $tool_name . ' to continue'));
             }
-            $_SESSION['thread_id'] = $body['thread_id'];
-        }
-        if (isset($response['thread_id'])) {
-            $_SESSION['thread_id'] = $response['thread_id'];
         }
     }
 }
