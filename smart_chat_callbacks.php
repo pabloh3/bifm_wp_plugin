@@ -99,7 +99,7 @@ function handle_response($body) {
         }
     //
     } else {
-        if ($body['status'] == 'needs_authorization') {
+        if ($body['status'] == 'reply_with_widget' || $body['status'] == 'needs_authorization') {
             $tool_name = $body['tool_name'];
             // eventually get rid of this filter, might want a list of approved tools to check against
             if ($tool_name == 'writer') {
