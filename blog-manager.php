@@ -283,7 +283,7 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
     // return an error if the user has not set their username and password
     if (!$username || !$encrypted_password) {
-        wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
+        wp_send_json_error(array('message' => "Please set your blog author username and password in the [settings page](/wp-admin/admin.php?page=bifm-plugin#settings)."));
     }
     $random_key = get_user_meta($user_id, 'random_key', true);
     $password = decrypt($encrypted_password, $random_key);

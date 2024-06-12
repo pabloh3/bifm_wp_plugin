@@ -24,6 +24,8 @@ function get_widget($parameters, $run_id, $tool_call_id) {
         console.log('reject writer');
         var data = {'authorize': false};
         document.getElementById('validate-writer-widget-" . $widget_id . "').innerHTML = 'You rejected to build blog posts for: <b>" . $keyphrase . "</b>';
+        processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
+        document.getElementById('billy-chatbox').appendChild(processingMessage);
         sendMessage(data, 'writer', '" . $run_id . "', '" . $tool_call_id . "');
     });
     ";

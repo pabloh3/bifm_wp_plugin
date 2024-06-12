@@ -102,7 +102,8 @@ function handle_response($body) {
         if ($body['status'] == 'reply_with_widget' || $body['status'] == 'needs_authorization') {
             $tool_name = $body['tool_name'];
             // eventually get rid of this filter, might want a list of approved tools to check against
-            if ($tool_name == 'writer') {
+            #try - catch block
+            try {
                 $parameters = $body['data']['parameters'];
                 $tool_call_id = $body['tool_call_id'];
                 $run_id = $body['run_id'];
@@ -112,8 +113,8 @@ function handle_response($body) {
                     $_SESSION['thread_id'] = $response['thread_id'];
                 }
                 wp_send_json_success(array('tool' => true, 'message' => "", 'widget_object' => $response));
-            } else {
-                wp_send_json_success(array('message' => 'Please authorize ' . $tool_name . ' to continue'));
+            } catch (Exception $e) {
+                wp_send_json_success(array('message' => 'There was an error in getting ' . $tool_name . '.'));
             }
         }
     }
