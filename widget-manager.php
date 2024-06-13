@@ -51,6 +51,15 @@ function builditforme_ewm_admin_menu() {
         'create-chat',
         'ewm_create_chat_content'
     );
+
+    add_submenu_page(
+        'design-system',
+        'Design system page',
+        'Design system',
+        'edit_posts',
+        'design_system',
+        'ewm_create_design_system'
+    );
 }
 add_action('admin_menu', 'builditforme_ewm_admin_menu');
 
@@ -113,6 +122,11 @@ function ewm_create_blog_content() {
 function ewm_create_chat_content() {
     //this code was taken to admin-page.php
     include plugin_dir_path(__FILE__) . 'smart-chat-settings-page.php';
+}
+
+function ewm_create_design_system() {
+    //this code was taken to admin-page.php
+    include plugin_dir_path(__FILE__) . 'design-system-page.php';
 }
 
 function builditforme_ewm_enqueue_admin_scripts($hook) {
