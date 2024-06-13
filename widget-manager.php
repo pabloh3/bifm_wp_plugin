@@ -120,8 +120,8 @@ function builditforme_ewm_enqueue_admin_scripts($hook) {
     
     // Check if we're on the create-widget page to load that JS
     if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-widget')) {
-        // Enqueue CSS & JavaScript
-        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)),'','1.0.8', false);
+        // Enqueue CSS and auto
+        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)),[],filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), false);
         wp_enqueue_script('my-plugin-script', plugin_dir_url(__FILE__) . 'static/main.js', array('jquery'), '1.0.76', true);
         // Pass ajax_url to script.js
         wp_localize_script('my-plugin-script', 'my_plugin', array(

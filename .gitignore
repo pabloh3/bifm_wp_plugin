@@ -3,3 +3,4 @@ widget-registration.php
 /bifm-widgets/
 .DS_Store
 /shared-widgets/smart_chat/chat_files/
+/static/materialize-src/*

@@ -2,7 +2,7 @@
     $nonce = wp_create_nonce('my_custom_action');
 
     // Materialize CSS and Icons
-    echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">';
+    //echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">';
     echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
 
     //echo '<div style="color:red">Using local API.</div>';
