@@ -66,23 +66,23 @@ body {
 .btn,
 .btn-small,
 .btn-large {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 16px 24px;
-  gap: 10px;
-  background-color: #8D9ADE !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 16px 24px !important;
+  gap: 10px !important;
   border-radius: 24px !important;
+  text-transform: none !important;
+  box-shadow: none !important;
 }
 
 .input-field {
-  box-sizing: border-box !important;
   background-color: #FAFAFC !important;
   border: 1px solid #8D9ADE !important;
   border-radius: 12px !important;
-  padding: 10px !important;
-  resize: vertical !important;
+  padding: 16px !important;
+  font-size: 14px !important;
 }
 
 .input-field.large {
@@ -93,6 +93,112 @@ body {
 input, textarea.materialize-textarea {
   border-bottom: none !important;
   box-shadow: none !important;
+  min-height: 24px !important;
+  overflow: auto !important;
+  resize: vertical !important;
+  resize: none !important;
+}
+
+textarea {
+  height: 100% !important;
+}
+
+.select-dropdown {
+  margin-bottom: 0px !important;
+}
+
+.select-wrapper + label {
+  top: -28px !important;
+}
+
+.input-field .send-input {
+  position: absolute !important;
+  right: 10px; /* Adjust for spacing */
+  bottom: 10px;
+  transform: translateY(-10px);
+}
+
+.icon-button {
+  background-color: #8D9ADE;
+  border-radius: 999px;
+  padding: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+}
+
+.card {
+  border-radius: 24px !important;
+  padding: 16px 24px !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+}
+
+.card.writer-bot {
+  background: #fffaf4 !important;
+  border: 1px solid #FF9D25 !important;
+}
+
+.card.coder-bot {
+  background: #fef7ff !important;
+  border: 1px solid #cb8bd0 !important;
+}
+
+.card-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+}
+
+.card .frame {
+  flex-shrink: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.card .frame img {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute !important;
+}
+
+.card-title {
+  line-height: 160% !important;
+}
+
+.card p {
+  line-height: 160% !important;
+  font-weight: 400 !important;
+  align-self: stretch !important;
+}
+
+.card-button {
+  height: 48px !important;
+  display: flex !important;
+}
+
+.writer-button {
+  background-color: #FF9D25 !important;
+}
+
+.coder-button {
+  background-color: #cb8bd0 !important;
+}
+
+.writer-icon {
+  color: #FF9D25 !important;
+}
+
+.coder-icon {
+  fill: #cb8bd0 !important;
 }
 
 .materialize-red {
@@ -400,11 +506,11 @@ input, textarea.materialize-textarea {
 }
 
 .purple {
-  background-color: #9c27b0 !important;
+  background-color: #cb8bd0 !important;
 }
 
 .purple-text {
-  color: #9c27b0 !important;
+  color: #cb8bd0 !important;
 }
 
 .purple.lighten-5 {
@@ -509,6 +615,22 @@ input, textarea.materialize-textarea {
 
 .purple-text.text-accent-4 {
   color: #aa00ff !important;
+}
+
+.violet {
+  background-color: #8D9ADE !important;
+}
+
+.violet-text {
+  color: #8D9ADE !important;
+}
+
+.violet.lighten-5 {
+  background-color: #fef7ff !important;
+}
+
+.violet-text.text-lighten-5 {
+  color: #fef7ff !important;
 }
 
 .deep-purple {
@@ -1744,19 +1866,19 @@ input, textarea.materialize-textarea {
 }
 
 .orange {
-  background-color: #ff9800 !important;
+  background-color: #FF9D25 !important;
 }
 
 .orange-text {
-  color: #ff9800 !important;
+  color: #FF9D25 !important;
 }
 
 .orange.lighten-5 {
-  background-color: #fff3e0 !important;
+  background-color: #fffaf4 !important;
 }
 
 .orange-text.text-lighten-5 {
-  color: #fff3e0 !important;
+  color: #fffaf4 !important;
 }
 
 .orange.lighten-4 {
@@ -5564,7 +5686,7 @@ body.keyboard-focused .dropdown-content li:focus {
   color: rgba(0, 0, 0, 0.6);
   display: inline-block;
   font-size: 16px;
-  height: 3rem;
+  height: 2rem;
   line-height: 32px;
   outline: 0;
   margin: 0;
@@ -5671,7 +5793,7 @@ textarea.materialize-textarea {
   border-bottom: 1px solid #9e9e9e;
   border-radius: 0;
   outline: none;
-  height: 3rem;
+  height: 2rem;
   width: 100%;
   font-size: 16px;
   margin: 0 0 8px 0;
@@ -6060,10 +6182,10 @@ textarea.materialize-textarea + label:after {
 }
 .input-field .prefix {
   position: absolute;
-  width: 3rem;
+  width: 2rem;
   font-size: 2rem;
   transition: color 0.2s;
-  top: 0.5rem;
+  top: 0rem;
 }
 .input-field .prefix.active {
   color: #3147B8;
@@ -6133,7 +6255,7 @@ textarea.materialize-textarea + label:after {
 /* Textarea */
 textarea {
   width: 100%;
-  height: 3rem;
+  height: 2rem;
   background-color: transparent;
 }
 textarea.materialize-textarea {
@@ -6141,7 +6263,7 @@ textarea.materialize-textarea {
   overflow-y: hidden; /* prevents scroll bar flash */
   padding: 0.8rem 0 0.8rem 0; /* prevents text jump on Enter keypress */
   resize: none;
-  min-height: 3rem;
+  min-height: 2rem;
   box-sizing: border-box;
 }
 
@@ -6546,7 +6668,7 @@ select {
   padding: 5px;
   border: 1px solid #f2f2f2;
   border-radius: 2px;
-  height: 3rem;
+  height: 2rem;
 }
 
 .select-label {
@@ -6567,8 +6689,8 @@ select {
   border: none;
   border-bottom: 1px solid #9e9e9e;
   outline: none;
-  height: 3rem;
-  line-height: 3rem;
+  height: 2rem;
+  line-height: 2rem;
   width: 100%;
   font-size: 16px;
   margin: 0 0 8px 0;
@@ -6678,8 +6800,8 @@ body.keyboard-focused .select-dropdown.dropdown-content li:focus {
 }
 .file-field .btn, .file-field .btn-large, .file-field .btn-small {
   float: left;
-  height: 3rem;
-  line-height: 3rem;
+  height: 2rem;
+  line-height: 2rem;
 }
 .file-field span {
   cursor: pointer;

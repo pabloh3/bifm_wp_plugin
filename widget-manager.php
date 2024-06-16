@@ -145,7 +145,7 @@ function builditforme_ewm_enqueue_admin_scripts($hook) {
     }
     else {
         # in all admin pages load the styles
-        wp_enqueue_style('my-plugin-styles', plugins_url('static/styles.css', __FILE__),'','1.0.7', false);
+        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)),[],filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), false);
     }
 }
 add_action('admin_enqueue_scripts', 'builditforme_ewm_enqueue_admin_scripts');

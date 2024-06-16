@@ -2,6 +2,7 @@
 // This file tests my design system
 
 // Materialize CSS and Icons
+//echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">';
 echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
 echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2"><i class="material-icons left">arrow_back</i>Back</button>';
 echo '<div class="container">';  // using Materialize's container for alignment and spacing
@@ -21,9 +22,9 @@ echo '<a href="#">This is a link</a><br/>';
 
 // Display all the colors using materialize items
 $colors = [
-    'primary-color' => 'blue',
-    'secondary-color' => 'blue',
-    'accent-color' => '#9c27b0',
+    'primary-color or purple' => 'purple',
+    'secondary-color or blue' => 'blue',
+    'orange' => 'orange',
     'primary-light' => '#ff7961',
     'primary-dark' => '#ba000d',
     'secondary-light' => '#ff6090',
@@ -78,9 +79,54 @@ echo '<form id="smart-chat-form" action="#" method="post">';
 echo '<div class="row">';
 echo '<div class="input-field large col s12 l8">';
 echo '<textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>';
+echo '    <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">';
+echo '        <i class="material-icons">send</i>';
+echo '    </button>';
 echo '<label for="text_input">Text Input</label>';
 echo '</div>';
 echo '</div>';
+
+// text input with button
+echo '<div class="input-field">';
+echo '    <input id="search" type="text" class="validate" placeholder="Ask Billy for any assistance you need">';
+echo '    <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">';
+echo '        <i class="material-icons">send</i>';
+echo '    </button>';
+echo '</div>';
+
+
+// Example of select input with label and placeholder
+echo '<div class="row">';
+echo '<div class="input-field col s12 l8">';
+echo '<select id="select_input_1" name="select_input_1">';
+echo '<option value="" disabled selected>Placeholder</option>';
+echo '<option value="1">Option 1</option>';
+echo '<option value="2">Option 2</option>';
+echo '<option value="3">Option 3</option>';
+echo '</select>';
+echo '<label for="select_input_1">Label</label>';
+echo '</div>';
+echo '</div>';
+
+// Initialize Materialize select
+echo '<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var elems = document.querySelectorAll("select");
+        var instances = M.FormSelect.init(elems);
+    });
+</script>';
+
+
+// Example of text area with label and placeholder
+echo '<div class="row">';
+echo '<div class="input-field col s12 l8">';
+echo '<textarea id="textarea_input_1" name="textarea_input_1" class="materialize-textarea" placeholder="Ask Billy for any assistance you need"></textarea>';
+echo '<label for="textarea_input_1">Label</label>';
+echo '</div>';
+echo '</div>';
+
+echo '</form>';
+
 
 // Email input
 echo '<div class="row">';
@@ -175,22 +221,40 @@ echo '</form>';
 // Cards
 echo '<h5>Cards</h5>';
 echo '<div class="row">';
-echo '<div class="col s12 m6 l4">';
-echo '<div class="card">';
-echo '<div class="card-content">';
-echo '<span class="card-title">Card Title</span>';
-echo '<p>This is a card content. It can hold text, images, and more.</p>';
-echo '</div>';
-echo '<div class="card-action">';
-echo '<a href="#">This is a link</a>';
-echo '</div>';
-echo '</div>';
-echo '</div>';
-echo '</div>';
+    echo '<div class="col s12 m6 l4">';
+        echo '<div class="card tool-s-chat-bubble writer-bot">';
+            echo '<div class="card-content frame-10120667">';
+                echo '<div class="frame">';
+                    //echo '<div class="svg-icon">' . get_inline_svg(esc_url(plugins_url('static/icons/Writer.svg', __FILE__))) . '</div>';
+                    echo '<img class="frame2 writer-icon" src="' . esc_url(plugins_url('static/icons/Writer.svg', __FILE__)) . '" />';
+                echo '</div>';
+                echo '<span class="card-title">Writer bot</span>';
+                echo '<p class="our-ai-powered-blog-post-generator-crafts-engaging-articles-efficiently-enhancing-your-blog-s-content-effortlessly">';
+                    echo 'Our AI-powered blog post generator crafts engaging articles efficiently, enhancing your blog’s content effortlessly.';
+                echo '</p>';
+            echo '</div>';
+            echo '<button class="btn waves-effect waves-light card-button writer-button" type="submit" name="action" >Go to the writer bot</button>';
+        echo '</div>';
+    echo '</div>';
 echo '<div>';
-echo '<div id="warningMessage" class="card-panel yellow darken-2" style="display: inline;">This is a warning message.</div>';
-echo '</div>';
 
+
+echo '<div class="row">';
+    echo '<div class="col s12 m6 l4">';
+        echo '<div class="card tool-s-chat-bubble coder-bot">';
+            echo '<div class="card-content frame-10120667">';
+                echo '<div class="frame">';
+                echo '<img class="frame2 coder-icon" src="' . esc_url(plugins_url('static/icons/Coder.svg', __FILE__)) . '" />';
+                echo '</div>';
+                echo '<span class="card-title">Coder bot</span>';
+                echo '<p class="our-ai-powered-blog-post-generator-crafts-engaging-articles-efficiently-enhancing-your-blog-s-content-effortlessly">';
+                    echo 'Our AI-powered blog post generator crafts engaging articles efficiently, enhancing your blog’s content effortlessly.';
+                echo '</p>';
+            echo '</div>';
+            echo '<button class="btn waves-effect waves-light card-button coder-button" type="submit" name="action" >Go to the writer bot</button>';
+        echo '</div>';
+    echo '</div>';
+echo '<div>';
 
 // Menus (Navbar)
 echo '<h5>Navbar</h5>';
