@@ -571,3 +571,10 @@ function cbc_drop_requests_table() {
     $sql = "DROP TABLE IF EXISTS $table_name;";
     $wpdb->query($sql);
 }
+
+
+// Suppress WordPress core update notifications
+function suppress_update_notifications() {
+    remove_action('admin_notices', 'update_nag', 3);
+}
+add_action('admin_menu', 'suppress_update_notifications');

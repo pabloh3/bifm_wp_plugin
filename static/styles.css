@@ -67,14 +67,12 @@ body {
 .btn-small,
 .btn-large {
   display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
   align-items: center !important;
   padding: 16px 24px !important;
-  gap: 10px !important;
   border-radius: 24px !important;
   text-transform: none !important;
   box-shadow: none !important;
+  height: 48px !important;
 }
 
 .input-field {
@@ -193,11 +191,11 @@ textarea {
   background-color: #cb8bd0 !important;
 }
 
-.writer-icon {
-  color: #FF9D25 !important;
+.writer-icon svg path {
+  fill: #FF9D25 !important;
 }
 
-.coder-icon {
+.coder-icon svg path {
   fill: #cb8bd0 !important;
 }
 
