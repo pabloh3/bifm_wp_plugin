@@ -21,21 +21,28 @@
 }
 
 #billy-form {
-    position: absolute;
-    bottom: 0px;
-    left: 0;
-    width: calc(100% - 60px);
+    width: 100%;
     height: 140px;
-    padding: 20px;
-    margin: 30px;
+    margin: auto;
 }
 
 #billy-chatbox {
     position: absolute;
+    width: calc(100% - 120px);
     bottom: 0px;
     left: 0;
+    margin: 60px;
 }
 
 #billy-form label {
     margin-left: 16px;
+}
+
+#billy-form-footer {
+    /* top right bottom left*/
+    margin: 10px auto 10px auto;
+    position: absolute;
+    width: 280px; /* Fixed or relative width */
+    left: 50%;
+    transform: translateX(-50%);
 }

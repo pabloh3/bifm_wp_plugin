@@ -62,15 +62,15 @@
   <!-- Body outside of menu -->
   <div class="plugin-content">
   <div class="container">
-    <div id='billy-chatbox'></div>
-    <form id='billy-form' method='POST' class='input-field'>
-            <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>
-            <label for="assistant_instructions">Ask Billy for any assistance you need:</label>
-            <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">
-                <i class="material-icons">send</i>
-            </button>
-    </form>
-    <div id ="billy-form-footer">Go to <a href="admin.php?page=bifm-plugin">settings</a> to change the way Billy responds.</div>
+    <div id='billy-chatbox'>
+        <form id='billy-form' method='POST' class='input-field'>
+                <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>
+                <label for="assistant_instructions">Ask Billy for any assistance you need:</label>
+                <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">
+                    <i class="material-icons">send</i>
+                </button>
+        </form>
+        <div id ="billy-form-footer" class="grey-text lighten-2">Go to <a href="admin.php?page=create-chat" class="black-text">Settings</a> to change the way Billy responds.</div>
     </div>
   </div>
 </div>
