@@ -1,24 +1,43 @@
 <?php
 // This file tests my design system
+//sidenav menu
+echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
+echo '<div class="row">';
+echo '  <div class="plugin-menu">';
+echo '    <ul id="slide-out" class="sidenav sidenav-fixed browser-default">';
+echo '      <li>';
+echo '        <div class="user-view">';
+echo '          <div class="form-icon-button btn-floating btn-small waves-effect waves-light back-button">';
+echo '            <i class="arrow-left material-icons">arrow_back</i>';
+echo '          </div>';
+echo '        </div>';
+echo '      </li>';
+echo '      <li><a href="admin.php?page=smart-chat" class="waves-effect"><i class="material-icons">chat</i>Smart Chat</a></li>';
+echo '      <li><a href="admin.php?page=blog-generator" class="waves-effect"><i class="material-icons">edit</i>Blog Generator</a></li>';
+echo '      <li><a href="admin.php?page=widget-generator" class="waves-effect"><i class="material-icons">widgets</i>Widget Generator</a></li>';
+echo '      <li><a href="admin.php?page=settings" class="waves-effect"><i class="material-icons">settings</i>Settings</a></li>';
+echo '    </ul>';
+echo '  </div>';
 
 // Materialize CSS and Icons
-//echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">';
-echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
-echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2"><i class="material-icons left">arrow_back</i>Back</button>';
-echo '<div class="container">';  // using Materialize's container for alignment and spacing
-echo '<div id="smart-chat" class="col s12">';
-echo '<h1>This is an h1</h1>';
-echo '<h2>This is an h2</h2>';
-echo '<h3>This is an h3</h3>';
-echo '<h4>This is an h4</h4>';
-echo '<h5>This is an h5</h5>';
-echo '<h6>This is an h6</h6>';
-echo '<p>This is a paragraph</p>';
-echo 'This is just text<br/>';
-echo '<i>This is italic text</i><br/>';
-echo '<b>This is bold text</b><br/>';
-echo '<u>This is underlined text</u><br/>';
-echo '<a href="#">This is a link</a><br/>';
+echo '  <div class="plugin-content">';
+echo '    <button id="backButton" class="btn waves-effect waves-light red lighten-2"><i class="material-icons left">arrow_back</i>Back</button>';
+echo '    <div class="container">';  // using Materialize's container for alignment and spacing
+echo '      <div id="smart-chat" class="col s12">';
+echo '        <h1>This is an h1</h1>';
+echo '        <h2>This is an h2</h2>';
+echo '        <h3>This is an h3</h3>';
+echo '        <h4>This is an h4</h4>';
+echo '        <h5>This is an h5</h5>';
+echo '        <h6>This is an h6</h6>';
+echo '        <p>This is a paragraph</p>';
+echo '        This is just text<br/>';
+echo '        <i>This is italic text</i><br/>';
+echo '        <b>This is bold text</b><br/>';
+echo '        <u>This is underlined text</u><br/>';
+echo '        <a href="#">This is a link</a><br/>';
+echo '      </div>';
+echo '    </div>';
 
 // Display all the colors using materialize items
 $colors = [
@@ -66,8 +85,6 @@ echo '</div>';
 // Submit button
 echo '<button class="btn waves-effect waves-light" type="submit" name="action" >Save Changes</button>';
 echo '<button class="btn waves-effect waves-light red lighten-2" type="submit" name="action" id="reset_chat">Reset chatbot</button>';
-echo '</div>'; // Close the settings tab
-echo '</div>'; // Close the container
 
 
 // Input fields
@@ -79,9 +96,9 @@ echo '<form id="smart-chat-form" action="#" method="post">';
 echo '<div class="row">';
 echo '<div class="input-field large col s12 l8">';
 echo '<textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>';
-echo '    <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">';
-echo '        <i class="material-icons">send</i>';
-echo '    </button>';
+echo '<button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">';
+echo '  <i class="material-icons">send</i>';
+echo '</button>';
 echo '<label for="text_input">Text Input</label>';
 echo '</div>';
 echo '</div>';
@@ -267,6 +284,9 @@ echo '<li><a href="#">Contact</a></li>';
 echo '</ul>';
 echo '</div>';
 echo '</nav>';
+
+echo '</div>';
+echo '</div>';
 
 echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>';
 ?>
