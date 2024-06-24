@@ -41,21 +41,28 @@ echo '    </div>';
 
 // Display all the colors using materialize items
 $colors = [
-    'primary-color or purple' => 'purple',
-    'secondary-color or blue' => 'blue',
-    'orange' => 'orange',
-    'primary-light' => '#ff7961',
-    'primary-dark' => '#ba000d',
-    'secondary-light' => '#ff6090',
-    'secondary-dark' => '#b0003a',
-    'background-color' => '#f5f5f5',
-    'surface-color' => '#ffffff',
-    'error-color' => '#d32f2f',
-    'on-primary' => '#ffffff',
-    'on-secondary' => '#000000',
-    'on-background' => '#000000',
-    'on-surface' => '#000000',
-    'on-error' => '#ffffff'
+    'secondary-color or blue' => color("blue", "base"),
+    'secondary-light-purple' => color("purple", "secondary-light-purple"),
+    'primary-light' => color("red", "lighten-4"),
+    'primary-dark' => color("red", "darken-4"),
+    'secondary-light' => color("pink", "lighten-4"),
+    'secondary-dark' => color("pink", "darken-4"),
+    'background-color' => color("grey", "lighten-5"),
+    'surface-color' => color("white", "base"),
+    'error-color' => color("red", "base"),
+    'on-primary' => color("white", "base"),
+    'on-secondary' => color("black", "base"),
+    'on-background' => color("black", "base"),
+    'on-surface' => color("black", "base"),
+    'on-error' => color("white", "base"),
+    // New colors based on your provided variables
+    'purple-lighten-5' => color("purple", "lighten-5"),
+    'dark-purple' => color("purple", "dark-purple"),
+    'gray-purple' => color("purple", "gray-purple"),
+    'main-Purple' => color("purple", "main-Purple"),
+    'light-purple' => color("purple", "light-purple"),
+    'light-grey' => color("grey", "light-grey"),
+    'off-white' => color("grey", "off-white"),
 ];
 
 echo '<div class="row">';

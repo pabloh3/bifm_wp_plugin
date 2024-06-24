@@ -1,105 +1,102 @@
-const form = document.getElementById('billy-form');
-const chatbox = document.getElementById('billy-chatbox');
-const submit_chat = document.getElementById('billy-submit_chat');
-let commandCount = 0;
-const MAX_COMMANDS = 50;
-let processingMessage = document.createElement('div');
-let prevMessageCounts = [0];
-let retryCount = 0;
-let displayedMessageIds = new Set(); // To keep track of message ids already displayed
+jQuery(document).ready(function($) {
+    const form = $('#billy-form');
+    const chatbox = $('#billy-chatbox');
+    const submit_chat = $('#billy-submit_chat');
+    let commandCount = 0;
+    const MAX_COMMANDS = 50;
+    let processingMessage = $('<div>');
+    let prevMessageCounts = [0];
+    let retryCount = 0;
+    let displayedMessageIds = new Set(); // To keep track of message ids already displayed
 
-// Extract the 'foldername' parameter from the URL
-var urlParams = new URLSearchParams(window.location.search);
+    // Extract the 'foldername' parameter from the URL
+    var urlParams = new URLSearchParams(window.location.search);
 
-// Initialize markdown-it and highlight.js
-const md = window.markdownit({
-    highlight: function (str, lang) {
-        if (lang && hljs.getLanguage(lang)) {
-            try {
-                return '<pre class="hljs"><code>' +
-                    hljs.highlight(str, { language: lang }).value +
-                    '</code></pre>';
-            } catch (__) {}
-        }
-        return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
-    }
-});
-
-// Listens to chat submissions
-form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    prevMessageCounts.push(chatbox.getElementsByTagName('p').length);
-    if (commandCount < MAX_COMMANDS) {
-        let userInput = form.name.value;
-        let div = document.createElement('div');
-        div.innerHTML = `<b>You:</b> ${userInput}`;
-        chatbox.appendChild(div);
-    }
-    processingMessage.innerHTML = '<div id="billy-responding" class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
-    document.getElementById('billy-chatbox').appendChild(processingMessage);
-    // Send the message to the server
-    sendMessage(form.name.value, null, null, null);
-});
-
-// Send the message from either submit or debug to the server
-function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
-    jQuery.ajax({
-        url: billy_localize.ajax_url,
-        type: 'POST',
-        data: {
-            action: 'send_chat_message',
-            nonce: billy_localize.nonce,
-            message: messageBody,
-            widget_name: widget_name,
-            run_id: run_id,
-            tool_call_id: tool_call_id
-        },
-        success: function(response) {
-            console.log("success response");
-            document.getElementById('billy-responding').style.display = 'none'; // Hide responding animation
-            
-            // Convert the response message from Markdown to HTML
-            const htmlContent = md.render(response.data.message);
-            let div = document.createElement('div');
-            div.innerHTML = `<b>Billy:</b> ${htmlContent}`;
-            chatbox.appendChild(div);
-
-            // if response contain widget, append as html
-            if (response.data.widget_object) {
-                console.log("contains widget");
-                let div = document.createElement('div');
-                div.innerHTML = response.data.widget_object.widget;
-                chatbox.appendChild(div);
-                if (response.data.widget_object.script) {
-                    console.log("contains script");
-                    // if response contain script, append to the document's existing <script> tag
-                    let script = document.createElement('script');
-                    script.innerHTML = response.data.widget_object.script;
-                    document.body.appendChild(script);
-                }
-                return;
+    // Initialize markdown-it and highlight.js
+    const md = window.markdownit({
+        highlight: function (str, lang) {
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return '<pre class="hljs"><code>' +
+                        hljs.highlight(str, { language: lang }).value +
+                        '</code></pre>';
+                } catch (__) {}
             }
-
-
-            // Highlight the code blocks
-            hljs.highlightAll();
-        },
-        error: function(error) {
-            // Handle errors here
-            console.log("error response");
-            const errorMessage = error.responseJSON.data.message;
-            console.log(errorMessage);
-            displayWarning(errorMessage);
-            document.getElementById('billy-chatbox').removeChild(processingMessage);
-            form.name.disabled = false;
-            submit_chat.disabled = false;
+            return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
         }
     });
-    form.name.value = '';
-    form.name.style.height = "9px"; 
-}
 
+    // Listens to chat submissions
+    form.on('submit', function(event) {
+        console.log("submit event");
+        event.preventDefault();
+        prevMessageCounts.push(chatbox.find('p').length);
+        if (commandCount < MAX_COMMANDS) {
+            let userInput = form.find('[name="assistant_instructions"]').val();
+            let user_bubble = $('<div class="bubble user-bubble">').html(`${userInput}`);
+            chatbox.append(user_bubble);
+        }
+        processingMessage.html('<div id="billy-responding" class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>');
+        chatbox.append(processingMessage);
+        // Send the message to the server
+        sendMessage(form.find('[name="assistant_instructions"]').val(), null, null, null);
+    });
 
+    // Send the message from either submit or debug to the server
+    function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
+        $.ajax({
+            url: billy_localize.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'send_chat_message',
+                nonce: billy_localize.nonce,
+                message: messageBody,
+                widget_name: widget_name,
+                run_id: run_id,
+                tool_call_id: tool_call_id
+            },
+            success: function(response) {
+                console.log("success response");
+                $('#billy-responding').hide(); // Hide responding animation
+                
+                // Convert the response message from Markdown to HTML
+                const htmlContent = md.render(response.data.message);
+                let div = $('<div class="bubble billy-bubble">').html(`${htmlContent}`);
+                chatbox.append(div);
+
+                // if response contain widget, append as html
+                if (response.data.widget_object) {
+                    console.log("contains widget");
+                    let div = $('<div>').html(response.data.widget_object.widget);
+                    chatbox.append(div);
+                    if (response.data.widget_object.script) {
+                        console.log("contains script");
+                        // if response contain script, append to the document's existing <script> tag
+                        $('<script>').html(response.data.widget_object.script).appendTo('body');
+                    }
+                    return;
+                }
+
+                // Highlight the code blocks
+                hljs.highlightAll();
+            },
+            error: function(error) {
+                // Handle errors here
+                console.log("error response");
+                const errorMessage = error.responseJSON.data.message;
+                console.log(errorMessage);
+                displayWarning(errorMessage);
+                processingMessage.remove();
+                form.find('[name="assistant_instructions"]').prop('disabled', false);
+                submit_chat.prop('disabled', false);
+            }
+        });
+        form.find('[name="assistant_instructions"]').val('').css('height', '9px');
+    }
+
+    // Note: The displayWarning function is not defined in the original code snippet.
+    // You may need to implement it separately if it's used elsewhere in your application.
+});
 /*// listens for responses on messages sent.
 function pollForGptResponse(folderName, jobId, retryCount) {
     jQuery.ajax({

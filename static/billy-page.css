@@ -26,7 +26,7 @@
     margin: auto;
 }
 
-#billy-chatbox {
+#billy-chatbox-input {
     position: absolute;
     width: calc(100% - 120px);
     bottom: 0px;
@@ -45,4 +45,12 @@
     width: 280px; /* Fixed or relative width */
     left: 50%;
     transform: translateX(-50%);
+}
+
+
+/* Conversation and bubbles */
+#billy-chatbox {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
 }

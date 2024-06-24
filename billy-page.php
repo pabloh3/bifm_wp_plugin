@@ -1,6 +1,7 @@
 <?php require 'bifm-config.php'; ?>
 
-<!-- This file tests my design system -->
+<!-- This is the Billy page tool -->
+<link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css'>
 <div class="plugin-page">
   <div class="plugin-menu">
     <ul id="slide-out" class="sidenav sidenav-fixed browser-default">
@@ -62,11 +63,12 @@
   <!-- Body outside of menu -->
   <div class="plugin-content">
   <div class="container">
-    <div id='billy-chatbox'>
+    <div id='billy-chatbox'></div>
+    <div id='billy-chatbox-input'>
         <form id='billy-form' method='POST' class='input-field'>
                 <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>
                 <label for="assistant_instructions">Ask Billy for any assistance you need:</label>
-                <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">
+                <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit" id="billy-submit_chat">
                     <i class="material-icons">send</i>
                 </button>
         </form>
@@ -76,6 +78,8 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js'></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.tooltipped');
