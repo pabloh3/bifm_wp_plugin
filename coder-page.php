@@ -1,13 +1,15 @@
-    <?php
-    // Extract the 'client_folder' parameter from the URL
-    $folderName = isset($_GET['foldername']) ? sanitize_text_field($_GET['foldername']) : '';
-    $client_folder = preg_replace("/[a-zA-Z]/", "", $folderName); // Remove any letters
-    require 'bifm-config.php';
-    $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php "; 
-    //localhost:3013/<foldername>/widget.php
-    // for testing
-    wp_enqueue_style('billy-page', plugin_dir_url(__FILE__) . 'static/coder-page.css');
-    ?>
+<?php
+// Extract the 'client_folder' parameter from the URL
+//echo "Get: ", var_dump($_GET); for debugging
+$folderName = isset($_GET['foldername']) ? sanitize_text_field($_GET['foldername']) : '';
+$client_folder = preg_replace("/[a-zA-Z]/", "", $folderName); // Remove any letters
+require 'bifm-config.php';
+$url = $WIDGET_URL . esc_attr($folderName) . "/widget.php "; 
+//localhost:3013/<foldername>/widget.php
+// for testing
+wp_enqueue_style('billy-page', plugin_dir_url(__FILE__) . 'static/coder-page.css');
+?>
+
 <a href="admin.php?page=bifm-plugin" class="btn waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
     Back
@@ -16,8 +18,6 @@
 
 <head>
     <meta charset='utf-8'>
-    <!-- Materialize CSS -->
-
     <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
     <title>Main App</title>
 </head>
@@ -43,7 +43,7 @@
                 <button class='btn waves-effect waves-light' id='undo-button'>Undo</button>
             </div>
             <div class='aspect-16-9'>
-                <iframe id='myframe' src='{$url}' frameborder='0' allowfullscreen></iframe>
+                <iframe id='myframe' src=<?php echo $url; ?>frameborder='0' allowfullscreen></iframe>
                 
             </div>
             

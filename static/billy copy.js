@@ -30,17 +30,17 @@ form.addEventListener('submit', (event) => {
     event.preventDefault();
     prevMessageCounts.push(chatbox.getElementsByTagName('p').length);
     if (commandCount < MAX_COMMANDS) {
-        let userInput = form.assistant_instructions.value;
+        let userInput = form.name.value;
         let div = document.createElement('div');
-        div.classList.add('user-bubble');
-        div.classList.add('bubble');
+        div.addClass('user-bubble');
+        div.addClass('bubble');
         div.innerHTML = `${userInput}`;
         chatbox.appendChild(div);
     }
-    processingMessage.innerHTML = '<div id="billy-responding" class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
+    processingMessage.html('<div id="billy-responding" class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>');
     document.getElementById('billy-chatbox').appendChild(processingMessage);
     // Send the message to the server
-    sendMessage(form.assistant_instructions.value, null, null, null);
+    sendMessage(form.name.value, null, null, null);
 });
 
 // Send the message from either submit or debug to the server
@@ -64,8 +64,8 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
             const htmlContent = md.render(response.data.message);
             let div = document.createElement('div');
             //add classes to div
-            div.classList.add('billy-bubble');
-            div.classList.add('bubble');
+            div.addClass('billy-bubble');
+            div.addClass('bubble');
             div.innerHTML = `${htmlContent}`;
             chatbox.appendChild(div);
 
@@ -96,12 +96,12 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
             console.log(errorMessage);
             displayWarning(errorMessage);
             document.getElementById('billy-chatbox').removeChild(processingMessage);
-            form.assistant_instructions.disabled = false;
+            form.name.disabled = false;
             submit_chat.disabled = false;
         }
     });
-    form.assistant_instructions.value = '';
-    form.assistant_instructions.style.height = "9px"; 
+    form.name.value = '';
+    form.name.style.height = "9px"; 
 }
 
 
@@ -118,7 +118,7 @@ function pollForGptResponse(folderName, jobId, retryCount) {
         },
         success: function(response) {
             if (response.data && response.status === 200) {
-                form.assistant_instructions.disabled = false;
+                form.name.disabled = false;
                 submit_chat.disabled = false;
                 document.getElementById('billy-chatbox').removeChild(processingMessage);
                 let response_gpt = JSON.parse(response.data);
@@ -140,12 +140,12 @@ function pollForGptResponse(folderName, jobId, retryCount) {
                 }
                 commandCount++;
                 if (commandCount >= MAX_COMMANDS) {
-                    form.assistant_instructions.disabled = true;
+                    form.name.disabled = true;
                     submit_chat.disabled = true;
                     document.getElementById('chatbox').innerHTML += `<p>Thank you for using our beta product. Sign up for our waitlist <a href="https://www.builditforme.ai">here</a>.</p>`;
                 }
             } else if (response.status === 202) {
-                form.assistant_instructions.disabled = true;
+                form.name.disabled = true;
                 submit_chat.disabled = true;
                 let response_gpt = JSON.parse(response.data);
                 // Get the last message id and message from response_gpt.gpt_says_dict
@@ -175,7 +175,7 @@ function pollForGptResponse(folderName, jobId, retryCount) {
                 setTimeout(pollForGptResponse, 3000, folderName, jobId, 1);
             } else {
                 document.getElementById('billy-chatbox').removeChild(processingMessage);
-                form.assistant_instructions.disabled = false;
+                form.name.disabled = false;
                 submit_chat.disabled = false;
                 document.getElementById('billy-chatbox').innerHTML += `<p>GPT: Your request has finished running.</p>`;
             }

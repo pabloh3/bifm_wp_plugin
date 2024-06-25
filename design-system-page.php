@@ -7,6 +7,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
+    <a href="admin.php?page=bifm-plugin" class="btn waves-effect waves-light purple light-grey" style="width: 120px;">
+        <i class="material-icons left">arrow_back</i>
+        Back
+    </a>
     <div class="row">
         <div class="plugin-menu">
             <ul id="slide-out" class="sidenav sidenav-fixed browser-default">

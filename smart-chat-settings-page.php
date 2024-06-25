@@ -1,6 +1,9 @@
 <?php require 'bifm-config.php'; ?>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<button id="backButton" class="btn waves-effect waves-light purple grey-purple"><i class="material-icons left">arrow_back</i>Back</button>
+<a href="admin.php?page=bifm-plugin" class="btn waves-effect waves-light purple light-grey" style="width: 120px;">
+    <i class="material-icons left">arrow_back</i>
+    Back
+</a>
 
 <div class="container">
     <div id="smart-chat" class="col s12">

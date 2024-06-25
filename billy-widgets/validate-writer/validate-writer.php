@@ -4,6 +4,8 @@ function get_widget($parameters, $run_id, $tool_call_id) {
     // create a random id for the widget
     $widget_id = uniqid();
     $keyphrase = $parameters['keyphrase'];
+    // escape chars in keyphrase
+    $keyphrase = htmlspecialchars($keyphrase);
     // widget as a piece of html with two buttons (authorize and reject)
     $widget = "<div id='validate-writer-widget-" . $widget_id . "' style='border: 1px solid black; padding: 10px; margin: 10px;'>";
     $widget .= "<b>Billy wants to write a blog post:</b>";

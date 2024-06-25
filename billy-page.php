@@ -46,7 +46,7 @@
         </a>
       </li>
       <li>
-        <a href="admin.php?page=create-widget" class="waves-effect">
+        <a href="admin.php?page=widget-manager" class="waves-effect">
           <div class="svg-icon coder-icon inline-icon">
             <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Coder.svg'); ?>
           </div>

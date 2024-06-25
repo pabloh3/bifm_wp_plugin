@@ -6,6 +6,11 @@
     }
 </style>
 
+<a href="admin.php?page=bifm-plugin" class="btn waves-effect waves-light purple light-grey" style="width: 120px;">
+    <i class="material-icons left">arrow_back</i>
+    Back
+</a>
+
 <div id="settings" class="col s12">
     <h5>Settings</h5>
     <p>Here you can update the settings for blog creation.</p>
