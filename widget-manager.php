@@ -53,12 +53,22 @@ function builditforme_ewm_admin_menu() {
     );
 
     add_submenu_page(
-        'design-system',
-        'Design system page',
-        'Design system',
+        'design-system',            // parent_slug
+        'Design system page',       // page_title
+        'Design system',            // menu_title
+        'edit_posts',               // capability
+        'design_system',            // menu_slug
+        'ewm_create_design_system'  // function
+    );
+    
+
+    add_submenu_page(
+        'writer-settings',
+        'Writer settings page',
+        'Writer settings',
         'edit_posts',
-        'design_system',
-        'ewm_create_design_system'
+        'writer-settings',
+        'ewm_writer_settings'
     );
 }
 add_action('admin_menu', 'builditforme_ewm_admin_menu');
@@ -111,7 +121,7 @@ function ewm_admin_page_content() {
 
 function ewm_create_widget_content() {
     //this code was taken to admin-page.php
-    include plugin_dir_path(__FILE__) . 'client.php';
+    include plugin_dir_path(__FILE__) . 'coder-page.php';
 }
 
 function ewm_create_blog_content() {
@@ -128,6 +138,12 @@ function ewm_create_design_system() {
     //this code was taken to admin-page.php
     include plugin_dir_path(__FILE__) . 'design-system-page.php';
 }
+
+function ewm_writer_settings() {
+    //this code was taken to admin-page.php
+    include plugin_dir_path(__FILE__) . 'writer-settings-page.php';
+}
+
 
 function builditforme_ewm_enqueue_admin_scripts($hook) {
     global $pagenow;

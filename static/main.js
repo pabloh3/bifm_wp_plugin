@@ -21,14 +21,14 @@ form.addEventListener('submit', (event) => {
     event.preventDefault();
     prevMessageCounts.push(chatbox.getElementsByTagName('p').length);
     if (commandCount < MAX_COMMANDS) {
-        let userInput = form.name.value;
+        let userInput = form.user_message.value;
         let p = document.createElement('p');
         p.textContent = `You: ${userInput}`;
         chatbox.appendChild(p);
     }
     var stageDisplay = document.getElementById('stageDisplay');
     var currentStage = stageDisplay.getAttribute('data-stage');
-    sendMessage(folderName, 'processgpt', form.name.value, currentStage);
+    sendMessage(folderName, 'processgpt', form.user_message.value, currentStage);
 });
 
 // process clicks on back button
@@ -60,7 +60,7 @@ function sendMessage(folderName, endpoint, messageBody, currentStage) {
             if (response.status === 202) {
                 processingMessage.innerHTML = '<div class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
                 document.getElementById('chatbox').appendChild(processingMessage);
-                form.name.disabled = true;
+                form.user_message.disabled = true;
                 submit_chat.disabled = true;
                 setTimeout(pollForGptResponse, 5000, folderName, jobId);
             } else if (response.status === 200) {
@@ -79,12 +79,12 @@ function sendMessage(folderName, endpoint, messageBody, currentStage) {
                 displayWarning(error);
             }
             document.getElementById('chatbox').removeChild(processingMessage);
-            form.name.disabled = false;
+            form.user_message.disabled = false;
             submit_chat.disabled = false;
         }
     });
-    form.name.value = '';
-    form.name.style.height = "9px"; 
+    form.user_message.value = '';
+    form.user_message.style.height = "9px"; 
 }
 
 
@@ -102,7 +102,7 @@ function pollForGptResponse(folderName, jobId, retryCount) {
         },
         success: function(response) {
             if (response.data && response.status === 200) {
-                form.name.disabled = false;
+                form.user_message.disabled = false;
                 submit_chat.disabled = false;
                 document.getElementById('chatbox').removeChild(processingMessage);
                 let response_gpt = JSON.parse(response.data);
@@ -127,7 +127,7 @@ function pollForGptResponse(folderName, jobId, retryCount) {
                 iframe.src = iframe.src;
                 commandCount++;
                 if (commandCount >= MAX_COMMANDS) {
-                    form.name.disabled = true;
+                    form.user_message.disabled = true;
                     submit_chat.disabled = true;
                     document.getElementById('chatbox').innerHTML += `<p>Thank you for using our beta product. Sign up for our waitlist <a href="https://www.builditforme.ai">here</a>.</p>`;
                 }
@@ -135,7 +135,7 @@ function pollForGptResponse(folderName, jobId, retryCount) {
                     document.getElementById('terminal-output').innerHTML = response.data.logs;
                 }
             } else if (response.status === 202) {
-                form.name.disabled = true;
+                form.user_message.disabled = true;
                 submit_chat.disabled = true;
                 let response_gpt = JSON.parse(response.data);
                 // Get the last message id and message from response_gpt.gpt_says_dict
@@ -165,7 +165,7 @@ function pollForGptResponse(folderName, jobId, retryCount) {
                 setTimeout(pollForGptResponse, 3000, folderName, jobId, 1);
             } else {
                 document.getElementById('chatbox').removeChild(processingMessage);
-                form.name.disabled = false;
+                form.user_message.disabled = false;
                 submit_chat.disabled = false;
                 iframe.src = iframe.src;
                 document.getElementById('chatbox').innerHTML += `<p>GPT: Your request has finished running.</p>`;

@@ -28,8 +28,8 @@ jQuery(document).ready(function($) {
 
     // Listens to chat submissions
     form.on('submit', function(event) {
-        console.log("submit event");
         event.preventDefault();
+        // scroll chatbox to bottom
         prevMessageCounts.push(chatbox.find('p').length);
         if (commandCount < MAX_COMMANDS) {
             let userInput = form.find('[name="assistant_instructions"]').val();
@@ -38,6 +38,7 @@ jQuery(document).ready(function($) {
         }
         processingMessage.html('<div id="billy-responding" class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>');
         chatbox.append(processingMessage);
+        chatbox.scrollTop(chatbox[0].scrollHeight);
         // Send the message to the server
         sendMessage(form.find('[name="assistant_instructions"]').val(), null, null, null);
     });

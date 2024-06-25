@@ -1,6 +1,7 @@
 <?php require 'bifm-config.php'; ?>
 
 <!-- This is the Billy page tool -->
+ <!--Stylesheet for handling markup-->
 <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css'>
 <div class="plugin-page">
   <div class="plugin-menu">
@@ -53,7 +54,7 @@
         </a>
       </li>
       <li>
-        <a href="admin.php?page=bifm-plugin" class="waves-effect">
+        <a href="admin.php?page=writer-settings" class="waves-effect">
           <i class="material-icons">settings</i>Settings
         </a>
       </li>

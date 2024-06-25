@@ -1,0 +1,74 @@
+
+.client {
+    display: flex;
+    height: calc(100vh - 60px);
+    width: 100%;
+}
+.chat-column {
+    border-right: 1px solid #dbdbdb;
+    padding: 1rem;  /* reduced padding */
+    width: 25%;
+    overflow-y: auto;
+}
+.future-column {
+    width: 75%;
+    padding: 2rem;
+}
+
+.future-column {
+    position: relative;
+    width: 100%;
+    padding: 10;
+}
+
+.future-column iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #dbdbdb;
+}
+
+.aspect-16-9 {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    overflow: hidden;
+}
+
+.processing-message {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.brand-logo {
+    margin-left: 10px; /* Adjust as needed */
+}
+.container img {
+    width: 100%;
+    height: auto;
+    object-fit: cover; 
+}
+.card-panel.black {
+    height: 140px;
+    overflow-y: auto;
+}
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#wpfooter {
+    display: none;
+}
+
+#my-form textarea{
+    min-height: 100px; /* Starting height */
+    overflow: hidden;
+    /*resize: none;*/
+    box-sizing: border-box;
+    /*height: auto !important;*/
+}

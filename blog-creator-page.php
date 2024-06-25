@@ -1,9 +1,8 @@
 
 <?php
 
-echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">';
 echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
-echo '<button id="backButton" class="btn waves-effect waves-light red lighten-2"><i class="material-icons left">arrow_back</i>Back</button>';
+echo '<button id="backButton" class="btn waves-effect waves-light purple grey-purple"><i class="material-icons left">arrow_back</i>Back</button>';
 echo '<div class="container">';  // Using Materialize's container for alignment and spacing
 
 // Added Tabs for clear separation
@@ -54,7 +53,7 @@ echo '   </form>';
 echo '</div>';  // End of container
 
 echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>';
-echo '<div class="card-panel red lighten-2">';
+echo '<div class="card-panel blue ">';
 echo '    <span class="white-text" id="cbc_response"></span>';
 echo '</div>';
 
