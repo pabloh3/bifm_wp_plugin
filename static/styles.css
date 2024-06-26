@@ -220,6 +220,25 @@ body {
   align-self: flex-start;
 }
 
+.bubble p {
+  margin: 0;
+}
+
+.warning-bubble {
+  background-color: #FFCDD2;
+  align-self: flex-start;
+}
+
+.writer-bubble {
+  background-color: #fffaf4;
+  align-self: flex-start;
+}
+
+.coder-bubble {
+  background-color: #fef7ff;
+  align-self: flex-start;
+}
+
 .processing-dot {
   animation: dot 1s infinite;
 }
@@ -4932,6 +4951,7 @@ small {
 .card-button {
   height: 48px;
   display: flex;
+  margin: 4px;
 }
 
 #toast-container {
@@ -6415,7 +6435,7 @@ textarea.materialize-textarea {
   min-height: 18px;
 }
 
-/* BIFM settings */
+/* BIFM styles */
 input, textarea.materialize-textarea {
   border-bottom: none;
   box-shadow: none;

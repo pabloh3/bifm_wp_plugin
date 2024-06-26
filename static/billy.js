@@ -92,7 +92,17 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
         error: function(error) {
             // Handle errors here
             console.log("error response");
-            const errorMessage = error.responseJSON.data.message;
+            // check if there's data.message
+            let errorMessage = "";
+            try {
+                errorMessage = error.responseJSON.data.message;
+            } catch (error2) {
+                try {
+                    errorMessage = error.responseText;
+                } catch (error3) {
+                    errorMessage = "An error occurred. Please try again.";
+                }
+            }
             console.log(errorMessage);
             displayWarning(errorMessage);
             document.getElementById('billy-chatbox').removeChild(processingMessage);
@@ -251,14 +261,17 @@ document.getElementById('undo-button').addEventListener('click', function() {
 });*/
 
 function displayWarning(message) {
-    var warningDiv = document.getElementById('warningMessage');
-    warningDiv.textContent = message;
+    let div = document.createElement('div');
+    div.classList.add('warning-bubble');
+    div.classList.add('bubble');
+    div.innerHTML = message;
+    chatbox.appendChild(div);
 
     // Make the warning box visible
-    warningDiv.style.display = 'block';
+    //warningDiv.style.display = 'block';
     // set 5 second timeout to remove warning
-    setTimeout(function() {
+    /*setTimeout(function() {
         warningDiv.style.display = 'none';
-    }, 5000);
+    }, 5000);*/
 }
 
