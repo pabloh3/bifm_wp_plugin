@@ -64,7 +64,38 @@
   <!-- Body outside of menu -->
   <div class="plugin-content">
   <div class="container">
-    <div id='billy-chatbox'></div>
+    <div id='billy-chatbox'>
+      <div id="suggestion-buttons" class="row suggestions">
+        <!-- First Column -->
+        <div class="col s6">
+            <button class="btn waves-effect waves-light suggestion-button transparent">How do I create a new page on WP?</button>
+            <button class="btn waves-effect waves-light suggestion-button transparent">Write a blog post on dogs</button>
+            <button id="use-writer-suggestion" class="btn-large waves-effect waves-light suggestion-button card transparent">
+              <div class="frame">
+                <div class="svg-icon writer-icon">
+                    <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Writer.svg'); ?>
+                </div>
+              </div>
+              <span class="card-title">Writer bot</span>
+              <p>Our AI-powered blog post generator crafts engaging articles efficiently, enhancing your blog’s content effortlessly.</p>
+            </button>
+        </div>
+        <!-- Second Column -->
+        <div class="col s6">
+            <button class="btn waves-effect waves-light suggestion-button transparent">Review my pages for spelling</button>
+            <button class="btn waves-effect waves-light suggestion-button transparent">How do I capture SEO traffic?</button>
+            <button id="use-coder-suggestion" class="btn-large waves-effect waves-light suggestion-button card transparent">
+              <div class="frame">
+                <div class="svg-icon coder-icon">
+                  <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Coder.svg'); ?>
+                </div>
+              </div>
+              <span class="card-title">Coder bot</span>
+              <p>Create interactive widgets and calculators for your site (requires Elementor).</p>
+            </button>
+        </div>
+      </div>
+    </div>
     <div id='billy-chatbox-input'>
         <form id='billy-form' method='POST' class='input-field'>
                 <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>

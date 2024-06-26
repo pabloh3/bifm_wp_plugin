@@ -196,6 +196,15 @@ body {
   background-color: #cccfde;
 }
 
+.btn.suggestion-button, .suggestion-button.btn-small, .suggestion-button.btn-large {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  color: #4D5477;
+  margin: 8px;
+  padding: 12px 24px 12px 24px;
+  line-height: 1.2;
+}
+
 /* CHAT CONVERSATION AND BUBBLES */
 .bubble {
   border-radius: 24px;
@@ -587,11 +596,11 @@ body {
   color: #1B1C25 !important;
 }
 
-.purple.gray-purple {
+.purple.grey-purple {
   background-color: #4D5477 !important;
 }
 
-.purple-text.text-gray-purple {
+.purple-text.text-grey-purple {
   color: #4D5477 !important;
 }
 

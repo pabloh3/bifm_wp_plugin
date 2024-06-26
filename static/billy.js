@@ -28,6 +28,10 @@ const md = window.markdownit({
 // Listens to chat submissions
 form.addEventListener('submit', (event) => {
     event.preventDefault();
+    suggestion = document.getElementById('suggestion-buttons');
+    if (suggestion) {
+        suggestion.remove();
+    }
     prevMessageCounts.push(chatbox.getElementsByTagName('p').length);
     if (commandCount < MAX_COMMANDS) {
         let userInput = form.assistant_instructions.value;
@@ -113,6 +117,44 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
     form.assistant_instructions.value = '';
     form.assistant_instructions.style.height = "9px"; 
 }
+
+// when one of the suggestions is clicked
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle clicks on suggestion buttons except for cards
+    document.querySelectorAll('.suggestion-button:not(.card)').forEach(button => {
+        button.addEventListener('click', function() {
+            let suggestion = document.getElementById('suggestion-buttons');
+            if (suggestion) {
+                suggestion.remove();
+            }
+            let question = this.innerText; // Get the button's text
+            let div = document.createElement('div');
+            div.classList.add('user-bubble');
+            div.classList.add('bubble');
+            div.innerHTML = `${question}`;
+            chatbox.appendChild(div);
+            processingMessage.innerHTML = '<div id="billy-responding" class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
+            document.getElementById('billy-chatbox').appendChild(processingMessage);
+                    sendMessage(question, null, null, null); // Send as a question to the bot
+        });
+    });
+
+    // Handle clicks on card elements
+    document.querySelectorAll('.suggestion-button.card').forEach(card => {
+        card.addEventListener('click', function() {
+            // Prevent the default form submission behavior
+            // if id ="use-writer-suggestion" redirect to admin.php?page=create-blog
+            if (this.id === "use-writer-suggestion") {
+                window.location.href = "admin.php?page=create-blog";
+            } else if (this.id === "use-coder-suggestion") {
+                window.location.href = "admin.php?page=widget-manager";
+            }
+        });
+    });
+});
+
+
+
 
 
 /*// listens for responses on messages sent.

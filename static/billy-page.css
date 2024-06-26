@@ -66,3 +66,18 @@
     max-height: calc(100vh - 250px);
     overflow-y: auto;
 }
+
+.suggestions {
+    width: 100%;
+    font-weight: 300;
+    margin-top: calc(100vh - 600px);
+    /*position: absolute;
+    bottom: 0px;*/
+}
+
+
+.suggestion-button.card  {
+    height:200px !important; 
+    display: block !important;
+    text-align: left;
+}
