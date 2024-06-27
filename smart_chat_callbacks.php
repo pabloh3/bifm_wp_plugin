@@ -30,7 +30,7 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
     if ($assistant_id === false) {
         update_option('assistant_instructions', '');
         update_option('uploaded_file_names', array());
-        update_option('assistant_id', '');
+        update_option('assistant_id', NULL);
         update_option('vector_store_id', NULL);
         //wp_send_json_error(array('message' => "Your admin hasn't configured the smart chat in the BIFM plugin."), 500);
         //wp_die();
@@ -70,7 +70,7 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
         if ($status_code == 200) {
             // check if site_info is set, if so save assistant_id to options
-            if ($assistant_id == false && isset($response_body['site_info'])) {
+            if ($assistant_id == NULL && isset($response_body['site_info'])) {
                 $site_info = $response_body['site_info'];
                 if (isset($site_info['assistant_id'])) {
                     error_log("Assistant ID stored from first-time call to chat: " . $site_info['assistant_id']);
