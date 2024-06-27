@@ -88,7 +88,7 @@ function bifm_enqueue_scripts() {
     if (isset($_GET['page'])) {
         if ($_GET['page'] == 'create-blog') {
             // Enqueue scripts for the blog page
-            wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), '1.0.69', true);
+            wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/static/blog-creator-script.js'), true);
 
             // Localize the script with your data
             $translation_array = array(
@@ -101,7 +101,7 @@ function bifm_enqueue_scripts() {
             
         } elseif ($_GET['page'] == 'create-chat') {
             // Enqueue scripts for the chat page
-            wp_enqueue_script('cbc_script_chat', plugins_url('/static/smart-chat-script.js', __FILE__), array('jquery'), '1.0.10', true); 
+            wp_enqueue_script('cbc_script_chat', plugins_url('/static/smart-chat-script.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/static/smart-chat-script.js'), true);
             // Localize the script with your data
             $translation_array = array(
                 'ajax_url' => admin_url('admin-ajax.php'),
@@ -111,7 +111,7 @@ function bifm_enqueue_scripts() {
             wp_localize_script('cbc_script_chat', 'cbc_script_object_chat', $translation_array);
 
         } elseif ($_GET['page'] == 'widget-manager') {
-            wp_enqueue_script('cbc_script_widget_mgr', plugins_url('/static/widget-manager.js', __FILE__), array('jquery'), '1.0.69', true);
+            wp_enqueue_script('cbc_script_widget_mgr', plugins_url('/static/widget-manager.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/static/widget-manager.js'), true);
         } 
     }
 }
@@ -123,8 +123,8 @@ function ewm_admin_page_content() {
     //this code was taken to admin-page.php
     include plugin_dir_path(__FILE__) . 'admin-page.php';
     // Externalize JavaScript Code
-    wp_enqueue_script('my-custom-script', plugin_dir_url(__FILE__) . 'static/admin-page.js', array('jquery'), '1.0.2', true);
-    wp_enqueue_script('billy-script', plugin_dir_url(__FILE__) . 'static/billy.js', array('jquery'), '1.0.5', true);
+    wp_enqueue_script('my-custom-script', plugins_url('static/admin-page.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/admin-page.js'), true);
+    wp_enqueue_script('billy-script', plugin_dir_url(__FILE__) . 'static/billy.js', array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/billy.js'), true);
     wp_localize_script('billy-script', 'billy_localize', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('billy-nonce')
@@ -170,8 +170,8 @@ function builditforme_ewm_enqueue_admin_scripts($hook) {
     // Check if we're on the create-widget page to load that JS
     if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-widget')) {
         // Enqueue CSS and auto
-        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)),[],filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), false);
-        wp_enqueue_script('my-plugin-script', plugin_dir_url(__FILE__) . 'static/main.js', array('jquery'), '1.0.76', true);
+        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)), [], filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), false);
+        wp_enqueue_script('my-plugin-script', plugin_dir_url(__FILE__) . 'static/main.js', array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/main.js'), true);        
         // Pass ajax_url to script.js
         wp_localize_script('my-plugin-script', 'my_plugin', array(
             'ajax_url' => admin_url('admin-ajax.php'),
