@@ -28,8 +28,12 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
     $assistant_id = get_option('assistant_id');
     error_log("Assistant ID: " . $assistant_id);
     if ($assistant_id === false) {
-        wp_send_json_error(array('message' => "Your admin hasn't configured the smart chat in the BIFM plugin."), 500);
-        wp_die();
+        update_option('assistant_instructions', '');
+        update_option('uploaded_file_names', array());
+        update_option('assistant_id', '');
+        update_option('vector_store_id', NULL);
+        //wp_send_json_error(array('message' => "Your admin hasn't configured the smart chat in the BIFM plugin."), 500);
+        //wp_die();
     }
     if (isset($_SESSION['thread_id'])) {
         $thread_id = $_SESSION['thread_id'];
@@ -62,9 +66,17 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
         wp_send_json_error(array('message' => "Something went wrong: $error_response"), 500);
     } else {
         $status_code = wp_remote_retrieve_response_code($response);
-        error_log("Status code: " . $status_code);
+        error_log("Status code from chat response: " . $status_code);
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
         if ($status_code == 200) {
+            // check if site_info is set, if so save assistant_id to options
+            if ($assistant_id == false && isset($response_body['site_info'])) {
+                $site_info = $response_body['site_info'];
+                if (isset($site_info['assistant_id'])) {
+                    error_log("Assistant ID stored from first-time call to chat: " . $site_info['assistant_id']);
+                    update_option('assistant_id', $site_info['assistant_id']);
+                }
+            }
             handle_response($response_body, $message);
         } else {
             error_log("Got a not 200 response" . $status_code);
