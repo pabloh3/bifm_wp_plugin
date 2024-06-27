@@ -11,7 +11,7 @@
         <i class="material-icons left">arrow_back</i>
         Back
     </a>
-    <div class="row">
+    <div class="bifm-row">
         <div class="plugin-menu">
             <ul id="slide-out" class="sidenav sidenav-fixed browser-default">
                 <li>
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-    <div class="row">
+    <div class="bifm-row">
         <?php
         $colors = [
             'secondary-color or blue' => 'blue base',
@@ -86,7 +86,7 @@
         }
         ?>
     </div>
-    <div class="row">
+    <div class="bifm-row">
         <div class="file-field col s12 l6">
             <div class="btn bifm-btn waves-effect waves-light blue lighten-2">
                 <i class="material-icons left">cloud_upload</i>
@@ -99,7 +99,7 @@
     <button class="btn bifm-btn waves-effect waves-light red lighten-2" type="submit" name="action" id="reset_chat">Reset chatbot</button>
     <h5>Inputs</h5>
     <form id="smart-chat-form" action="#" method="post">
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field large col s12 l8">
                 <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>
                 <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">
@@ -114,7 +114,7 @@
                 <i class="material-icons">send</i>
             </button>
         </div>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l8">
                 <select id="select_input_1" name="select_input_1">
                     <option value="" disabled selected>Placeholder</option>
@@ -131,37 +131,37 @@
                 var instances = M.FormSelect.init(elems);
             });
         </script>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l8">
                 <textarea id="textarea_input_1" name="textarea_input_1" class="materialize-textarea" placeholder="Ask Billy for any assistance you need"></textarea>
                 <label for="textarea_input_1">Label</label>
             </div>
         </div>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l8">
                 <input id="email_input" type="email" name="email_input">
                 <label for="email_input">Email Input</label>
             </div>
         </div>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l8">
                 <input id="password_input" type="password" name="password_input">
                 <label for="password_input">Password Input</label>
             </div>
         </div>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l8">
                 <input id="date_input" type="text" class="datepicker" name="date_input">
                 <label for="date_input">Date Input</label>
             </div>
         </div>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l8">
                 <input id="time_input" type="text" class="timepicker" name="time_input">
                 <label for="time_input">Time Input</label>
             </div>
         </div>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l8">
                 <select id="select_input" name="select_input">
                     <option value="" disabled selected>Choose your option</option>
@@ -172,7 +172,7 @@
                 <label for="select_input">Select Input</label>
             </div>
         </div>
-        <div class="row">
+        <div class="bifm-row">
         <div class="input-field col s12 l8">
             <label>
                 <input type="checkbox" id="checkbox_input" name="checkbox_input">
@@ -182,7 +182,7 @@
     </div>
 
     <!-- Radio buttons -->
-    <div class="row">
+    <div class="bifm-row">
         <div class="input-field col s12 l8">
             <p>
                 <label>
@@ -200,7 +200,7 @@
     </div>
 
     <!-- Switch -->
-    <div class="row">
+    <div class="bifm-row">
         <div class="input-field bifm-col s12 l8">
             <div class="switch">
                 <label>
@@ -215,7 +215,7 @@
 </form>
 
 <h5>Cards</h5>
-<div class="row">
+<div class="bifm-row">
     <div class="bifm-col s12 m6 l4">
         <div class="card tool-s-chat-bubble writer-bot">
             <div class="card-content frame-10120667">

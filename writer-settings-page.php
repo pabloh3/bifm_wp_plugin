@@ -19,7 +19,7 @@
     <form id="bifm-settings-form" action="#" method="post">
         <?php $user_id = get_current_user_id(); ?>
         <?php $username = get_user_meta($user_id, 'username', true); ?>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field bifm-col s12 l4">
                 <input id="blog_author_username" type="text" name="blog_author_username" class="validate materialize-textarea" value="<?= htmlspecialchars($username) ?>" <?= is_null($username) ? '' : 'required' ?>>
                 <label for="blog_author_username">Blog author's username</label>
@@ -33,7 +33,7 @@
         </div>
 
         <?php $blog_language = get_user_meta($user_id, 'blog_language', true); ?>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l4">
                 <select id="blog_language" name="blog_language">
                     <option value="" disabled <?= empty($blog_language) ? 'selected' : '' ?>>Choose your option</option>
@@ -46,7 +46,7 @@
 
         <?php $image_width = get_user_meta($user_id, 'image_width', true); ?>
         <?php $image_height = get_user_meta($user_id, 'image_height', true); ?>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l2">
                 <select id="image_width" name="image_width">
                     <option value="" disabled <?= empty($image_width) ? 'selected' : '' ?>>Width</option>
@@ -67,7 +67,7 @@
         </div>
 
         <?php $website_description = get_user_meta($user_id, 'website_description', true); ?>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l8">
                 <textarea id="website_description" name="website_description" class="materialize-textarea"><?= htmlspecialchars($website_description) ?></textarea>
                 <label for="website_description"><b>Instructions for the writer bot:</b> Describe your website and how you want your posts written.</label>
@@ -75,7 +75,7 @@
         </div>
 
         <?php $image_style = get_user_meta($user_id, 'image_style', true); ?>
-        <div class="row">
+        <div class="bifm-row">
             <div class="input-field col s12 l8">
                 <textarea id="image_style" name="image_style" class="materialize-textarea"><?= htmlspecialchars($image_style) ?></textarea>
                 <label for="image_style"><b>Instructions for the image generation bot:</b> Describe the style you want for your images.</label>

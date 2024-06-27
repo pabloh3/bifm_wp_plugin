@@ -18,7 +18,7 @@ echo '</ul>';
 echo '<div id="test-swipe-1" class="bifm-col s12">'; // Tab container for single post creation
 echo '    <h5>Create Single Blogpost</h5>';
 echo '    <form id="cbc_form">';
-echo '        <div class="row">';  // using Materialize's row for structuring the form
+echo '        <div class="bifm-row">';  // using Materialize's row for structuring the form
 echo '            <div class="input-field bifm-col s12">';  // input-field class for Materialize styled inputs
 echo '                <input type="text" name="keyphrase" id="keyphrase_input" required>';
 echo '                <label for="keyphrase_input">Keyphrase</label>';  // label AFTER input for Materialize styling
@@ -38,7 +38,7 @@ echo '</div>';
 echo '<div id="test-swipe-2" class="bifm-col s12">'; // Tab container for bulk post creation
 echo '  <h5>Create Blogpost in Bulk</h5>';
 echo '  <form id="cbc_csv_upload_form" method="post" enctype="multipart/form-data">';
-echo '      <div class="row">';  // using Materialize's row for structuring the form
+echo '      <div class="bifm-row">';  // using Materialize's row for structuring the form
 echo '          <div class="input-field bifm-col s12">';
 echo '              <input type="file" name="cbc_csv_file" id="cbc_csv_file">';
 echo '              <b>CSV Instructions: </b>Single column containing the keyphrases you are trying to target. No header.<br/>';

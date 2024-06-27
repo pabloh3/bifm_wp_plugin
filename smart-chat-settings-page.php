@@ -12,7 +12,7 @@
         
         <form id="smart-chat-form" action="#" method="post">
             <?php $assistant_instructions = get_option('assistant_instructions'); ?>
-            <div class="row">
+            <div class="bifm-row">
                 <div class="input-field bifm-col s12 l8">
                     <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"><?= stripslashes($assistant_instructions) ?: ''; ?></textarea>
                     <label for="assistant_instructions">Give the bot instructions for how to respond. Start with something like "We use Elementor to edit our pages..."</label>
@@ -22,7 +22,7 @@
             <h5>Define the files that will be used to answer chat questions.</h5>
             <div>You can upload up to 5 files. The maximum file size is 512 MB and no more than 2 million tokens (approx 1.5M words).</div>
             <div>Accepted file types: .c, .cpp, .docx, .html, .java, .json, .md, .pdf, .php, .pptx, .py, .rb, .tex, .txt</div>
-            <div class="row">
+            <div class="bifm-row">
                 <div class="file-field input-field bifm-col s12 l6">
                     <div class="btn bifm-btn waves-effect waves-light">
                         <i class="material-icons left">cloud_upload</i>
