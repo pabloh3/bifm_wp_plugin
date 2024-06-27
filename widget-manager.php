@@ -170,17 +170,17 @@ function builditforme_ewm_enqueue_admin_scripts($hook) {
     // Check if we're on the create-widget page to load that JS
     if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-widget')) {
         // Enqueue CSS and auto
-        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)), [], filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), false);
+        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)), [], filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), 'all');
         wp_enqueue_script('my-plugin-script', plugin_dir_url(__FILE__) . 'static/main.js', array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/main.js'), true);        
         // Pass ajax_url to script.js
         wp_localize_script('my-plugin-script', 'my_plugin', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('my-plugin-nonce')
         ));
-    }
-    else {
-        # in all admin pages load the styles
-        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)),[],filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), false);
+    // case where we're in any other of the plugin pages
+    } else if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-blog' || $_GET['page'] == 'bifm-plugin' || $_GET['page'] == 'create-chat' || $_GET['page'] == 'widget-manager' || $_GET['page'] == 'design_system' || $_GET['page'] == 'writer-settings')) {
+        // in all admin pages load the styles
+        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)), [], filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), 'all');
     }
 }
 add_action('admin_enqueue_scripts', 'builditforme_ewm_enqueue_admin_scripts');
