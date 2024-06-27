@@ -2917,11 +2917,11 @@ a {
 }
 
 /* 2dp elevation modified*/
-.z-depth-1, .sidenav, .collapsible, .dropdown-content, .btn-floating, .btn, .btn-small, .btn-large, .toast, .card, .card-panel, nav {
+.z-depth-1, .sidenav, .collapsible, .dropdown-content, .btn-floating, .btn, .btn-small, .btn-large, .billy-btn, .toast, .card, .card-panel, nav {
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
-.z-depth-1-half, .btn-floating:hover, .btn:hover, .btn-small:hover, .btn-large:hover {
+.z-depth-1-half, .btn-floating:hover, .btn:hover, .btn-small:hover, .btn-large:hover, .billy-btn:hover {
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
 }
 
@@ -5140,7 +5140,7 @@ small {
   visibility: hidden;
 }
 
-.btn, .btn-small, .btn-large,
+.btn, .btn-small, .btn-large, .billy-btn,
 .btn-flat {
   border: none;
   border-radius: 2px;
@@ -5195,7 +5195,7 @@ small {
 
 .btn,
 .btn-small,
-.btn-large, .btn.billy-btn,
+.btn-large, .billy-btn, .btn.billy-btn,
 .btn-floating,
 .btn-flat {
   display: flex !important;
@@ -5208,7 +5208,7 @@ small {
   font-size: 14px;
   outline: 0;
 }
-.btn i, .btn.billy-btn i,
+.btn i, .billy-btn i, .btn.billy-btn i,
 .btn-floating i,
 .btn-large i,
 .btn-small i,
@@ -5217,12 +5217,12 @@ small {
   line-height: inherit;
 }
 
-.btn:focus, .btn-small:focus, .btn-large:focus,
+.btn:focus, .btn-small:focus, .btn-large:focus, .billy-btn:focus,
 .btn-floating:focus {
   background-color: #263790;
 }
 
-.btn, .btn-small, .btn-large {
+.btn, .btn-small, .btn-large, .billy-btn {
   text-decoration: none;
   color: #fff;
   background-color: #3147B8;
@@ -5231,7 +5231,7 @@ small {
   transition: background-color 0.2s ease-out;
   cursor: pointer;
 }
-.btn:hover, .btn-small:hover, .btn-large:hover {
+.btn:hover, .btn-small:hover, .btn-large:hover, .billy-btn:hover {
   background-color: #2f43a9;
 }
 
