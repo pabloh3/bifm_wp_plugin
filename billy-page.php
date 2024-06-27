@@ -42,7 +42,7 @@
             echo "<div class='thread-list'>";
             foreach ($assistant_thread_data as $thread_id => $message_snippet) {
                 $display_text = $message_snippet ?: htmlspecialchars($thread_id); // Fallback to thread ID if snippet is not available
-                echo "<a href='' class='waves-effect waves-light btn thread-btn' data-tooltip='Chat with Billy' data-thread-id='" . htmlspecialchars($thread_id) . "'>" . $display_text . "</a>";
+                echo "<a href='' class='waves-effect waves-light bifm-btn thread-btn' data-tooltip='Chat with Billy' data-thread-id='" . htmlspecialchars($thread_id) . "'>" . $display_text . "</a>";
             }
             echo "</div>";
         }
@@ -78,7 +78,7 @@
   <div class="plugin-content">
   <div class="container">
     <div id='billy-chatbox'>
-      <div id="suggestion-buttons" class="row suggestions">
+      <div id="suggestion-buttons" class="bifm-row suggestions">
         <!-- First Column -->
         <div class="col s6">
             <button class="btn billy-btn waves-effect waves-light suggestion-button transparent">How do I create a new page on WP?</button>
@@ -95,8 +95,8 @@
         </div>
         <!-- Second Column -->
         <div class="col s6">
-            <button class="btn waves-effect waves-light suggestion-button transparent">Review my pages for spelling</button>
-            <button class="btn waves-effect waves-light suggestion-button transparent">How do I capture SEO traffic?</button>
+            <button class="btn billy-btn waves-effect waves-light suggestion-button transparent">Review my pages for spelling</button>
+            <button class="btn billy-btn waves-effect waves-light suggestion-button transparent">How do I capture SEO traffic?</button>
             <button id="use-coder-suggestion" class="btn-large waves-effect waves-light suggestion-button card transparent">
               <div class="frame">
                 <div class="svg-icon coder-icon">

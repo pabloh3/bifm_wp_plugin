@@ -6,7 +6,7 @@
     }
 </style>
 
-<a href="admin.php?page=bifm-plugin" class="btn waves-effect waves-light purple light-grey" style="width: 120px;">
+<a href="admin.php?page=bifm-plugin" class="btn bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
     Back
 </a>
@@ -82,7 +82,7 @@
             </div>
         </div>
 
-        <button class="btn waves-effect waves-light" type="submit" name="action">Update</button>
+        <button class="bifm-btn btn waves-effect waves-light" type="submit" name="action">Update</button>
     </form>
 </div>
 

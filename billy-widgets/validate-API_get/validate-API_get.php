@@ -11,8 +11,8 @@ function get_widget($parameters, $run_id, $tool_call_id) {
         <p>Billy requested access to read your site's configuration and draft content.</p>
     </div>
     <div style='display: flex;'>
-        <button id='authorize-API_get-" . $widget_id . "' class='btn waves-effect waves-light card-button'>Go ahead</button>
-        <button id='reject-API_get-" . $widget_id . "' class='btn waves-effect waves-light grey card-button'>Nope</button>
+        <button id='authorize-API_get-" . $widget_id . "' class='btn bifm-btn waves-effect waves-light card-button'>Go ahead</button>
+        <button id='reject-API_get-" . $widget_id . "' class='btn bifm-btn waves-effect waves-light grey card-button'>Nope</button>
     </div>
 </div>";
 

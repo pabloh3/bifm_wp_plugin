@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-    <a href="admin.php?page=bifm-plugin" class="btn waves-effect waves-light purple light-grey" style="width: 120px;">
+    <a href="admin.php?page=bifm-plugin" class="btn bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
         <i class="material-icons left">arrow_back</i>
         Back
     </a>
@@ -28,7 +28,7 @@
             </ul>
         </div>
         <div class="plugin-content">
-            <button id="backButton" class="btn waves-effect waves-light red lighten-2">
+            <button id="backButton" class="btn bifm-btn waves-effect waves-light red lighten-2">
                 <i class="material-icons left">arrow_back</i>Back
             </button>
             <div class="container">
@@ -88,15 +88,15 @@
     </div>
     <div class="row">
         <div class="file-field col s12 l6">
-            <div class="btn waves-effect waves-light blue lighten-2">
+            <div class="btn bifm-btn waves-effect waves-light blue lighten-2">
                 <i class="material-icons left">cloud_upload</i>
                 <span>Upload Files</span>
                 <input type="file" id="fileUpload" name="files[]" multiple accept=".c, .cpp, application/vnd.openxmlformats-officedocument.wordprocessingml.document, .html, .java, application/json, .md, application/pdf, .php, application/vnd.openxmlformats-officedocument.presentationml.presentation, .py, .rb, .tex, .txt">
             </div>
         </div>
     </div>
-    <button class="btn waves-effect waves-light" type="submit" name="action">Save Changes</button>
-    <button class="btn waves-effect waves-light red lighten-2" type="submit" name="action" id="reset_chat">Reset chatbot</button>
+    <button class="btn bifm-btn waves-effect waves-light" type="submit" name="action">Save Changes</button>
+    <button class="btn bifm-btn waves-effect waves-light red lighten-2" type="submit" name="action" id="reset_chat">Reset chatbot</button>
     <h5>Inputs</h5>
     <form id="smart-chat-form" action="#" method="post">
         <div class="row">
@@ -229,7 +229,7 @@
                     Our AI-powered blog post generator crafts engaging articles efficiently, enhancing your blog’s content effortlessly.
                 </p>
             </div>
-            <button class="btn waves-effect waves-light card-button writer-button" type="submit" name="action">Go to the writer bot</button>
+            <button class="btn bifm-btn waves-effect waves-light card-button writer-button" type="submit" name="action">Go to the writer bot</button>
         </div>
     </div>
 
@@ -246,7 +246,7 @@
                     Our AI-powered code generator creates efficient code, enhancing your projects effortlessly.
                 </p>
             </div>
-            <button class="btn waves-effect waves-light card-button coder-button" type="submit" name="action">Go to the coder bot</button>
+            <button class="btn bifm-btn waves-effect waves-light card-button coder-button" type="submit" name="action">Go to the coder bot</button>
         </div>
     </div>
 </div>

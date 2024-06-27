@@ -21,8 +21,8 @@ function get_widget($parameters, $run_id, $tool_call_id) {
                 <p>Do you want to authorize our writer bot to build blog posts for: <b>" . $keyphrase . "</b>?</p>
             </div>
             <div style='display:flex;'>
-                <button id='authorize-writer-" . $widget_id . "' class='btn waves-effect waves-light card-button writer-button' type='submit' name='action'>Go ahead</button>
-                <button id='reject-writer-" . $widget_id . "' class='btn waves-effect waves-light card-button grey'>Nope</button>
+                <button id='authorize-writer-" . $widget_id . "' class='btn bifm-btn waves-effect waves-light card-button writer-button' type='submit' name='action'>Go ahead</button>
+                <button id='reject-writer-" . $widget_id . "' class='btn bifm-btn waves-effect waves-light card-button grey'>Nope</button>
             </div>
         </div>
     </div>";

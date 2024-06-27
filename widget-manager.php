@@ -183,7 +183,7 @@ function builditforme_ewm_enqueue_admin_scripts($hook) {
         wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)), [], filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), 'all');
     }
 }
-add_action('admin_enqueue_scripts', 'builditforme_ewm_enqueue_admin_scripts');
+add_action('admin_enqueue_scripts', 'builditforme_ewm_enqueue_admin_scripts',90);
 
 
 
