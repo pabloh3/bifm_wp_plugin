@@ -11,7 +11,7 @@
     Back
 </a>
 
-<div id="settings" class="col s12">
+<div id="settings" class="bifm-col s12">
     <h5>Settings</h5>
     <p>Here you can update the settings for blog creation.</p>
     <p>Please note that the blog creator requires the <a href="https://github.com/WP-API/Basic-Auth">"JSON Basic Authentication"</a> plugin by the Wordpress API team to be installed.</p>
@@ -20,13 +20,13 @@
         <?php $user_id = get_current_user_id(); ?>
         <?php $username = get_user_meta($user_id, 'username', true); ?>
         <div class="row">
-            <div class="input-field col s12 l4">
+            <div class="input-field bifm-col s12 l4">
                 <input id="blog_author_username" type="text" name="blog_author_username" class="validate materialize-textarea" value="<?= htmlspecialchars($username) ?>" <?= is_null($username) ? '' : 'required' ?>>
                 <label for="blog_author_username">Blog author's username</label>
                 <p style="color:red">Create an author account that only has author access, DO NOT use an admin account.</p>
             </div>
 
-            <div class="input-field col s12 l4">
+            <div class="input-field bifm-col s12 l4">
                 <input id="blog_author_password" type="password" name="blog_author_password" class="validate materialize-textarea">
                 <label for="blog_author_password">Blog author's password</label>
             </div>

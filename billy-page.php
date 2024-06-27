@@ -80,7 +80,7 @@
     <div id='billy-chatbox'>
       <div id="suggestion-buttons" class="bifm-row suggestions">
         <!-- First Column -->
-        <div class="col s6">
+        <div class="bifm-col s6">
             <button class="btn billy-btn waves-effect waves-light suggestion-button transparent">How do I create a new page on WP?</button>
             <button class="btn billy-btn waves-effect waves-light suggestion-button transparent">Write a blog post on dogs</button>
             <button id="use-writer-suggestion" class="btn-large waves-effect waves-light suggestion-button card transparent">
@@ -94,7 +94,7 @@
             </button>
         </div>
         <!-- Second Column -->
-        <div class="col s6">
+        <div class="bifm-col s6">
             <button class="btn billy-btn waves-effect waves-light suggestion-button transparent">Review my pages for spelling</button>
             <button class="btn billy-btn waves-effect waves-light suggestion-button transparent">How do I capture SEO traffic?</button>
             <button id="use-coder-suggestion" class="btn-large waves-effect waves-light suggestion-button card transparent">

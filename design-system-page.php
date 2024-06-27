@@ -32,7 +32,7 @@
                 <i class="material-icons left">arrow_back</i>Back
             </button>
             <div class="container">
-                <div id="smart-chat" class="col s12">
+                <div id="smart-chat" class="bifm-col s12">
                     <h1>This is an h1</h1>
                     <h2>This is an h2</h2>
                     <h3>This is an h3</h3>
@@ -201,7 +201,7 @@
 
     <!-- Switch -->
     <div class="row">
-        <div class="input-field col s12 l8">
+        <div class="input-field bifm-col s12 l8">
             <div class="switch">
                 <label>
                     Off
@@ -216,7 +216,7 @@
 
 <h5>Cards</h5>
 <div class="row">
-    <div class="col s12 m6 l4">
+    <div class="bifm-col s12 m6 l4">
         <div class="card tool-s-chat-bubble writer-bot">
             <div class="card-content frame-10120667">
                 <div class="frame">
@@ -233,7 +233,7 @@
         </div>
     </div>
 
-    <div class="col s12 m6 l4">
+    <div class="bifm-col s12 m6 l4">
         <div class="card tool-s-chat-bubble coder-bot">
             <div class="card-content frame-10120667">
                 <div class="frame">

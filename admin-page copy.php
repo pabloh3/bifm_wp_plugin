@@ -12,7 +12,7 @@
     echo '<div class="row">';
     //disclaimers for staging
 
-    echo '<div class="col s12">';
+    echo '<div class="bifm-col s12">';
     echo '<ul class="tabs">';
     echo '<li class="tab bifm-col s2"><a href="#smart-chat">Smart chat</a></li>';
     echo '<li class="tab bifm-col s2"><a href="#blog-generator">Blog Generator</a></li>';

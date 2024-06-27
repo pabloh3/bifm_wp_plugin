@@ -3,7 +3,7 @@
     <i class="material-icons left">arrow_back</i>
     Back
 </a>
-<div id="widget-generator" class="col s12">
+<div id="widget-generator" class="bifm-col s12">
     <h5>Widget Generator</h5>
     <!-- Button to create a new widget -->
     <button id="createNewWidget" class="btn bifm-btn  waves-effect waves-light">Create new widget</button>

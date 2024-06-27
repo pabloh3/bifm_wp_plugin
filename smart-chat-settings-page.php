@@ -6,14 +6,14 @@
 </a>
 
 <div class="container">
-    <div id="smart-chat" class="col s12">
+    <div id="smart-chat" class="bifm-col s12">
         <h5>Smart chat</h5>
         <p>Here you can update the settings for smart chat.</p>
         
         <form id="smart-chat-form" action="#" method="post">
             <?php $assistant_instructions = get_option('assistant_instructions'); ?>
             <div class="row">
-                <div class="input-field col s12 l8">
+                <div class="input-field bifm-col s12 l8">
                     <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"><?= stripslashes($assistant_instructions) ?: ''; ?></textarea>
                     <label for="assistant_instructions">Give the bot instructions for how to respond. Start with something like "We use Elementor to edit our pages..."</label>
                 </div>
@@ -23,7 +23,7 @@
             <div>You can upload up to 5 files. The maximum file size is 512 MB and no more than 2 million tokens (approx 1.5M words).</div>
             <div>Accepted file types: .c, .cpp, .docx, .html, .java, .json, .md, .pdf, .php, .pptx, .py, .rb, .tex, .txt</div>
             <div class="row">
-                <div class="file-field input-field col s12 l6">
+                <div class="file-field input-field bifm-col s12 l6">
                     <div class="btn bifm-btn waves-effect waves-light">
                         <i class="material-icons left">cloud_upload</i>
                         <span>Upload Files</span>
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <div id="uploadedFilesSection" class="col l6">
+            <div id="uploadedFilesSection" class="bifm-col l6">
                 <h5>Uploaded files</h5>
                 <div id="uploadedFiles" class="l6">
                     <ul class="collection">
