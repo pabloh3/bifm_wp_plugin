@@ -37,7 +37,6 @@
       <li>
       <!-- load from uptions the values of assistant_thread_ids and add a button for each -->
       <?php
-        echo "thread_id: " . $_SESSION['thread_id'];
         $assistant_thread_data = get_option('assistant_thread_data');
         if ($assistant_thread_data) {
             echo "<div class='thread-list'>";
