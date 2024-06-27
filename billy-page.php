@@ -34,6 +34,20 @@
           </div>
         </div>
       </li>
+      <li>
+      <!-- load from uptions the values of assistant_thread_ids and add a button for each -->
+      <?php
+        echo "thread_id: " . $_SESSION['thread_id'];
+        $assistant_thread_data = get_option('assistant_thread_data');
+        if ($assistant_thread_data) {
+            echo "<div class='thread-list'>";
+            foreach ($assistant_thread_data as $thread_id => $message_snippet) {
+                $display_text = $message_snippet ?: htmlspecialchars($thread_id); // Fallback to thread ID if snippet is not available
+                echo "<a href='' class='waves-effect waves-light btn thread-btn' data-tooltip='Chat with Billy' data-thread-id='" . htmlspecialchars($thread_id) . "'>" . $display_text . "</a>";
+            }
+            echo "</div>";
+        }
+      ?>
       <!-- spacer -->
       <li><div class="section-spacer"></div></li>
       <li><div class="section-header"><h6>Tools</h6></div></li>
@@ -55,7 +69,7 @@
       </li>
       <li>
         <a href="admin.php?page=writer-settings" class="waves-effect">
-          <i class="material-icons">settings</i>Settings
+          <i class="material-icons">settings</i>Writer settings
         </a>
       </li>
     </ul>

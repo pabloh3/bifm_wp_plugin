@@ -81,3 +81,18 @@
     display: block !important;
     text-align: left;
 }
+
+
+
+/* styles for threads */
+.thread-btn {
+    border-radius: 12px; /* Rounded corners as specified */
+    background-color: #CDD2EA; /* Custom background color */
+    color: #1B1C25;
+    margin: 4px;
+}
+/* darken thread-btn 10% on gover */
+.thread-btn:hover {
+    background-color: #B4B9D1;
+    color: #1B1C25;
+}

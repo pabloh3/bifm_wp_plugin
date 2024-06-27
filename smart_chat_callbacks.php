@@ -11,8 +11,6 @@ if (!session_id()) {
 //assistant start
 add_action('wp_ajax_send_chat_message', 'handle_chat_message');
 function handle_chat_message() {
-    error_log("handle_chat_message called");
-    error_log("nonce received: " . $_POST['nonce']);
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
         wp_send_json_error(array('message' => "Couldn't verify user"), 500);
     }
@@ -67,7 +65,7 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
         error_log("Status code: " . $status_code);
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
         if ($status_code == 200) {
-            handle_response($response_body);
+            handle_response($response_body, $message);
         } else {
             error_log("Got a not 200 response" . $status_code);
             if (isset($response_body['message'])){
@@ -85,12 +83,33 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
     wp_die();
 }
 
-//handle response from API
-function handle_response($body) {
-    // case where just a regular chat response
+// Handle response from API
+function handle_response($body, $message) {
+    // Case where just a regular chat response
     if (isset($body['thread_id'])) {
         $_SESSION['thread_id'] = $body['thread_id'];
+        $thread_id = $body['thread_id'];
+        // Get the existing thread data from the WP option
+        $thread_data = get_option('assistant_thread_data', array());
+
+        // Check if the thread ID is not already in the list of threads
+        if (!array_key_exists($thread_id, $thread_data)) {
+            // Create a snippet of the first 20 characters of the message
+            $message_snippet = substr($message, 0, 20) . '...';
+            // Add the new thread ID with its message snippet
+            $thread_data[$thread_id] = $message_snippet;
+        }
+
+        // Make sure only the last 5 threads are kept
+        if (count($thread_data) > 5) {
+            // Removes the oldest thread ID
+            array_shift($thread_data); 
+        }
+
+        // Update the option with the new list of thread data
+        update_option('assistant_thread_data', $thread_data);
     }
+
     if (!isset($body['status']) || $body['status'] == 'chatting' || $body['status'] == 'error') {
         if (isset($body['data'])) {
             wp_send_json_success(array('message' => $body['data']));
@@ -120,6 +139,79 @@ function handle_response($body) {
     }
 }
 
+// add action for case where new_chat is clicked
+add_action('wp_ajax_new_chat', 'new_chat');
+function new_chat() {
+    //check nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
+        wp_send_json_error(array('message' => "Couldn't verify user"), 500);
+    }
+    $assistant_id = get_option('assistant_id');
+    if ($assistant_id === false) {
+        wp_send_json_error(array('message' => "Your admin hasn't configured the smart chat in the BIFM plugin."), 500);
+        wp_die();
+    }
+    // clear the thread_id from session
+    unset($_SESSION['thread_id']);
+    $thread_id = null;
+    //return success
+    wp_send_json_success(array('message' => 'New chat started', 'thread_id' => $thread_id));
+}
+
+/* Load an old thread */
+add_action('wp_ajax_load_billy_chat', 'load_billy_chat'); // wp_ajax_{action} for logged-in users
+function load_billy_chat() {
+    error_log("load chat called");
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
+        wp_send_json_error(array('message' => "Couldn't verify user"), 500);
+    }
+    $thread_id = sanitize_text_field($_POST['thread_id']);
+    if (!session_id()) {
+        session_start();
+    }
+    $_SESSION['thread_id'] = $thread_id; // Set the new current thread ID
+
+    $thread_ids = get_option('assistant_thread_data');
+    if (($key = array_search($thread_id, $thread_ids)) !== false) {
+        unset($thread_ids[$key]);
+        array_unshift($thread_ids, $thread_id); // Move this thread to the top
+        update_option('assistant_thread_data', $thread_ids);
+    }
+
+    // Call the API to get the thread
+    global $API_URL;
+    $url = $API_URL . '/load_thread'; // Make sure this matches your Flask route
+    error_log("calling api for load threads");
+    // post to the API
+    $response = wp_remote_post($url, array(
+        'headers' => array('Content-Type' => 'application/json'),
+        'body' => json_encode(array(
+            'thread_id' => $thread_id
+        )),
+        'data_format' => 'body',
+        'timeout' => 60 // Set the timeout (in seconds)
+    ));
+    
+    if ($response instanceof WP_Error) {
+        error_log("Response to load thread contains an error.");
+        wp_send_json_error(array('message' => "Couldn't load thread: " . $response->get_error_message()), 500);
+    } elseif (wp_remote_retrieve_response_code($response) != 200) {
+        error_log("Response to load thread is not 200.");
+        wp_send_json_error(array('message' => "Couldn't load thread: " . wp_remote_retrieve_response_message($response)), 500);
+    } else {
+        $response_body = json_decode(wp_remote_retrieve_body($response), true);
+        error_log("Response body status: ", $response_body['status']);
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+        wp_send_json_success($data);
+    }
+    wp_send_json_success(array('message' => "Thread $thread_id loaded and moved up."),200);
+}
+
+
+
+
+// handle widgets //
 function include_widget($widget_name, $parameters, $run_id, $tool_call_id) {
     include_once __DIR__ . '/billy-widgets/validate-' . $widget_name . '/validate-' . $widget_name . '.php';
     $response = get_widget($parameters, $run_id, $tool_call_id);

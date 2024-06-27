@@ -5,7 +5,7 @@ Tags: widgets, elementor, AI, automation, management
 Requires at least: 5.0
 Tested up to: 6.4.3
 Requires PHP: 7.0
-Stable tag: 1.0.18
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -104,6 +104,9 @@ Wait at least 3 minutes for each line that you included, then visit the “Entra
 
 = 1.1 =
 Fixed widget saving issues.
+
+= 1.2 =
+Redesign and Billy has reading powers.
 
 == External API Usage ==
 
