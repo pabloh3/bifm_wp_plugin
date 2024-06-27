@@ -42,7 +42,7 @@
             echo "<div class='thread-list'>";
             foreach ($assistant_thread_data as $thread_id => $message_snippet) {
                 $display_text = $message_snippet ?: htmlspecialchars($thread_id); // Fallback to thread ID if snippet is not available
-                echo "<a href='' class='waves-effect waves-light bifm-btn thread-btn' data-tooltip='Chat with Billy' data-thread-id='" . htmlspecialchars($thread_id) . "'>" . $display_text . "</a>";
+                echo "<a href='' class='waves-effect waves-light btn bifm-btn thread-btn' data-tooltip='Chat with Billy' data-thread-id='" . htmlspecialchars($thread_id) . "'>" . $display_text . "</a>";
             }
             echo "</div>";
         }
