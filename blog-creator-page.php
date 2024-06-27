@@ -2,7 +2,7 @@
 <?php
 
 echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
-echo '<a href="admin.php?page=bifm-plugin" class="btn bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
+echo '<a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
     Back
 </a>';
@@ -29,7 +29,7 @@ echo '                    <option value="" disabled selected>Choose a category</
 echo '                </select>';
 echo '                <label for="category_input">Category</label>';
 echo '            </div>';
-echo '        <button type="submit"  class="btn bifm-btn waves-effect waves-light">Submit<i class="material-icons right">send</i></button>';  // Standardized button color and icon
+echo '        <button type="submit"  class="bifm-btn waves-effect waves-light">Submit<i class="material-icons right">send</i></button>';  // Standardized button color and icon
 echo '        </div>';
 echo '    </form>';
 echo '</div>';
@@ -50,7 +50,7 @@ echo '                  <option value="" disabled selected>Choose a category</op
 echo '              </select>';
 echo '              <label for="category_input2">Category</label>';
 echo '          </div>';
-echo '              <button type="submit" class="btn bifm-btn waves-effect waves-light">Submit<i class="material-icons right">send</i></button>'; // Materialize button styling
+echo '              <button type="submit" class="bifm-btn waves-effect waves-light">Submit<i class="material-icons right">send</i></button>'; // Materialize button styling
 echo '      </div>';
 echo '   </form>';
 echo '</div>';  // End of container

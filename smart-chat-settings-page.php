@@ -1,6 +1,6 @@
 <?php require 'bifm-config.php'; ?>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<a href="admin.php?page=bifm-plugin" class="btn bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
+<a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
     Back
 </a>
@@ -24,7 +24,7 @@
             <div>Accepted file types: .c, .cpp, .docx, .html, .java, .json, .md, .pdf, .php, .pptx, .py, .rb, .tex, .txt</div>
             <div class="bifm-row">
                 <div class="file-field input-field bifm-col s12 l6">
-                    <div class="btn bifm-btn waves-effect waves-light">
+                    <div class="bifm-btn waves-effect waves-light">
                         <i class="material-icons left">cloud_upload</i>
                         <span>Upload Files</span>
                         <input type="file" id="fileUpload" name="files[]" multiple accept=".c, .cpp, application/vnd.openxmlformats-officedocument.wordprocessingml.document, .html, .java, application/json, .md, application/pdf, .php, application/vnd.openxmlformats-officedocument.presentationml.presentation, .py, .rb, .tex, .txt">
@@ -67,9 +67,9 @@
                 </div>
             </div>
 
-            <button class="btn bifm-btn waves-effect waves-light" type="submit" name="action">Save Changes</button>
+            <button class="bifm-btn waves-effect waves-light" type="submit" name="action">Save Changes</button>
             <br/>
-            <button class="btn bifm-btn waves-effect waves-light purple grey-purple" type="submit" name="action" id="reset_chat">Reset chatbot</button>
+            <button class="bifm-btn waves-effect waves-light purple grey-purple" type="submit" name="action" id="reset_chat">Reset chatbot</button>
         </form>
     </div>
 </div>

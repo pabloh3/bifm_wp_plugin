@@ -30,8 +30,8 @@
     // insert billy-page.php
     include_once 'billy-page.php';
     // Button to modify smart chat settings
-    echo '<button id="createNewChat" class="btn bifm-btn waves-effect waves-light red lighten-2">Modify Smart Chat Settings</button>';
-    echo '<button id="backButton" class="btn bifm-btn waves-effect waves-light red lighten-2" style="display: none;"><i class="material-icons left">arrow_back</i>Back</button>';
+    echo '<button id="createNewChat" class="bifm-btn waves-effect waves-light red lighten-2">Modify Smart Chat Settings</button>';
+    echo '<button id="backButton" class="bifm-btn waves-effect waves-light red lighten-2" style="display: none;"><i class="material-icons left">arrow_back</i>Back</button>';
     echo '</div>';
     //end smart chat tab
 
@@ -39,8 +39,8 @@
     echo '<div id="widget-generator" class="bifm-col s12">';
     echo '<h5>Widget Generator</h5>';
         // Button to create a new widget
-        echo '<button id="createNewWidget" class="btn bifm-btn waves-effect waves-light red lighten-2">Create new widget</button>';
-        echo '<button id="backButton" class="btn bifm-btn waves-effect waves-light red lighten-2" style="display: none;"><i class="material-icons left">arrow_back</i>Back</button>';
+        echo '<button id="createNewWidget" class="bifm-btn waves-effect waves-light red lighten-2">Create new widget</button>';
+        echo '<button id="backButton" class="bifm-btn waves-effect waves-light red lighten-2" style="display: none;"><i class="material-icons left">arrow_back</i>Back</button>';
     
         $widgets_manager = \Elementor\Plugin::$instance->widgets_manager;
         $widget_types = $widgets_manager->get_widget_types();

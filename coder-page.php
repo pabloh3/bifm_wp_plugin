@@ -10,7 +10,7 @@ $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php ";
 wp_enqueue_style('billy-page', plugin_dir_url(__FILE__) . 'static/coder-page.css');
 ?>
 
-<a href="admin.php?page=bifm-plugin" class="btn bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
+<a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
     Back
 </a>
