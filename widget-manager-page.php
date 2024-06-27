@@ -1,12 +1,12 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<a href="admin.php?page=bifm-plugin" class="btn bifm-btn  waves-effect waves-light purple light-grey" style="width: 120px;">
+<a href="admin.php?page=bifm-plugin" class="bifm-btn  waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
     Back
 </a>
 <div id="widget-generator" class="bifm-col s12">
     <h5>Widget Generator</h5>
     <!-- Button to create a new widget -->
-    <button id="createNewWidget" class="btn bifm-btn  waves-effect waves-light">Create new widget</button>
+    <button id="createNewWidget" class="bifm-btn  waves-effect waves-light">Create new widget</button>
     <br/>
     <?php
     $widgets_manager = \Elementor\Plugin::$instance->widgets_manager;
