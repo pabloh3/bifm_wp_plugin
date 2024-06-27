@@ -270,7 +270,7 @@ body {
 
 /* Some classes were renamed to prevent conflict with other css loaded in WP */
 /*
-1. .btn -> .bifm-btn (including also .btn)
+1. .btn -> .billy-btn (including also .btn)
 2. .col -> .bifm-col
 3. .row -> .bifm-row
 
@@ -5160,7 +5160,7 @@ small {
   -webkit-tap-highlight-color: transparent;
 }
 
-.btn.disabled,
+.btn.disabled, .bifm-btn.disabled,
 .btn-floating.disabled,
 .btn-large.disabled,
 .btn-small.disabled,
@@ -5181,7 +5181,7 @@ small {
   color: #9F9F9F !important;
   cursor: default;
 }
-.btn.disabled:hover,
+.btn.disabled:hover, .bifm-btn.disabled:hover,
 .btn-floating.disabled:hover,
 .btn-large.disabled:hover,
 .btn-small.disabled:hover,
@@ -5202,7 +5202,7 @@ small {
 
 .btn,
 .btn-small,
-.btn-large, .bifm-btn, .btn.bifm-btn,
+.btn-large, .bifm-btn,
 .btn-floating,
 .btn-flat {
   display: flex !important;
@@ -5215,7 +5215,7 @@ small {
   font-size: 14px;
   outline: 0;
 }
-.btn i, .bifm-btn i, .btn.bifm-btn i,
+.btn i, .bifm-btn i,
 .btn-floating i,
 .btn-large i,
 .btn-small i,

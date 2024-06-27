@@ -10,8 +10,8 @@ echo '<div class="container">';  // Using Materialize's container for alignment 
 
 // Added Tabs for clear separation
 echo '<ul id="tabs-swipe-demo" class="tabs">';
-echo '    <li class="tab col s6"><a href="#test-swipe-1">Create Single Blogpost</a></li>';
-echo '    <li class="tab col s6"><a href="#test-swipe-2">Create Blogposts in Bulk</a></li>';
+echo '    <li class="tab bifm-col s6"><a href="#test-swipe-1">Create Single Blogpost</a></li>';
+echo '    <li class="tab bifm-col s6"><a href="#test-swipe-2">Create Blogposts in Bulk</a></li>';
 echo '</ul>';
 
 // Single creation

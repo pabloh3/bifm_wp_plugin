@@ -87,7 +87,7 @@
         ?>
     </div>
     <div class="bifm-row">
-        <div class="file-field col s12 l6">
+        <div class="file-field bifm-col s12 l6">
             <div class="btn bifm-btn waves-effect waves-light blue lighten-2">
                 <i class="material-icons left">cloud_upload</i>
                 <span>Upload Files</span>
@@ -100,7 +100,7 @@
     <h5>Inputs</h5>
     <form id="smart-chat-form" action="#" method="post">
         <div class="bifm-row">
-            <div class="input-field large col s12 l8">
+            <div class="input-field large bifm-col s12 l8">
                 <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>
                 <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">
                     <i class="material-icons">send</i>
@@ -115,7 +115,7 @@
             </button>
         </div>
         <div class="bifm-row">
-            <div class="input-field col s12 l8">
+            <div class="input-field bifm-col s12 l8">
                 <select id="select_input_1" name="select_input_1">
                     <option value="" disabled selected>Placeholder</option>
                     <option value="1">Option 1</option>
@@ -132,37 +132,37 @@
             });
         </script>
         <div class="bifm-row">
-            <div class="input-field col s12 l8">
+            <div class="input-field bifm-col s12 l8">
                 <textarea id="textarea_input_1" name="textarea_input_1" class="materialize-textarea" placeholder="Ask Billy for any assistance you need"></textarea>
                 <label for="textarea_input_1">Label</label>
             </div>
         </div>
         <div class="bifm-row">
-            <div class="input-field col s12 l8">
+            <div class="input-field bifm-col s12 l8">
                 <input id="email_input" type="email" name="email_input">
                 <label for="email_input">Email Input</label>
             </div>
         </div>
         <div class="bifm-row">
-            <div class="input-field col s12 l8">
+            <div class="input-field bifm-col s12 l8">
                 <input id="password_input" type="password" name="password_input">
                 <label for="password_input">Password Input</label>
             </div>
         </div>
         <div class="bifm-row">
-            <div class="input-field col s12 l8">
+            <div class="input-field bifm-col s12 l8">
                 <input id="date_input" type="text" class="datepicker" name="date_input">
                 <label for="date_input">Date Input</label>
             </div>
         </div>
         <div class="bifm-row">
-            <div class="input-field col s12 l8">
+            <div class="input-field bifm-col s12 l8">
                 <input id="time_input" type="text" class="timepicker" name="time_input">
                 <label for="time_input">Time Input</label>
             </div>
         </div>
         <div class="bifm-row">
-            <div class="input-field col s12 l8">
+            <div class="input-field bifm-col s12 l8">
                 <select id="select_input" name="select_input">
                     <option value="" disabled selected>Choose your option</option>
                     <option value="1">Option 1</option>
@@ -173,7 +173,7 @@
             </div>
         </div>
         <div class="bifm-row">
-        <div class="input-field col s12 l8">
+        <div class="input-field bifm-col s12 l8">
             <label>
                 <input type="checkbox" id="checkbox_input" name="checkbox_input">
                 <span>Checkbox Input</span>
@@ -183,7 +183,7 @@
 
     <!-- Radio buttons -->
     <div class="bifm-row">
-        <div class="input-field col s12 l8">
+        <div class="input-field bifm-col s12 l8">
             <p>
                 <label>
                     <input name="radio_group" type="radio" id="radio1" value="1">

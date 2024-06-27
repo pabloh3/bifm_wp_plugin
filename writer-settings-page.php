@@ -5,8 +5,8 @@
         margin: 10px;
     }
 </style>
-
-<a href="admin.php?page=bifm-plugin" class="btn bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
     Back
 </a>
@@ -34,7 +34,7 @@
 
         <?php $blog_language = get_user_meta($user_id, 'blog_language', true); ?>
         <div class="bifm-row">
-            <div class="input-field col s12 l4">
+            <div class="input-field bifm-col s12 l4">
                 <select id="blog_language" name="blog_language">
                     <option value="" disabled <?= empty($blog_language) ? 'selected' : '' ?>>Choose your option</option>
                     <option value="english" <?= $blog_language == 'english' ? 'selected' : '' ?>>English</option>
@@ -47,7 +47,7 @@
         <?php $image_width = get_user_meta($user_id, 'image_width', true); ?>
         <?php $image_height = get_user_meta($user_id, 'image_height', true); ?>
         <div class="bifm-row">
-            <div class="input-field col s12 l2">
+            <div class="input-field bifm-col s12 l2">
                 <select id="image_width" name="image_width">
                     <option value="" disabled <?= empty($image_width) ? 'selected' : '' ?>>Width</option>
                     <option value="1024" <?= $image_width == '1024' ? 'selected' : '' ?>>1024</option>
@@ -56,7 +56,7 @@
                 <label for="image_width">Image width (px)</label>
             </div>
 
-            <div class="input-field col s12 l2">
+            <div class="input-field bifm-col s12 l2">
                 <select id="image_height" name="image_height">
                     <option value="" disabled <?= empty($image_height) ? 'selected' : '' ?>>Height</option>
                     <option value="1024" <?= $image_height == '1024' ? 'selected' : '' ?>>1024</option>
@@ -68,7 +68,7 @@
 
         <?php $website_description = get_user_meta($user_id, 'website_description', true); ?>
         <div class="bifm-row">
-            <div class="input-field col s12 l8">
+            <div class="input-field bifm-col s12 l8">
                 <textarea id="website_description" name="website_description" class="materialize-textarea"><?= htmlspecialchars($website_description) ?></textarea>
                 <label for="website_description"><b>Instructions for the writer bot:</b> Describe your website and how you want your posts written.</label>
             </div>
@@ -76,13 +76,13 @@
 
         <?php $image_style = get_user_meta($user_id, 'image_style', true); ?>
         <div class="bifm-row">
-            <div class="input-field col s12 l8">
+            <div class="input-field bifm-col s12 l8">
                 <textarea id="image_style" name="image_style" class="materialize-textarea"><?= htmlspecialchars($image_style) ?></textarea>
                 <label for="image_style"><b>Instructions for the image generation bot:</b> Describe the style you want for your images.</label>
             </div>
         </div>
 
-        <button class="bifm-btn btn waves-effect waves-light" type="submit" name="action">Update</button>
+        <button class="bifm-btn waves-effect waves-light" type="submit" name="action">Update</button>
     </form>
 </div>
 
