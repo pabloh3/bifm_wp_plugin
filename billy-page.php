@@ -81,9 +81,9 @@
       <div id="suggestion-buttons" class="bifm-row suggestions">
         <!-- First Column -->
         <div class="bifm-col s6">
-            <button class="btn bifm-btn waves-effect waves-light suggestion-button transparent">How do I create a new page on WP?</button>
-            <button class="btn bifm-btn waves-effect waves-light suggestion-button transparent">Write a blog post on dogs</button>
-            <button id="use-writer-suggestion" class="btn-large waves-effect waves-light suggestion-button card transparent">
+            <button class="bifm-btn waves-effect waves-light suggestion-button transparent">How do I create a new page on WP?</button>
+            <button class="bifm-btn waves-effect waves-light suggestion-button transparent">Write a blog post on dogs</button>
+            <button id="use-writer-suggestion" class="bifm-btn btn-large waves-effect waves-light suggestion-button card transparent">
               <div class="frame">
                 <div class="svg-icon writer-icon">
                     <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Writer.svg'); ?>
@@ -95,9 +95,9 @@
         </div>
         <!-- Second Column -->
         <div class="bifm-col s6">
-            <button class="btn bifm-btn waves-effect waves-light suggestion-button transparent">Review my pages for spelling</button>
-            <button class="btn bifm-btn waves-effect waves-light suggestion-button transparent">How do I capture SEO traffic?</button>
-            <button id="use-coder-suggestion" class="btn-large waves-effect waves-light suggestion-button card transparent">
+            <button class="bifm-btn waves-effect waves-light suggestion-button transparent">Review my pages for spelling</button>
+            <button class="bifm-btn waves-effect waves-light suggestion-button transparent">How do I capture SEO traffic?</button>
+            <button id="use-coder-suggestion" class="bifm-btn btn-large waves-effect waves-light suggestion-button card transparent">
               <div class="frame">
                 <div class="svg-icon coder-icon">
                   <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Coder.svg'); ?>

@@ -108,11 +108,11 @@ body {
   border: 1px solid #cb8bd0;
 }
 
-.btn.writer-button, .writer-button.btn-small, .writer-button.btn-large {
+.bifm-btn.writer-button {
   background-color: #FF9D25;
 }
 
-.btn.coder-button, .coder-button.btn-small, .coder-button.btn-large {
+.bifm-btn.coder-button {
   background-color: #cb8bd0;
 }
 
@@ -196,7 +196,7 @@ body {
   background-color: #cccfde;
 }
 
-.btn.suggestion-button, .suggestion-button.btn-small, .suggestion-button.btn-large {
+.bifm-btn.suggestion-button {
   width: 100%;
   border: 1px solid #e0e0e0;
   color: #4D5477;
@@ -4495,12 +4495,12 @@ nav ul a {
   padding: 0 15px;
   cursor: pointer;
 }
-nav ul a.btn, nav ul a.btn-small, nav ul a.btn-large, nav ul a.btn-flat, nav ul a.btn-floating {
+nav ul a.bifm-btn, nav ul a.btn-large, nav ul a.btn-flat, nav ul a.btn-floating {
   margin-top: -2px;
   margin-left: 15px;
   margin-right: 15px;
 }
-nav ul a.btn > .material-icons, nav ul a.btn-small > .material-icons, nav ul a.btn-large > .material-icons, nav ul a.btn-flat > .material-icons, nav ul a.btn-floating > .material-icons {
+nav ul a.bifm-btn > .material-icons, nav ul a.btn-large > .material-icons, nav ul a.btn-flat > .material-icons, nav ul a.btn-floating > .material-icons {
   height: inherit;
   line-height: inherit;
 }
@@ -4907,13 +4907,13 @@ small {
 .card .card-action:last-child {
   border-radius: 0 0 2px 2px;
 }
-.card .card-action a:not(.btn):not(.btn-small):not(.btn-large):not(.btn-large):not(.btn-floating) {
+.card .card-action a:not(.bifm-btn):not(.btn-large):not(.btn-floating) {
   color: #ffab40;
   margin-right: 24px;
   transition: color 0.3s ease;
   text-transform: uppercase;
 }
-.card .card-action a:not(.btn):not(.btn-small):not(.btn-large):not(.btn-large):not(.btn-floating):hover {
+.card .card-action a:not(.bifm-btn):not(.btn-large):not(.btn-floating):hover {
   color: #ffd8a6;
 }
 .card .card-reveal {
@@ -5676,7 +5676,7 @@ body.keyboard-focused .dropdown-content li:focus {
   width: 100%;
   text-align: right;
 }
-.modal .modal-footer .btn, .modal .modal-footer .btn-large, .modal .modal-footer .btn-small, .modal .modal-footer .btn-flat {
+.modal .modal-footer .bifm-btn, .modal .modal-footer .btn-flat {
   margin: 6px 0;
 }
 
@@ -6982,7 +6982,7 @@ body.keyboard-focused .select-dropdown.dropdown-content li:focus {
 .file-field input.file-path {
   width: 100%;
 }
-.file-field .btn, .file-field .btn-large, .file-field .btn-small {
+.file-field .bifm-btn {
   float: left;
   height: 2rem;
   line-height: 2rem;
@@ -7228,16 +7228,16 @@ input[type=range]::-ms-thumb {
 .sidenav li > a:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
-.sidenav li > a.btn, .sidenav li > a.btn-small, .sidenav li > a.btn-large, .sidenav li > a.btn-flat, .sidenav li > a.btn-floating {
+.sidenav li > a.bifm-btn, .sidenav li > a.btn-large, .sidenav li > a.btn-flat, .sidenav li > a.btn-floating {
   margin: 10px 15px;
 }
-.sidenav li > a.btn, .sidenav li > a.btn-small, .sidenav li > a.btn-large, .sidenav li > a.btn-floating {
+.sidenav li > a.bifm-btn, .sidenav li > a.btn-large, .sidenav li > a.btn-floating {
   color: #fff;
 }
 .sidenav li > a.btn-flat {
   color: #343434;
 }
-.sidenav li > a.btn:hover, .sidenav li > a.btn-small:hover, .sidenav li > a.btn-large:hover {
+.sidenav li > a.bifm-btn:hover, .sidenav li > a.btn-large:hover {
   background-color: #3850ca;
 }
 .sidenav li > a.btn-floating:hover {
@@ -8056,7 +8056,7 @@ input[type=range]::-ms-thumb {
   z-index: 10002;
   position: absolute !important;
 }
-.tap-target-origin:not(.btn):not(.btn-large):not(.btn-small), .tap-target-origin:not(.btn):not(.btn-large):not(.btn-small):hover {
+.tap-target-origin:not(.bifm-btn), .tap-target-origin:not(.bifm-btn):hover {
   background: none;
 }
 
