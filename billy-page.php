@@ -81,8 +81,8 @@
       <div id="suggestion-buttons" class="row suggestions">
         <!-- First Column -->
         <div class="col s6">
-            <button class="btn waves-effect waves-light suggestion-button transparent">How do I create a new page on WP?</button>
-            <button class="btn waves-effect waves-light suggestion-button transparent">Write a blog post on dogs</button>
+            <button class="btn billy-btn waves-effect waves-light suggestion-button transparent">How do I create a new page on WP?</button>
+            <button class="btn billy-btn waves-effect waves-light suggestion-button transparent">Write a blog post on dogs</button>
             <button id="use-writer-suggestion" class="btn-large waves-effect waves-light suggestion-button card transparent">
               <div class="frame">
                 <div class="svg-icon writer-icon">

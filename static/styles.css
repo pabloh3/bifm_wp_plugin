@@ -604,11 +604,11 @@ body {
   color: #4D5477 !important;
 }
 
-.purple.main-Purple {
+.purple.main-purple {
   background-color: #8D9ADE !important;
 }
 
-.purple-text.text-main-Purple {
+.purple-text.text-main-purple {
   color: #8D9ADE !important;
 }
 
@@ -5195,7 +5195,7 @@ small {
 
 .btn,
 .btn-small,
-.btn-large,
+.btn-large, .btn.billy-btn,
 .btn-floating,
 .btn-flat {
   display: flex !important;
@@ -5208,7 +5208,7 @@ small {
   font-size: 14px;
   outline: 0;
 }
-.btn i,
+.btn i, .btn.billy-btn i,
 .btn-floating i,
 .btn-large i,
 .btn-small i,
