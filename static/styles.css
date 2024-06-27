@@ -270,7 +270,7 @@ body {
 
 /* Some classes were renamed to prevent conflict with other css loaded in WP */
 /*
-1. .btn -> .billy-btn (including also .btn)
+1. .btn -> .bifm-btn (including also .btn)
 2. .col -> .bifm-col
 3. .row -> .bifm-row
 
@@ -2924,11 +2924,11 @@ a {
 }
 
 /* 2dp elevation modified*/
-.z-depth-1, .sidenav, .collapsible, .dropdown-content, .btn-floating, .btn, .btn-small, .btn-large, .billy-btn, .toast, .card, .card-panel, nav {
+.z-depth-1, .sidenav, .collapsible, .dropdown-content, .btn-floating, .btn, .btn-small, .btn-large, .bifm-btn, .toast, .card, .card-panel, nav {
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
-.z-depth-1-half, .btn-floating:hover, .btn:hover, .btn-small:hover, .btn-large:hover, .billy-btn:hover {
+.z-depth-1-half, .btn-floating:hover, .btn:hover, .btn-small:hover, .btn-large:hover, .bifm-btn:hover {
   box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
 }
 
@@ -5147,7 +5147,7 @@ small {
   visibility: hidden;
 }
 
-.btn, .btn-small, .btn-large, .billy-btn,
+.btn, .btn-small, .btn-large, .bifm-btn,
 .btn-flat {
   border: none;
   border-radius: 2px;
@@ -5202,7 +5202,7 @@ small {
 
 .btn,
 .btn-small,
-.btn-large, .billy-btn, .btn.billy-btn,
+.btn-large, .bifm-btn, .btn.bifm-btn,
 .btn-floating,
 .btn-flat {
   display: flex !important;
@@ -5215,7 +5215,7 @@ small {
   font-size: 14px;
   outline: 0;
 }
-.btn i, .billy-btn i, .btn.billy-btn i,
+.btn i, .bifm-btn i, .btn.bifm-btn i,
 .btn-floating i,
 .btn-large i,
 .btn-small i,
@@ -5224,12 +5224,12 @@ small {
   line-height: inherit;
 }
 
-.btn:focus, .btn-small:focus, .btn-large:focus, .billy-btn:focus,
+.btn:focus, .btn-small:focus, .btn-large:focus, .bifm-btn:focus,
 .btn-floating:focus {
   background-color: #263790;
 }
 
-.btn, .btn-small, .btn-large, .billy-btn {
+.btn, .btn-small, .btn-large, .bifm-btn {
   text-decoration: none;
   color: #fff;
   background-color: #3147B8;
@@ -5238,7 +5238,7 @@ small {
   transition: background-color 0.2s ease-out;
   cursor: pointer;
 }
-.btn:hover, .btn-small:hover, .btn-large:hover, .billy-btn:hover {
+.btn:hover, .btn-small:hover, .btn-large:hover, .bifm-btn:hover {
   background-color: #2f43a9;
 }
 

@@ -9,7 +9,7 @@
     //echo '<div style="color:red">Validate https in new_blogpost and upload_image.</div>';
 
     // Tabs structure
-    echo '<div class="row">';
+    echo '<div class="bifm-row">';
     //disclaimers for staging
 
     echo '<div class="bifm-col s12">';
