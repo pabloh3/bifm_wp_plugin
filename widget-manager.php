@@ -185,6 +185,13 @@ function builditforme_ewm_enqueue_admin_scripts($hook) {
 }
 add_action('admin_enqueue_scripts', 'builditforme_ewm_enqueue_admin_scripts',90);
 
+require_once( __DIR__ . '/blog-creator/blog-manager.php' );
+require_once( __DIR__ . '/billy/smart-chat-manager.php' );
+require_once( __DIR__ . '/shared-widget-registration.php' );
+require_once( __DIR__ . '/billy-coder/billy-coder.php' );
+require_once( __DIR__ . '/billy-coder/manage-widgets.php' );
+require_once( __DIR__ . '/billy/smart_chat_callbacks.php' );
+require_once( __DIR__ . '/writer-settings/writer-settings.php' );
 
 
 
@@ -225,7 +232,6 @@ function update_elementor_data($value, $object, $field_name) {
     return update_post_meta($object->ID, '_elementor_data', $value);
 }
 
-
 // Register field used to track post requests
 function register_bifm_uuid_meta() {
     register_post_meta('post', 'bifm_uuid', array(
@@ -258,7 +264,8 @@ function remove_hello_elementor_description_meta_tag() {
 }
 add_action( 'after_setup_theme', 'remove_hello_elementor_description_meta_tag' );
 
-// Update the plugin based on the most recent tag on github
+
+// CODE TO HANDLE PLUGIN UPDATES //
 // Filter the update_plugins transient just before it's updated
 add_filter('pre_set_site_transient_update_plugins', 'bifm_pre_set_site_transient_update_plugins');
 function bifm_pre_set_site_transient_update_plugins($transient) {
@@ -345,6 +352,18 @@ function bifm_clear_update_cache($upgrader_object, $options) {
 }
 add_action('upgrader_process_complete', 'bifm_clear_update_cache', 10, 2);
 
+// Hook for plugin deactivation to delete the table where post info is stored
+register_deactivation_hook(__FILE__, 'cbc_drop_requests_table');
+
+function cbc_drop_requests_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'cbc_blog_requests';
+    $sql = "DROP TABLE IF EXISTS $table_name;";
+    $wpdb->query($sql);
+}
+
+
+// LOAD ACTION HOOKS FROM WIDGETS //
 // register the widgets in DB
 function register_custom_widgets_from_db() {
     $widget_names = get_option('bifm_widget_names', []);
@@ -362,18 +381,6 @@ function register_custom_widgets_from_db() {
     }
 }
 add_action('elementor/widgets/widgets_registered', 'register_custom_widgets_from_db');
-
-
-require_once( __DIR__ . '/blog-creator/blog-manager.php' );
-require_once( __DIR__ . '/billy/smart-chat-manager.php' );
-require_once( __DIR__ . '/shared-widget-registration.php' );
-require_once( __DIR__ . '/billy-coder/billy-coder.php' );
-require_once( __DIR__ . '/billy-coder/manage-widgets.php' );
-require_once( __DIR__ . '/billy/smart_chat_callbacks.php' );
-require_once( __DIR__ . '/writer-settings/writer-settings.php' );
-
-
-
 
 // check if bifm_action_hooks exists, if not, create with content <?php
 $dirPath = wp_upload_dir()['basedir'] . '/bifm-files';
@@ -395,7 +402,6 @@ if (!file_exists( __DIR__ . '/shared-bifm_action_hooks.php')) {
     file_put_contents(  __DIR__ . '/shared-bifm_action_hooks.php', "<?php\n");
 }
 
-
 require_once(  __DIR__ . '/shared-bifm_action_hooks.php' );
 // Retrieve stored hooks from the option
 $hooks = get_option('bifm_action_hooks', []);
@@ -415,19 +421,9 @@ foreach ($hooks as $hook_name => $widget_name) {
 }
 
 
-// Hook for plugin deactivation to delete the table where post info is stored
-register_deactivation_hook(__FILE__, 'cbc_drop_requests_table');
-
-function cbc_drop_requests_table() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'cbc_blog_requests';
-    $sql = "DROP TABLE IF EXISTS $table_name;";
-    $wpdb->query($sql);
-}
-
 
 // Suppress WordPress core update notifications
-function suppress_update_notifications() {
+/*function suppress_update_notifications() {
     remove_action('admin_notices', 'update_nag', 3);
 }
-add_action('admin_menu', 'suppress_update_notifications');
+add_action('admin_menu', 'suppress_update_notifications');*/
