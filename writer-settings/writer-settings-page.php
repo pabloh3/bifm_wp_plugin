@@ -1,4 +1,4 @@
-<?php require 'bifm-config.php'; ?>
+<?php require ( __DIR__ . '/../bifm-config.php' ) ?>
 
 <style>
     .input-field {
@@ -98,4 +98,3 @@
     });
 </script>
 
-<script>var my_script_object = { ajax_url: "<?= esc_js(admin_url('admin-ajax.php')) ?>", nonce: "<?= esc_js($nonce) ?>" };</script>

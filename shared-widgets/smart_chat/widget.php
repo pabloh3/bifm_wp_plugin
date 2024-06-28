@@ -5,8 +5,6 @@ echo "<!DOCTYPE html>";
 echo "<html lang='en'>";
 echo "<head>";
 echo "<meta charset='UTF-8'>";
-//echo "<link rel='stylesheet' type='text/css' href='styles.css'>";  // ALWAYS INCLUDE THIS LINE TO INLCUDE THE CSS file
-//echo "<script src='main.js' defer></script>";  // ALWAYS INCLUDE THIS LINE TO INLCUDE THE JS file
 echo "</head>";
 echo "<body>";
 echo "<div id='chat-widget'>";

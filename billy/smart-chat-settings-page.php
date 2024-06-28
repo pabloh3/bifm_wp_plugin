@@ -1,4 +1,4 @@
-<?php require 'bifm-config.php'; ?>
+<?php require ( __DIR__ . '/../bifm-config.php' );// define base url for the API?>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>

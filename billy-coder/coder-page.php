@@ -3,11 +3,10 @@
 //echo "Get: ", var_dump($_GET); for debugging
 $folderName = isset($_GET['foldername']) ? sanitize_text_field($_GET['foldername']) : '';
 $client_folder = preg_replace("/[a-zA-Z]/", "", $folderName); // Remove any letters
-require 'bifm-config.php';
+require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php "; 
 //localhost:3013/<foldername>/widget.php
 // for testing
-wp_enqueue_style('billy-page', plugin_dir_url(__FILE__) . 'static/coder-page.css');
 ?>
 
 <a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
@@ -28,7 +27,7 @@ wp_enqueue_style('billy-page', plugin_dir_url(__FILE__) . 'static/coder-page.css
             <form id='my-form' method='POST' class='input-field'>
                 <textarea id='user_message' name='user_message' class='materialize-textarea' rows='4' cols='50' placeholder=' ' required></textarea>
                 <label for='user_message'>Enter your instructions:</label>
-                <button class='btn  bifm-btn waves-effect waves-light' type='submit' id='submit_chat'>Submit</button>
+                <button class='bifm-btn waves-effect waves-light' type='submit' id='submit_chat'>Submit</button>
             </form>
         </div>
         <div class='future-column'>   
@@ -39,17 +38,17 @@ wp_enqueue_style('billy-page', plugin_dir_url(__FILE__) . 'static/coder-page.css
                 <div id='warningMessage' class='card-panel yellow darken-2' style='display: none;'></div>
             </div>  
             <div class='button-container'>
-                <button class='btn bifm-btn waves-effect waves-light' id='reset-button'>Reset</button>
-                <button class='btn bifm-btn waves-effect waves-light' id='undo-button'>Undo</button>
+                <button class='bifm-btn waves-effect waves-light' id='reset-button'>Reset</button>
+                <button class='bifm-btn waves-effect waves-light' id='undo-button'>Undo</button>
             </div>
             <div class='aspect-16-9'>
                 <iframe id='myframe' src=<?php echo $url; ?>frameborder='0' allowfullscreen></iframe>
                 
             </div>
             
-            <button class='btn bifm-btn waves-effect waves-light' id='save-button'>Save</button>
-            <button class='btn bifm-btn waves-effect waves-light' id='previous-stage' style='display: none;'>< Back (modify visuals)</button>
-            <button class='btn bifm-btn waves-effect waves-light' id='next-stage' >Next (modify controls) ></button>
+            <button class='bifm-btn waves-effect waves-light' id='save-button'>Save</button>
+            <button class='bifm-btn waves-effect waves-light' id='previous-stage' style='display: none;'>< Back (modify visuals)</button>
+            <button class='bifm-btn waves-effect waves-light' id='next-stage' >Next (modify controls) ></button>
         </div>
     </div>
     

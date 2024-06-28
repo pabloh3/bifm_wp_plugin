@@ -17,25 +17,28 @@ console.log('JS loaded v1.0.71');
 //stages = {visuals, functional, controls}
 
 // listens to chat submissions
-form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    prevMessageCounts.push(chatbox.getElementsByTagName('p').length);
-    if (commandCount < MAX_COMMANDS) {
-        let userInput = form.user_message.value;
-        let p = document.createElement('p');
-        p.textContent = `You: ${userInput}`;
-        chatbox.appendChild(p);
-    }
-    var stageDisplay = document.getElementById('stageDisplay');
-    var currentStage = stageDisplay.getAttribute('data-stage');
-    sendMessage(folderName, 'processgpt', form.user_message.value, currentStage);
-});
+// when document is ready
+document.addEventListener('DOMContentLoaded', function() {
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        prevMessageCounts.push(chatbox.getElementsByTagName('p').length);
+        if (commandCount < MAX_COMMANDS) {
+            let userInput = form.user_message.value;
+            let p = document.createElement('p');
+            p.textContent = `You: ${userInput}`;
+            chatbox.appendChild(p);
+        }
+        var stageDisplay = document.getElementById('stageDisplay');
+        var currentStage = stageDisplay.getAttribute('data-stage');
+        sendMessage(folderName, 'processgpt', form.user_message.value, currentStage);
+    });
 
-// process clicks on back button
-document.getElementById('backButton').addEventListener('click', goBack);
-function goBack() {
-    window.location.href = 'admin.php?page=bifm-plugin';
-}
+    // process clicks on back button
+    document.getElementById('backButton').addEventListener('click', goBack);
+    function goBack() {
+        window.location.href = 'admin.php?page=bifm-plugin';
+    }
+});
 
 // send the message from either submit or debug to the server
 function sendMessage(folderName, endpoint, messageBody, currentStage) {
@@ -175,138 +178,143 @@ function pollForGptResponse(folderName, jobId, retryCount) {
 }
 
 
-// save button
-document.getElementById('save-button').addEventListener('click', function() {
-    // Prompt user for name
-    const name = prompt('Name for this version (max 60 chars):');
-    if (name && name.length <= 60 && /^[A-Za-z]/.test(name)) {
-        // Send save request to the server with the name using jQuery's AJAX method
+// save button when document is ready
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('save-button').addEventListener('click', function() {
+        // Prompt user for name
+        const name = prompt('Name for this version (max 60 chars):');
+        if (name && name.length <= 60 && /^[A-Za-z]/.test(name)) {
+            // Send save request to the server with the name using jQuery's AJAX method
+            jQuery.ajax({
+                url: my_plugin.ajax_url,  // Assuming you've localized the script with the admin-ajax.php URL
+                type: 'POST',
+                data: {
+                    action: 'plugin_save',  
+                    name: name,
+                    folderName: folderName,
+                    nonce: my_plugin.nonce  
+                },
+                success: function(response) {
+                    // Handle the response if needed
+                    if(response.success) {
+                        alert('Your widget has been saved.');
+                    } else {
+                        alert(response.data['message']);
+                        console.error('Error:', response.data);
+                    }
+                },
+                error: function(errorThrown) {
+                    alert('There was an error saving your widget.');
+                    console.error('Error:', errorThrown);
+                }
+            });
+        } else {
+            alert('Invalid name. Please enter a name starting with a letter and with a maximum of 40 characters.');
+        }
+    });
+
+
+    // reset button
+    document.getElementById('reset-button').addEventListener('click', function() {
+        var warningDiv = document.getElementById('warningMessage');
+        warningDiv.textContent = "";
+        // Make the warning box visible
+        warningDiv.style.display = 'none';
+        // Prompt user for name
         jQuery.ajax({
             url: my_plugin.ajax_url,  // Assuming you've localized the script with the admin-ajax.php URL
             type: 'POST',
             data: {
-                action: 'plugin_save',  
-                name: name,
+                action: 'plugin_reset',  // This should match the action hooked to wp_ajax_ in your PHP
                 folderName: folderName,
-                nonce: my_plugin.nonce  
+                nonce: my_plugin.nonce  // Assuming you've localized the script with a nonce for security
             },
             success: function(response) {
                 // Handle the response if needed
                 if(response.success) {
-                    alert('Your widget has been saved.');
+                    // Empty the chat on the front end
+                    document.getElementById('chatbox').innerHTML = '';
+                    // reset iframe
+                    var iframe = document.querySelector('.future-column iframe');
+                    commandCount = 0;
+                    prevMessageCounts = [0];
+                    //wait 1 second
+                    setTimeout(function() {
+                        iframe.src = iframe.src;
+                    }, 1000);
                 } else {
-                    alert(response.data['message']);
                     console.error('Error:', response.data);
                 }
             },
             error: function(errorThrown) {
-                alert('There was an error saving your widget.');
                 console.error('Error:', errorThrown);
             }
         });
-    } else {
-        alert('Invalid name. Please enter a name starting with a letter and with a maximum of 40 characters.');
-    }
-});
-
-
-// reset button
-document.getElementById('reset-button').addEventListener('click', function() {
-    var warningDiv = document.getElementById('warningMessage');
-    warningDiv.textContent = "";
-    // Make the warning box visible
-    warningDiv.style.display = 'none';
-    // Prompt user for name
-    jQuery.ajax({
-        url: my_plugin.ajax_url,  // Assuming you've localized the script with the admin-ajax.php URL
-        type: 'POST',
-        data: {
-            action: 'plugin_reset',  // This should match the action hooked to wp_ajax_ in your PHP
-            folderName: folderName,
-            nonce: my_plugin.nonce  // Assuming you've localized the script with a nonce for security
-        },
-        success: function(response) {
-            // Handle the response if needed
-            if(response.success) {
-                // Empty the chat on the front end
-                document.getElementById('chatbox').innerHTML = '';
-                // reset iframe
-                var iframe = document.querySelector('.future-column iframe');
-                commandCount = 0;
-                prevMessageCounts = [0];
-                iframe.src = iframe.src;
-            } else {
-                console.error('Error:', response.data);
-            }
-        },
-        error: function(errorThrown) {
-            console.error('Error:', errorThrown);
-        }
     });
-});
 
 
-document.getElementById('undo-button').addEventListener('click', function() {
-    jQuery.ajax({
-        url: my_plugin.ajax_url,  // Assuming you've localized the script with the admin-ajax.php URL
-        type: 'POST',
-        data: {
-            action: 'plugin_undo',  // This should match the action hooked to wp_ajax_ in your PHP
-            folderName: folderName,
-            nonce: my_plugin.nonce  // Assuming you've localized the script with a nonce for security
-        },
-        success: function(response) {
-            // Handle the response if needed
-            if(response.success) {
-                // Refresh the iframe
-                // Remove the messages added in the last operation
-                while (chatbox.getElementsByTagName('p').length > prevMessageCounts[prevMessageCounts.length - 1]) {
-                    chatbox.removeChild(chatbox.lastChild);
+    document.getElementById('undo-button').addEventListener('click', function() {
+        jQuery.ajax({
+            url: my_plugin.ajax_url,  // Assuming you've localized the script with the admin-ajax.php URL
+            type: 'POST',
+            data: {
+                action: 'plugin_undo',  // This should match the action hooked to wp_ajax_ in your PHP
+                folderName: folderName,
+                nonce: my_plugin.nonce  // Assuming you've localized the script with a nonce for security
+            },
+            success: function(response) {
+                // Handle the response if needed
+                if(response.success) {
+                    // Refresh the iframe
+                    // Remove the messages added in the last operation
+                    while (chatbox.getElementsByTagName('p').length > prevMessageCounts[prevMessageCounts.length - 1]) {
+                        chatbox.removeChild(chatbox.lastChild);
+                    }
+                    prevMessageCounts.pop();
+                    var iframe = document.querySelector('.future-column iframe');
+                    iframe.src = iframe.src;
+                } else {
+                    console.error('Error:', response.data);
                 }
-                prevMessageCounts.pop();
-                var iframe = document.querySelector('.future-column iframe');
-                iframe.src = iframe.src;
-            } else {
-                console.error('Error:', response.data);
+            },
+            error: function(errorThrown) {
+                console.error('Error:', errorThrown);
             }
-        },
-        error: function(errorThrown) {
-            console.error('Error:', errorThrown);
+        });
+    });
+
+
+    document.getElementById('next-stage').addEventListener('click', function() {
+        document.getElementById('chatbox').innerHTML = '';
+        // reset iframe
+        commandCount = 0;
+        prevMessageCounts = [0];
+        
+        var stageDisplay = document.getElementById('stageDisplay');
+        var currentStage = stageDisplay.getAttribute('data-stage');
+        if (currentStage === 'visual') {
+            stageDisplay.innerHTML = "Add controls to your widget so you can modify it when dragging it into a page. If you add text controls, don't worry if the preview breaks. Save and test in your pages.";
+            stageDisplay.setAttribute('data-stage', 'controls');
+            document.getElementById('next-stage').style.display = 'none';
+            document.getElementById('previous-stage').style.display = 'inline';
+        } 
+    });
+
+    document.getElementById('previous-stage').addEventListener('click', function() {
+        document.getElementById('chatbox').innerHTML = '';
+        // reset iframe
+        commandCount = 0;
+        prevMessageCounts = [0];
+        
+        var stageDisplay = document.getElementById('stageDisplay');
+        var currentStage = stageDisplay.getAttribute('data-stage');
+        if (currentStage === 'controls') {
+            stageDisplay.innerHTML = 'Modify how your widget looks.';
+            stageDisplay.setAttribute('data-stage', 'visual');
+            document.getElementById('next-stage').style.display = 'inline';
+            document.getElementById('previous-stage').style.display = 'none';
         }
     });
-});
-
-
-document.getElementById('next-stage').addEventListener('click', function() {
-    document.getElementById('chatbox').innerHTML = '';
-    // reset iframe
-    commandCount = 0;
-    prevMessageCounts = [0];
-    
-    var stageDisplay = document.getElementById('stageDisplay');
-    var currentStage = stageDisplay.getAttribute('data-stage');
-    if (currentStage === 'visual') {
-        stageDisplay.innerHTML = "Add controls to your widget so you can modify it when dragging it into a page. If you add text controls, don't worry if the preview breaks. Save and test in your pages.";
-        stageDisplay.setAttribute('data-stage', 'controls');
-        document.getElementById('next-stage').style.display = 'none';
-        document.getElementById('previous-stage').style.display = 'inline';
-    } 
-});
-
-document.getElementById('previous-stage').addEventListener('click', function() {
-    document.getElementById('chatbox').innerHTML = '';
-    // reset iframe
-    commandCount = 0;
-    prevMessageCounts = [0];
-    
-    var stageDisplay = document.getElementById('stageDisplay');
-    var currentStage = stageDisplay.getAttribute('data-stage');
-    if (currentStage === 'controls') {
-        stageDisplay.innerHTML = 'Modify how your widget looks.';
-        stageDisplay.setAttribute('data-stage', 'visual');
-        document.getElementById('next-stage').style.display = 'inline';
-        document.getElementById('previous-stage').style.display = 'none';
-    }
 });
 
 function displayWarning(message) {

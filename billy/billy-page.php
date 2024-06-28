@@ -1,7 +1,8 @@
-<?php require 'bifm-config.php'; ?>
+<?php require ( __DIR__ . '/../bifm-config.php' );// define base url for the API ?>
 
 <!-- This is the Billy page tool -->
- <!--Stylesheet for handling markup-->
+<!--Stylesheet for handling markup-->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css'>
 <div class="plugin-page">
   <div class="plugin-menu">
@@ -17,18 +18,18 @@
       <li>
         <div class="billy-menu">
           <div class="svg-icon inline-icon">
-            <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/AI.svg'); ?>
+            <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/AI.svg'); ?>
           </div>
           <div class="menu-label-center">Billy</div>
           <div class="right-billy-buttons">
             <a href="" id="new_chat_button" class="waves-effect billy-button tooltipped" data-tooltip="New chat">
               <div class="svg-icon inline-icon">
-                <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/New_chat.svg'); ?>
+                <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/New_chat.svg'); ?>
               </div>
             </a>
             <a href="admin.php?page=create-chat" class="waves-effect billy-button tooltipped" data-tooltip="Chat settings">
               <div class="svg-icon inline-icon">
-                <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Tune.svg'); ?>
+                <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Tune.svg'); ?>
               </div>
             </a>
           </div>
@@ -53,7 +54,7 @@
       <li>
         <a href="admin.php?page=create-blog" class="waves-effect">
           <div class="svg-icon writer-icon inline-icon">
-            <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Writer.svg'); ?>
+            <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Writer.svg'); ?>
           </div>
           Writer Bot
         </a>
@@ -61,7 +62,7 @@
       <li>
         <a href="admin.php?page=widget-manager" class="waves-effect">
           <div class="svg-icon coder-icon inline-icon">
-            <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Coder.svg'); ?>
+            <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Coder.svg'); ?>
           </div>
           Coder Bot
         </a>
@@ -86,7 +87,7 @@
             <button id="use-writer-suggestion" class="bifm-btn btn-large waves-effect waves-light suggestion-button card transparent">
               <div class="frame">
                 <div class="svg-icon writer-icon">
-                    <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Writer.svg'); ?>
+                    <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Writer.svg'); ?>
                 </div>
               </div>
               <span class="card-title">Writer bot</span>
@@ -100,7 +101,7 @@
             <button id="use-coder-suggestion" class="bifm-btn btn-large waves-effect waves-light suggestion-button card transparent">
               <div class="frame">
                 <div class="svg-icon coder-icon">
-                  <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Coder.svg'); ?>
+                  <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Coder.svg'); ?>
                 </div>
               </div>
               <span class="card-title">Coder bot</span>

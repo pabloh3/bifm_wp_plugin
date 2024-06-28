@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-require 'bifm-config.php';
+require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
 add_action('wp_ajax_plugin_send_message', 'bifm_handle_plugin_send_message');
 function bifm_handle_plugin_send_message() {

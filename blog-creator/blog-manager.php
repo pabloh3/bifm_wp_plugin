@@ -1,7 +1,6 @@
-<?php
+<?php 
+require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
-// define base url for the API
-require 'bifm-config.php';
 
 function decrypt($data, $random_key) {
     list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);

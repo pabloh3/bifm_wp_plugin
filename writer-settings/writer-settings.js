@@ -1,9 +1,3 @@
-document.getElementById('createNewBlog').addEventListener('click', newBlog);
-            
-function newBlog() {
-    window.location.href = 'admin.php?page=create-blog'; // Redirect to the provided URL
-}
-
 // Handle submission of blog settings form
 document.addEventListener('DOMContentLoaded', function() {
     var form = document.getElementById('bifm-settings-form');
@@ -13,8 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var formData = new FormData(form);
         formData.append('action', 'bifm_save_settings');
-        formData.append('bifm_nonce', my_script_object.nonce);
-        console.log("nonce: " + my_script_object.nonce);
+        formData.append('bifm_nonce', my_script_object.bifm_nonce);
+        console.log("bifm_nonce: " + my_script_object.bifm_nonce);
 
         fetch(my_script_object.ajax_url, {
             method: 'POST',

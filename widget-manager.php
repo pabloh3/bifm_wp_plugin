@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// DEFINE ALL THE PAGES //
 function builditforme_ewm_admin_menu() {
     add_menu_page(
         'Build It For Me AI',
@@ -59,7 +60,7 @@ function builditforme_ewm_admin_menu() {
         'Design system',            // menu_title
         'edit_posts',               // capability (give access to those with this access)
         'design_system',            // menu_slug
-        'ewm_create_design_system'  // function
+        'ewm_create_design_system'  // callback function
     );
     
 
@@ -84,73 +85,86 @@ function builditforme_ewm_admin_menu() {
 }
 add_action('admin_menu', 'builditforme_ewm_admin_menu');
 
-function bifm_enqueue_scripts() {
-    if (isset($_GET['page'])) {
-        if ($_GET['page'] == 'create-blog') {
-            // Enqueue scripts for the blog page
-            wp_enqueue_script('cbc_script', plugins_url('/static/blog-creator-script.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/static/blog-creator-script.js'), true);
-
-            // Localize the script with your data
-            $translation_array = array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'single_post_nonce' => wp_create_nonce('create-single-post-action'),
-                'bulk_upload_nonce' => wp_create_nonce('bulk-upload-csv-action')
-            );
-            // error log the entire translation array
-            wp_localize_script('cbc_script', 'cbc_object', $translation_array);
-            
-        } elseif ($_GET['page'] == 'create-chat') {
-            // Enqueue scripts for the chat page
-            wp_enqueue_script('cbc_script_chat', plugins_url('/static/smart-chat-script.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/static/smart-chat-script.js'), true);
-            // Localize the script with your data
-            $translation_array = array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('update-chat-settings-nonce'),
-            );
-            // error log the entire translation array
-            wp_localize_script('cbc_script_chat', 'cbc_script_object_chat', $translation_array);
-
-        } elseif ($_GET['page'] == 'widget-manager') {
-            wp_enqueue_script('cbc_script_widget_mgr', plugins_url('/static/widget-manager.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/static/widget-manager.js'), true);
-        } 
-    }
-}
-
-add_action('admin_enqueue_scripts', 'bifm_enqueue_scripts');
-
+// DEFINE ALL THE PAGES CONTENT  AND ENQUEUE SCRIPTS //
 
 function ewm_admin_page_content() {
     //this code was taken to admin-page.php
-    include plugin_dir_path(__FILE__) . 'admin-page.php';
+    include plugin_dir_path(__FILE__) . 'billy/billy-page.php';
     // Externalize JavaScript Code
-    wp_enqueue_script('my-custom-script', plugins_url('static/admin-page.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/admin-page.js'), true);
-    wp_enqueue_script('billy-script', plugin_dir_url(__FILE__) . 'static/billy.js', array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/billy.js'), true);
+    //wp_enqueue_script('my-custom-script', plugins_url('static/admin-page.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/admin-page.js'), true);
+    wp_enqueue_script('billy-script', plugin_dir_url(__FILE__) . 'billy/billy.js', array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'billy/billy.js'), true);
     wp_localize_script('billy-script', 'billy_localize', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('billy-nonce')
     ));
+    wp_enqueue_style('billy-page', plugin_dir_url(__FILE__) . 'billy/billy-page.css', [], filemtime(plugin_dir_path(__FILE__) . 'billy/billy-page.css'), 'all');
 }
 
 
 function ewm_create_widget_content() {
     //this code was taken to admin-page.php
-    include plugin_dir_path(__FILE__) . 'coder-page.php';
+    include plugin_dir_path(__FILE__) . 'billy-coder/coder-page.php';
+    wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)), [], filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), 'all');
+    wp_enqueue_style('billy-page', plugin_dir_url(__FILE__) . 'billy-coder/coder-page.css');
+    wp_enqueue_script('my-plugin-script', plugin_dir_url(__FILE__) . 'billy-coder/billy-coder.js', array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'billy-coder/billy-coder.js'), true);        
+    // Pass ajax_url to script.js
+    wp_localize_script('my-plugin-script', 'my_plugin', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('my-plugin-nonce')
+    ));
 }
 
 function ewm_widget_manager() {
     //this code was taken to admin-page.php
-    include plugin_dir_path(__FILE__) . 'widget-manager-page.php';
+    include plugin_dir_path(__FILE__) . 'billy-coder/widget-manager-page.php';
+    wp_enqueue_script('cbc_script_widget_mgr', plugins_url('/billy-coder/widget-manager.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/billy-coder/widget-manager.js'), true);
+    wp_localize_script('cbc_script_widget_mgr', 'my_script_object', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('my_custom_action')
+    ));
 }
-
 
 function ewm_create_blog_content() {
     //this code was taken to admin-page.php
-    include plugin_dir_path(__FILE__) . 'blog-creator-page.php';
+    include plugin_dir_path(__FILE__) . 'blog-creator/blog-creator-page.php';
+    // Enqueue scripts for the blog page
+    wp_enqueue_script('cbc_script', plugins_url('/blog-creator/blog-creator-script.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/blog-creator/blog-creator-script.js'), true);
+
+    // Localize the script with your data
+    $translation_array = array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'single_post_nonce' => wp_create_nonce('create-single-post-action'),
+        'bulk_upload_nonce' => wp_create_nonce('bulk-upload-csv-action')
+    );
+    // error log the entire translation array
+    wp_localize_script('cbc_script', 'cbc_object', $translation_array);
+}
+
+function ewm_writer_settings() {
+    //this code was taken to admin-page.php
+    include plugin_dir_path(__FILE__) . '/writer-settings/writer-settings-page.php';
+    wp_enqueue_script('cbc_script_widget_mgr', plugins_url('/writer-settings/writer-settings.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/writer-settings/writer-settings.js'), true);
+    // Localize the script with your data
+    $translation_array = array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'bifm_nonce' => wp_create_nonce('bifm-writer-settings-nonce'),
+    );
+    // error log the entire translation array
+    wp_localize_script('cbc_script_widget_mgr', 'my_script_object', $translation_array);
 }
 
 function ewm_create_chat_content() {
     //this code was taken to admin-page.php
-    include plugin_dir_path(__FILE__) . 'smart-chat-settings-page.php';
+    include plugin_dir_path(__FILE__) . 'billy/smart-chat-settings-page.php';
+    // Enqueue scripts for the chat page
+    wp_enqueue_script('cbc_script_chat', plugins_url('/billy/smart-chat-settings.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/billy/smart-chat-settings.js'), true);
+    // Localize the script with your data
+    $translation_array = array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('update-chat-settings-nonce'),
+    );
+    // error log the entire translation array
+    wp_localize_script('cbc_script_chat', 'cbc_script_object_chat', $translation_array);
 }
 
 function ewm_create_design_system() {
@@ -158,27 +172,13 @@ function ewm_create_design_system() {
     include plugin_dir_path(__FILE__) . 'design-system-page.php';
 }
 
-function ewm_writer_settings() {
-    //this code was taken to admin-page.php
-    include plugin_dir_path(__FILE__) . 'writer-settings-page.php';
-}
 
 
+// ENQUEUE SCRIPTS AND STYLES TO BE USED IN ALL PAGES //
 function builditforme_ewm_enqueue_admin_scripts($hook) {
     global $pagenow;
-    
     // Check if we're on the create-widget page to load that JS
-    if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-widget')) {
-        // Enqueue CSS and auto
-        wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)), [], filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), 'all');
-        wp_enqueue_script('my-plugin-script', plugin_dir_url(__FILE__) . 'static/main.js', array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/main.js'), true);        
-        // Pass ajax_url to script.js
-        wp_localize_script('my-plugin-script', 'my_plugin', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('my-plugin-nonce')
-        ));
-    // case where we're in any other of the plugin pages
-    } else if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-blog' || $_GET['page'] == 'bifm-plugin' || $_GET['page'] == 'create-chat' || $_GET['page'] == 'widget-manager' || $_GET['page'] == 'design_system' || $_GET['page'] == 'writer-settings')) {
+    if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-blog' || $_GET['page'] == 'bifm-plugin' || $_GET['page'] == 'create-chat' || $_GET['page'] == 'widget-manager' || $_GET['page'] == 'design_system' || $_GET['page'] == 'writer-settings')) {
         // in all admin pages load the styles
         wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)), [], filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), 'all');
     }
@@ -188,61 +188,7 @@ add_action('admin_enqueue_scripts', 'builditforme_ewm_enqueue_admin_scripts',90)
 
 
 
-// Handle change blog settings
-// Add action for logged-in users
-add_action('wp_ajax_bifm_save_settings', 'handle_bifm_save_settings');
-
-// Function to handle form submission
-function handle_bifm_save_settings() {
-    try {
-        // Check for nonce security
-        if (!isset($_POST['bifm_nonce']) || !wp_verify_nonce($_POST['bifm_nonce'], 'my_custom_action')) {
-            throw new Exception('Nonce verification failed!');
-        }
-        $user_id = get_current_user_id();
-        // Update username and password only if username is provided
-        if (isset($_POST['blog_author_username'])) {
-            update_user_meta($user_id, 'username', $_POST['blog_author_username']);
-            
-            // Update password only if it's provided
-            if (!empty($_POST['blog_author_password'])) {
-                $random_key = bin2hex(random_bytes(32));
-                $password = encrypt_data($_POST['blog_author_password'], $random_key);
-                update_user_meta($user_id, 'encrypted_password', $password);
-                update_user_meta($user_id, 'random_key', $random_key);
-            }
-        }
-        
-        // Always update these settings
-        update_user_meta($user_id, 'website_description', $_POST['website_description']);
-        update_user_meta($user_id, 'image_style', $_POST['image_style']);
-        update_user_meta($user_id, 'blog_language', $_POST['blog_language']);
-        update_user_meta($user_id, 'image_width', $_POST['image_width']);
-        update_user_meta($user_id, 'image_height', $_POST['image_height']);
-        
-        wp_send_json_success('Settings saved successfully.');
-    } catch (Exception $e) {
-        wp_send_json_error($e->getMessage(), 400);
-    }
-}
-
-
-
-// Define a secret key. Store this securely and do not expose it.
-
-function encrypt_data($data, $random_key) {
-    $ivLength = openssl_cipher_iv_length($cipher = 'AES-128-CBC');
-    $iv = openssl_random_pseudo_bytes($ivLength);
-    $encrypted = openssl_encrypt($data, $cipher, $random_key, $options = 0, $iv);
-    return base64_encode($encrypted . '::' . $iv);
-}
-
-function decrypt_data($data, $random_key) {
-    list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
-    return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
-}
-
-
+// EXPOSE API VALUES //
 // expose Yoast values in the API that usually wouldn't be exposed
 function register_yoast_fields() {
     register_rest_field('post', '_yoast_wpseo_focuskw',  array(
@@ -418,12 +364,17 @@ function register_custom_widgets_from_db() {
 add_action('elementor/widgets/widgets_registered', 'register_custom_widgets_from_db');
 
 
-require_once( __DIR__ . '/blog-manager.php' );
-require_once( __DIR__ . '/smart-chat-manager.php' );
+require_once( __DIR__ . '/blog-creator/blog-manager.php' );
+require_once( __DIR__ . '/billy/smart-chat-manager.php' );
 require_once( __DIR__ . '/shared-widget-registration.php' );
-require_once( __DIR__ . '/chat.php' );
-require_once( __DIR__ . '/manage-widgets.php' );
-require_once( __DIR__ . '/smart_chat_callbacks.php' );
+require_once( __DIR__ . '/billy-coder/billy-coder.php' );
+require_once( __DIR__ . '/billy-coder/manage-widgets.php' );
+require_once( __DIR__ . '/billy/smart_chat_callbacks.php' );
+require_once( __DIR__ . '/writer-settings/writer-settings.php' );
+
+
+
+
 // check if bifm_action_hooks exists, if not, create with content <?php
 $dirPath = wp_upload_dir()['basedir'] . '/bifm-files';
 // Check if the directory exists, and if not, create it

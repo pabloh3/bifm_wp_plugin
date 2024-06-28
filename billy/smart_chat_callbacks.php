@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/bifm-config.php';
+require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
 $custom_log_file = WP_CONTENT_DIR . '/custom.log';
 //session info
@@ -225,14 +225,14 @@ function load_billy_chat() {
 
 // handle widgets //
 function include_widget($widget_name, $parameters, $run_id, $tool_call_id) {
-    include_once __DIR__ . '/billy-widgets/validate-' . $widget_name . '/validate-' . $widget_name . '.php';
+    include_once __DIR__ . '/../billy-widgets/validate-' . $widget_name . '/validate-' . $widget_name . '.php';
     $response = get_widget($parameters, $run_id, $tool_call_id);
     return $response;
 }
 
 //widget submission
 function widget_submission($message, $run_id, $widget_name, $assistant_id, $thread_id, $tool_call_id) {
-    include_once __DIR__ . '/billy-widgets/validate-' . $widget_name . '/response-' . $widget_name . '.php';
+    include_once __DIR__ . '/../billy-widgets/validate-' . $widget_name . '/response-' . $widget_name . '.php';
     $response = widget_response($message, $run_id, $assistant_id, $thread_id, $tool_call_id);
     return $response;
 }
