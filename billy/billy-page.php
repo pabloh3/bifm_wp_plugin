@@ -39,6 +39,8 @@
       <!-- load from uptions the values of assistant_thread_ids and add a button for each -->
       <?php
         $assistant_thread_data = get_option('assistant_thread_data');
+        // invert order
+        $assistant_thread_data = array_reverse($assistant_thread_data);
         if ($assistant_thread_data) {
             echo "<div class='thread-list'>";
             foreach ($assistant_thread_data as $thread_id => $message_snippet) {
