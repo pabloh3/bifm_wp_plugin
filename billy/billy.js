@@ -63,8 +63,7 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
         },
         success: function(response) {
             console.log("success response");
-            document.getElementById('billy-responding').style.display = 'none'; // Hide responding animation
-            
+            document.getElementById('billy-responding').style.display = 'none';            
             // Convert the response message from Markdown to HTML
             const htmlContent = md.render(response.data.message);
             if (htmlContent) {
@@ -113,7 +112,7 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
             }
             console.log(errorMessage);
             displayWarning(errorMessage);
-            document.getElementById('billy-chatbox').removeChild(processingMessage);
+            document.getElementById('billy-responding').style.display = 'none';
             form.assistant_instructions.disabled = false;
             submit_chat.disabled = false;
         }
@@ -160,7 +159,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // handle clicks on new_chat_button with id new-chat-button
-        document.getElementById('new_chat_button').addEventListener('click', function() {
+        document.getElementById('new_chat_button').addEventListener('click', function(event) {
+            // prevent sending a new request for the page
+            event.preventDefault();
             //reset the suggestions
             let suggestion = document.getElementById('suggestion-buttons');
             if (suggestion) {
@@ -178,6 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 success: function(response) {
                     console.log("success response");
                     // TO do add the new chat button to history
+                    // prevent default
                     
                 },
                 error: function(error) {
@@ -251,6 +253,8 @@ function loadThread(threadId) {
 
 
 function cleanupChat() {
+    // store copy of suggestion-buttons
+    let suggestion = document.getElementById('suggestion-buttons');
     chatbox.innerHTML = "";
     prevMessageCounts = [0];
     commandCount = 0;
@@ -258,6 +262,10 @@ function cleanupChat() {
     form.assistant_instructions.disabled = false;
     submit_chat.disabled = false;
     form.assistant_instructions.value = '';
+    // add suggestion-buttons back to chatbox
+    if (suggestion) {
+        chatbox.appendChild(suggestion);
+    }
 }
 
 function displayWarning(message) {
