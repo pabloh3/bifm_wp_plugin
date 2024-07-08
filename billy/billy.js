@@ -25,6 +25,14 @@ const md = window.markdownit({
     }
 });
 
+// submit form if enter
+form.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter' && !(event.shiftKey || event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        submit_chat.click();
+    }
+});
+
 // Listens to chat submissions
 form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -202,6 +210,12 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             var threadId = this.getAttribute('data-thread-id');
             loadThread(threadId);
+            // make button slightly darker and return other buttons to their color
+            threadButtons.forEach(function(button) {
+                button.style.backgroundColor = "#CDD2EA";
+            });
+            button.style.backgroundColor = "#ECEEF9";
+
         });
     });
 });

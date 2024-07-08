@@ -4602,27 +4602,27 @@ h1 {
 }
 
 h2 {
-  font-size: 3.56rem;
+  font-size: 3.43rem;
   line-height: 110%;
-  margin: 2.3733333333rem 0 1.424rem 0;
+  margin: 2.2866666667rem 0 1.372rem 0;
 }
 
 h3 {
-  font-size: 2.92rem;
-  line-height: 110%;
-  margin: 1.9466666667rem 0 1.168rem 0;
-}
-
-h4 {
   font-size: 2.28rem;
   line-height: 110%;
   margin: 1.52rem 0 0.912rem 0;
 }
 
-h5 {
-  font-size: 1.64rem;
+h4 {
+  font-size: 1.43rem;
   line-height: 110%;
-  margin: 1.0933333333rem 0 0.656rem 0;
+  margin: 0.9533333333rem 0 0.572rem 0;
+}
+
+h5 {
+  font-size: 1.25rem;
+  line-height: 110%;
+  margin: 0.8333333333rem 0 0.5rem 0;
 }
 
 h6 {
