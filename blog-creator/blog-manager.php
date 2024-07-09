@@ -374,4 +374,37 @@ function register_request($uuid, $keyphrase, $category, $requester) {
         'requester' => $requester,
     ));
 }
+
+
+function cbc_delete_blog_post() {
+    // Check the nonce for security
+    check_ajax_referer('create-single-post-action', 'nonce');
+
+    // Get the post ID and UUID from the request
+    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    $uuid = isset($_POST['uuid']) ? sanitize_text_field($_POST['uuid']) : '';
+    // Validate inputs
+    if (!$uuid) {
+        wp_send_json_error('Invalid data provided.');
+    }
+
+    // Attempt to delete the post
+    $deleted_post = wp_delete_post($post_id, true);
+
+    // Delete the corresponding request from the custom table
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'cbc_blog_requests';
+
+    $deleted_request = $wpdb->delete($table_name, array('uuid' => $uuid));
+
+    if ($deleted_request === false) {
+        wp_send_json_error('Failed to delete the request from the custom table.');
+    }
+
+    // If everything is successful
+    wp_send_json_success('Post and request deleted successfully.');
+}
+add_action('wp_ajax_cbc_delete_blog', 'cbc_delete_blog_post');
+add_action('wp_ajax_nopriv_cbc_delete_blog', 'cbc_delete_blog_post');
+
 ?>

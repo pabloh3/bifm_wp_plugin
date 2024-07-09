@@ -17,7 +17,6 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
     <!-- Body outside of menu -->
     <div class="container">
         <div class="writer-content">
-            <div id="cbc_response" class="card-panel grey" style="display:none;"></div>
             <div class="header-bot">
                 <div class="svg-icon writer-icon">
                     <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Writer.svg'); ?>
@@ -59,7 +58,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                     </div>
                 </button>
             </div>
-            
+            <div id="cbc_response" class="card-panel grey" style="display:none;"></div>
         </div>
     
 
@@ -87,7 +86,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
                         if ($post) {
                             $post_id = $post[0]->ID;
-                            $title = $post[0]->post_title;
+                            $title = $post[0]->post_title ? $post[0]->post_title : NULL;
                             $status = get_post_status($post_id);
                             $status_text = $status ? ucfirst($status) : 'Not ready or deleted by user';
                             $title_link = get_permalink($post_id);
@@ -102,13 +101,14 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                             <td>
                                 <!-- display title, if no title, show keyphrase -->
                                 <div class = "post-title">
-                                    <?php echo esc_html($request->title) ? esc_html($request->title) : esc_html($request->keyphrase); ?>
+                                    <?php echo isset($request->title) ? esc_html($request->title) : esc_html($request->keyphrase); ?>
                                 </div>
                                 <div class="post-author"><?php echo esc_html($request->requester); ?> - <?php echo esc_html($request->requested_at); ?></div>
                             </td>
                             <td><?php echo esc_html($status_text); ?></td>
                             <td>
-                                <a href="" id="<?php echo 'delete_' . $post_id ?>" class="waves-effect billy-button tooltipped" data-tooltip="Delete">    
+                                <!-- add uuid as part of data -->
+                                <a href="#" id="<?php echo 'delete_' . $post_id ?>" class="waves-effect billy-button tooltipped delete-post" data-tooltip="Delete" data-post-id="<?php echo esc_attr($post_id); ?>" data-uuid="<?php echo esc_attr($request->uuid); ?>">
                                     <div class="svg-icon inline-icon">
                                         <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Trash.svg'); ?>
                                     </div>

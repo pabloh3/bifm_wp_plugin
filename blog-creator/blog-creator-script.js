@@ -44,7 +44,7 @@
                                 $('#category_input').append('<option value="' + newCategoryId + '" selected>' + newCategory + '</option>');
                                 $('#category_input').formSelect();
                             } else {
-                                alert('Failed to create new category. Please try again.');
+                                showMessage('Failed to create new category. Please try again.');
                             }
                         }
                     });
@@ -195,25 +195,31 @@
         // Delete request
         $('#posts-table-div').on('click', '.delete-post', function(e) {
             e.preventDefault();
-            let postId = $(this).data('post-id');
-            if (!postId) return;
-
+            //get confirmation
+            if (!confirm('Are you sure you want to delete these request and post?')) {
+                return;
+            }
+            let uuid = this.getAttribute('data-uuid');
+            let postId = this.getAttribute('data-post-id');
+            console.log("uuid: " + uuid + " post id: " + postId);
             let data = {
                 action: 'cbc_delete_blog',
                 nonce: cbc_object.single_post_nonce,
-                post_id: postId
+                post_id: postId,
+                uuid: uuid
             };
 
             $.post(cbc_object.ajax_url, data, function(response) {
                 if (response.success) {
-                    $(this).closest('tr').remove();
+                    $(e.target).closest('tr').remove();
                 } else {
-                    alert('Failed to delete the post. Please try again.');
+                    showMessage('Failed to delete the post. Please try again.');
                 }
             }).fail(function() {
-                alert('Failed to connect to the backend.');
+                showMessage('Failed to connect to the backend.');
             });
         });
+
 
         // Handle suggestion button clicks
         $('#suggestion-buttons .suggestion-button').on('click', function(e) {
@@ -239,8 +245,10 @@
 
 
 function showMessage(message) {
-    // scroll to top
-    window.scrollTo(0, 0);
+    // scroll #cbc_response
+    $('html, body').animate({
+        scrollTop: $('#cbc_response').offset().top + 350
+    }, 1000);
     $('#cbc_response').html(message).show();
     setTimeout(function() {
         $('#cbc_response').fadeOut('slow');
