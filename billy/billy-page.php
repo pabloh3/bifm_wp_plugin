@@ -10,10 +10,6 @@ if (isset($_SESSION['thread_id'])) {
 <!--Stylesheet for handling markup-->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css'>
-<?php
-// display thread_id from the session 
-echo "<script>console.log('thread_id: " . $_SESSION['thread_id'] . "');</script>";
-?>
 <div class="plugin-page">
   <div class="plugin-menu">
     <ul id="slide-out" class="sidenav sidenav-fixed browser-default">

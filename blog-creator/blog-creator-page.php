@@ -1,131 +1,159 @@
-
-<?php
-
-echo '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">';
-echo '<a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
-    <i class="material-icons left">arrow_back</i>
-    Back
-</a>';
-echo '<div class="container">';  // Using Materialize's container for alignment and spacing
-
-// Added Tabs for clear separation
-echo '<ul id="tabs-swipe-demo" class="tabs">';
-echo '    <li class="tab bifm-col s6"><a href="#test-swipe-1">Create Single Blogpost</a></li>';
-echo '    <li class="tab bifm-col s6"><a href="#test-swipe-2">Create Blogposts in Bulk</a></li>';
-echo '</ul>';
-
-// Single creation
-echo '<div id="test-swipe-1" class="bifm-col s12">'; // Tab container for single post creation
-echo '    <h5>Create Single Blogpost</h5>';
-echo '    <form id="cbc_form">';
-echo '        <div class="bifm-row">';  // using Materialize's row for structuring the form
-echo '            <div class="input-field bifm-col s12">';  // input-field class for Materialize styled inputs
-echo '                <input type="text" name="keyphrase" id="keyphrase_input" required>';
-echo '                <label for="keyphrase_input">Keyphrase</label>';  // label AFTER input for Materialize styling
-echo '            </div>';
-echo '            <div class="input-field bifm-col s12">';
-echo '                <select name="category" id="category_input">';
-echo '                    <option value="" disabled selected>Choose a category</option>';
-echo '                </select>';
-echo '                <label for="category_input">Category</label>';
-echo '            </div>';
-echo '        <button type="submit"  class="bifm-btn waves-effect waves-light">Submit<i class="material-icons right">send</i></button>';  // Standardized button color and icon
-echo '        </div>';
-echo '    </form>';
-echo '</div>';
-
-// Bulk creation
-echo '<div id="test-swipe-2" class="bifm-col s12">'; // Tab container for bulk post creation
-echo '  <h5>Create Blogpost in Bulk</h5>';
-echo '  <form id="cbc_csv_upload_form" method="post" enctype="multipart/form-data">';
-echo '      <div class="bifm-row">';  // using Materialize's row for structuring the form
-echo '          <div class="input-field bifm-col s12">';
-echo '              <input type="file" name="cbc_csv_file" id="cbc_csv_file">';
-echo '              <b>CSV Instructions: </b>Single column containing the keyphrases you are trying to target. No header.<br/>';
-echo '              <label for="cbc_csv_file" class="active">CSV with keyphrases</label>';
-echo '          </div>';
-echo '          <div class="input-field bifm-col s12">';
-echo '              <select name="category" id="category_input2">';
-echo '                  <option value="" disabled selected>Choose a category</option>';
-echo '              </select>';
-echo '              <label for="category_input2">Category</label>';
-echo '          </div>';
-echo '              <button type="submit" class="bifm-btn waves-effect waves-light">Submit<i class="material-icons right">send</i></button>'; // Materialize button styling
-echo '      </div>';
-echo '   </form>';
-echo '</div>';  // End of container
-
-echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>';
-echo '<div class="card-panel blue ">';
-echo '    <span class="white-text" id="cbc_response"></span>';
-echo '</div>';
-
-
-// Display old blog requests
-global $wpdb;
-$table_name = $wpdb->prefix . 'cbc_blog_requests';
-$requests = $wpdb->get_results("SELECT * FROM $table_name ORDER BY requested_at DESC");
-
-ob_start();
-echo '<br/>';
-echo '<h5>Old Blog Requests</h5>';
-echo '<table class="striped">';
-echo '<thead>';
-echo '<tr>';
-echo '<th>Post ID</th>';
-echo '<th>Title</th>';
-echo '<th>Keyphrase</th>';
-echo '<th>Category</th>';
-echo '<th>Created By</th>';
-echo '<th>Created Date</th>';
-echo '<th>Status</th>';
-echo '</tr>';
-echo '</thead>';
-echo '<tbody>';
-
-// error log a single post, and display the meta
-$post = get_posts(array(
-    'post_type' => 'post',
-    'post_status' => 'any',
-    'numberposts' => 1
-));
-
-foreach ($requests as $request) {
-
-    $post = get_posts(array(
-        'meta_key' => 'bifm_uuid',
-        'meta_value' => $request->uuid,
-        'post_type' => 'post',
-        'post_status' => 'any',
-        'numberposts' => 1
-    ));
-
-
-    if ($post) {
-        $post_id = $post[0]->ID;
-        $title = $post[0]->post_title;
-        $status = get_post_status($post_id);
-        $status_text = $status ? ucfirst($status) : 'Not ready or deleted by user';
-        $title_link = get_permalink($post_id);
-    } else {
-        $post_id = '';
-        $title = '';
-        $status_text = 'Not ready or deleted by user';
-        $title_link = '#';
-    }
-
-    echo '<tr>';
-    echo '<td>' . esc_html($post_id) . '</td>';
-    echo '<td><a href="' . esc_url($title_link) . '">' . esc_html($title) . '</a></td>';
-    echo '<td>' . esc_html($request->keyphrase) . '</td>';
-    echo '<td>' . esc_html($request->category) . '</td>';
-    echo '<td>' . esc_html($request->requester) . '</td>';
-    echo '<td>' . esc_html($request->requested_at) . '</td>';
-    echo '<td>' . esc_html($status_text) . '</td>';
-    echo '</tr>';
-}
-
-echo '</tbody>';
-echo '</table>';
-
+<?php 
+require ( __DIR__ . '/../bifm-config.php' );// define base url for the API 
+// reset thread_id from user session
 ?>
+
+<head>
+    <!-- Stylesheet for handling markup -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="plugin-page">
+    <div id="backButton" class="icon-button btn-floating btn-small waves-effect waves-light non-menu-back-button">
+        <i class="arrow-left material-icons">arrow_back</i>    
+    </div>
+    
+    <!-- Body outside of menu -->
+    <div class="container">
+        <div class="writer-content">
+            <div id="cbc_response" class="card-panel grey" style="display:none;"></div>
+            <div class="header-bot">
+                <div class="svg-icon writer-icon">
+                    <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Writer.svg'); ?>
+                </div>
+                <div class="bot-title">Writer Bot</div>
+            </div>
+
+            <div id="suggestion-buttons" class="bifm-row suggestions">
+                <!-- First Column -->
+                <div class="bifm-col s6">
+                    <button class="bifm-btn waves-effect waves-light suggestion-button transparent">Architecture ideas for tiny houses</button>
+                    <button class="bifm-btn waves-effect waves-light suggestion-button transparent">How to make the most of credit card rewards</button>
+                </div>
+                <!-- Second Column -->
+                <div class="bifm-col s6">
+                    <button class="bifm-btn waves-effect waves-light suggestion-button transparent">What to do in Mexico City</button>
+                    <button class="bifm-btn waves-effect waves-light suggestion-button transparent">Manufacturing trends 2024</button>
+                </div>
+
+            </div>
+            <div class='writer-input'>
+                <div class="input-field col s12">
+                    <input id="description" type="text" class="validate">
+                    <label for="description">Keyphrase (online search term) you'd like to capture</label>
+                    <select id="category_input" class="browser-default category-dropdown">
+                        <option value="" disabled selected>Category</option>
+                    </select>
+                </div>
+            </div>
+            <div id="writer-buttons">
+                <a class="add-more">
+                    Add more <i class="material-icons">add</i>
+                </a> 
+            </div>
+            <div id="generate-blogposts">
+                <button id="generate-blogposts-button" class="waves-effect waves-light btn-large generate-blogposts purple">Generate Blogposts
+                    <div class="svg-icon">
+                        <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Writer.svg'); ?>
+                    </div>
+                </button>
+            </div>
+            
+        </div>
+    
+
+
+        <!-- table for displaying blogposts -->
+        <?php
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'cbc_blog_requests';
+        $requests = $wpdb->get_results("SELECT * FROM $table_name ORDER BY requested_at DESC");
+        ?>
+        <br/>
+        <div id="posts-table-div">
+            <h6>Recently generated</h6>
+            <table id="posts-table" class="highlight">
+                <tbody>
+                    <?php
+                    foreach ($requests as $request) {
+                        $post = get_posts(array(
+                            'meta_key' => 'bifm_uuid',
+                            'meta_value' => $request->uuid,
+                            'post_type' => 'post',
+                            'post_status' => 'any',
+                            'numberposts' => 1
+                        ));
+
+                        if ($post) {
+                            $post_id = $post[0]->ID;
+                            $title = $post[0]->post_title;
+                            $status = get_post_status($post_id);
+                            $status_text = $status ? ucfirst($status) : 'Not ready or deleted by user';
+                            $title_link = get_permalink($post_id);
+                        } else {
+                            $post_id = false;
+                            $title = false;
+                            $status_text = 'Not ready or deleted by user';
+                            $title_link = '#';
+                        }
+                        ?>
+                        <tr>
+                            <td>
+                                <!-- display title, if no title, show keyphrase -->
+                                <div class = "post-title">
+                                    <?php echo esc_html($request->title) ? esc_html($request->title) : esc_html($request->keyphrase); ?>
+                                </div>
+                                <div class="post-author"><?php echo esc_html($request->requester); ?> - <?php echo esc_html($request->requested_at); ?></div>
+                            </td>
+                            <td><?php echo esc_html($status_text); ?></td>
+                            <td>
+                                <a href="" id="<?php echo 'delete_' . $post_id ?>" class="waves-effect billy-button tooltipped" data-tooltip="Delete">    
+                                    <div class="svg-icon inline-icon">
+                                        <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Trash.svg'); ?>
+                                    </div>
+                                </a>
+                                <!-- only display the view button if the post has a post id else, display the hourglass -->
+                                <?php if ($post_id) { ?>
+                                    <a href="<?php echo esc_url($title_link); ?>" class="waves-effect billy-button tooltipped" data-tooltip="View">    
+                                        <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Glasses.svg'); ?>
+                                    </a>
+                                <?php } else { ?>
+                                    <a class="waves-effect billy-button tooltipped disabled" data-tooltip="Pending">    
+                                        <i class="material-icons">hourglass_empty</i>
+                                    </a>
+                                <?php } ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+
+    <!-- end of table -->
+
+    </div>
+    
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.tooltipped');
+    var instances = M.Tooltip.init(elems);
+    // hide id=wpfooter
+    document.getElementById('wpfooter').style.display = 'none';
+  });
+  
+    
+</script>
+
+
+
+
+

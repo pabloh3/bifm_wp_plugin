@@ -1,13 +1,12 @@
 <?php 
 require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
-
 function decrypt($data, $random_key) {
     list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
     return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
 }
 
-// create blog
+// Create blog
 add_action('wp_ajax_cbc_create_blog', 'handle_cbc_create_blog');
 function handle_cbc_create_blog() {
     // Check nonce for security
@@ -33,7 +32,6 @@ function handle_cbc_create_blog() {
 
     wp_die("Reached end without success message");
 }
-
 
 function create_blog($keyphrase, $category, $category_name) {
     $website = home_url();  // Current website URL
@@ -74,13 +72,6 @@ function create_blog($keyphrase, $category, $category_name) {
     global $API_URL;
     $url = $API_URL . "create-blog";
     
-
-    // for  debugging DELETE!!!!!!!!!!!!!!!!!!!
-    /*wp_send_json(array(
-        'data' => '{"message": "test error message", "jobId": 123}',
-        'status' => 500
-    ), 500);*/
-    
     // Generate UUID
     $uuid = wp_generate_uuid4();
     $response = wp_remote_post($url, array(
@@ -114,7 +105,6 @@ function create_blog($keyphrase, $category, $category_name) {
     return $response;
 }
 
-
 add_action('wp_ajax_cbc_poll_for_results', 'handle_cbc_poll_for_results');
 function handle_cbc_poll_for_results() {
     // Check nonce for security
@@ -143,7 +133,7 @@ function handle_cbc_poll_for_results() {
     wp_die("Reached end without success message");
 }
 
-// get the categories
+// Get the categories
 add_action('wp_ajax_cbc_get_categories', 'handle_cbc_get_categories');
 function handle_cbc_get_categories() {
     // Get all the categories
@@ -160,14 +150,12 @@ function handle_cbc_get_categories() {
     wp_send_json_success($result);
 }
 
-
 function get_category_id_by_name($category_name) {
     $term = get_term_by('name', $category_name, 'category');
     return ($term && !is_wp_error($term)) ? $term->term_id : false;
 }
 
-
-// if necessary to create a new category for the post
+// If necessary to create a new category for the post
 add_action('wp_ajax_cbc_create_category', 'handle_cbc_create_category');
 function handle_cbc_create_category() {
     // Check nonce for security
@@ -187,8 +175,7 @@ function handle_cbc_create_category() {
     }
 }
 
-
-// fetch links for similar Pages / posts to feed the bot
+// Fetch links for similar Pages / posts to feed the bot
 function fetch_related_links($category) {
     $related_links = [];
 
@@ -230,44 +217,28 @@ function fetch_related_links($category) {
     return $related_links;
 }
 
+// Bulk creation of blog posts
+add_action('wp_ajax_cbc_create_bulk_blogs', 'handle_cbc_create_bulk_blogs');
+function handle_cbc_create_bulk_blogs() {
+    // Check nonce for security
+    check_ajax_referer('bulk-upload-items-action', 'nonce');
 
-// bulk creation of blog posts
-add_action('wp_ajax_cbc_file_upload', 'handle_cbc_file_upload');
-function handle_cbc_file_upload() {
-    // Check user capabilities and nonce
-    check_ajax_referer('bulk-upload-csv-action', 'nonce');
+    // Get the items from the frontend
+    $items = isset($_POST['items']) ? $_POST['items'] : array();
 
-    
-    // get the category
-    $category_id = isset($_POST['category']) ? sanitize_text_field(wp_unslash($_POST['category'])) : '';
-    $category_name = isset($_POST['category_name']) ? sanitize_text_field(wp_unslash($_POST['category_name'])) : '';
-    
-    #This is checking if the file upload field (named 'cbc_csv_file') exists within the $_FILES superglobal array
-    if (isset($_FILES['cbc_csv_file'])) {
-        // Handle file upload securely
-        $overrides = array('test_form' => false);
-        $file = wp_handle_upload($_FILES['cbc_csv_file'], $overrides);
-
-        if (isset($file['error'])) {
-            error_log("Error uploading file.");
-            wp_die('Error uploading file: ' . $file['error'], 'Error', array('response' => 400));
-        }
-
-        
-        // Process the CSV file
-        $file_path = $file['file'];
-        $response = cbc_process_csv($file_path, $category_id, $category_name);
-        $status_code = $response['status'];
-        wp_send_json(array(
-            'data' => $response['data'],
-            'status' => $status_code,
-        ), $status_code);
+    if (empty($items)) {
+        wp_send_json_error(array('message' => "No items provided."));
     }
+
+    $response = cbc_process_items($items);
+    $status_code = wp_remote_retrieve_response_code($response);
+    wp_send_json(array(
+        'data' => wp_remote_retrieve_body($response),
+        'status' => $status_code,
+    ), $status_code);
 }
 
-
-function cbc_process_csv($file_path, $category_id, $category_name) {
-    // Assume the API expects a multipart/form-data request with a file field
+function cbc_process_items($items) {
     global $API_URL;
     $url = $API_URL . "create-blog-batch";
     
@@ -276,11 +247,12 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
     $user_id = get_current_user_id();
-    $related_links = fetch_related_links($category_id); // Assuming this function exists and $category_id is used here
-    # Extract website info
+    $related_links = array(); // Assuming related links are not required for batch creation
+
+    // Extract user info
     $username = get_user_meta($user_id, 'username', true);
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
-    // return an error if the user has not set their username and password
+    // Return an error if the user has not set their username and password
     if (!$username || !$encrypted_password) {
         wp_send_json_error(array('message' => "Please set your blog author username and password in the [settings page](/wp-admin/admin.php?page=bifm-plugin#settings)."));
     }
@@ -306,28 +278,23 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
     if (!$image_height) {
         $image_height = "";
     }
-    # Extract website info    
-    $keyphrases = array();
-    $uuids = array();
-    if (($handle = fopen($file_path, 'r')) !== FALSE) {
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            $keyphrases[] = $data[0]; // Add the first column value to keyphrases array
-            $uuids[] = wp_generate_uuid4();
-        }
-        fclose($handle);
-    } else {
-        error_log("Unable to open CSV file.");
-        wp_die("Unable to open CSV file.", 'Error', array('response' => 400));
-    }
 
+    //modify items to include a uuid in each item
+    $new_items = array();
+    foreach ($items as $item) {
+        $uuid = wp_generate_uuid4();
+        $item['uuid'] = $uuid;
+        $new_items[] = $item; // Use [] to append item to the array
+    }
+    $items = $new_items;
+    error_log("items modified: " . json_encode($items));
+    
     // Prepare the headers and body of the request
     $body = array(
-        'keyphrases' => $keyphrases,
+        'items' => $items,
         'website' => $website,
         'requester' => $user_email,
         'related_links' => $related_links,
-        'category_id' => $category_id, 
-        'category_name' => $category_name,
         'username' => $username,
         'password' => $password,
         'website_description' => $website_description,
@@ -335,7 +302,6 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
         'blog_language' => $blog_language,
         'image_width' => $image_width,
         'image_height' => $image_height,
-        'uuids' => $uuids
     );
     
     $json_body = json_encode($body);
@@ -351,8 +317,6 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
         'timeout' => 45,
     ));
 
-
-
     // Check for errors in the response
     if (is_wp_error($response)) {
         error_log("error found in response");
@@ -360,22 +324,19 @@ function cbc_process_csv($file_path, $category_id, $category_name) {
         wp_die("Something went wrong: $error_message");
     } else {
         // Handle the successful response
+        error_log("response: " . json_encode($response));
         $status_code = wp_remote_retrieve_response_code($response);
         $response_body = wp_remote_retrieve_body($response);
-
-
-        for ($i = 0; $i < count($keyphrases); $i++) {
-            register_request($uuids[$i], $keyphrases[$i], $category_name, $user_email);
+    
+        // register requests based on items not keyphrases
+        for ($i = 0; $i < count($items); $i++) {
+            register_request($items[$i]['uuid'], $items[$i]['keyphrase'], $items[$i]['category_name'], $user_email);
         }
 
         // Do something with the response
-        return array(
-            'data' => $response_body,
-            'status' => $status_code
-        );
+        return $response;
     }
 }
-
 
 function create_requests_table() {
     global $wpdb;
@@ -396,12 +357,11 @@ function create_requests_table() {
     dbDelta($sql);
 }
 
-
 function register_request($uuid, $keyphrase, $category, $requester) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'cbc_blog_requests';
 
-    // check if table exists, if not call create_requests_table
+    // Check if table exists, if not call create_requests_table
     if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
         create_requests_table();
     }
@@ -414,6 +374,4 @@ function register_request($uuid, $keyphrase, $category, $requester) {
         'requester' => $requester,
     ));
 }
-
-
 ?>

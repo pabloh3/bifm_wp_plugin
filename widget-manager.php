@@ -128,13 +128,15 @@ function ewm_create_blog_content() {
     //this code was taken to admin-page.php
     include plugin_dir_path(__FILE__) . 'blog-creator/blog-creator-page.php';
     // Enqueue scripts for the blog page
+    wp_enqueue_style('cbc_script_blog_creator-page', plugin_dir_url(__FILE__) . 'blog-creator/blog-creator.css', [], filemtime(plugin_dir_path(__FILE__) . 'blog-creator/blog-creator.css'), 'all');
     wp_enqueue_script('cbc_script', plugins_url('/blog-creator/blog-creator-script.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/blog-creator/blog-creator-script.js'), true);
+    
 
     // Localize the script with your data
     $translation_array = array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'single_post_nonce' => wp_create_nonce('create-single-post-action'),
-        'bulk_upload_nonce' => wp_create_nonce('bulk-upload-csv-action')
+        'bulk_upload_nonce' => wp_create_nonce('bulk-upload-items-action')
     );
     // error log the entire translation array
     wp_localize_script('cbc_script', 'cbc_object', $translation_array);
