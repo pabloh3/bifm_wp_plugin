@@ -194,6 +194,7 @@ require_once( __DIR__ . '/billy-coder/billy-coder.php' );
 require_once( __DIR__ . '/billy-coder/manage-widgets.php' );
 require_once( __DIR__ . '/billy/smart_chat_callbacks.php' );
 require_once( __DIR__ . '/writer-settings/writer-settings.php' );
+require_once( __DIR__ . '/chat-bar/chat-bar.php' );
 
 
 
