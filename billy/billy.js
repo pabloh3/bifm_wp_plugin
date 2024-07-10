@@ -71,7 +71,8 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
         },
         success: function(response) {
             console.log("success response");
-            document.getElementById('billy-responding').style.display = 'none';            
+            // delete processing...
+            document.getElementById('billy-responding').remove();
             // Convert the response message from Markdown to HTML
             const htmlContent = md.render(response.data.message);
             if (htmlContent) {
@@ -120,7 +121,7 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
             }
             console.log(errorMessage);
             displayWarning(errorMessage);
-            document.getElementById('billy-responding').style.display = 'none';
+            document.getElementById('billy-responding').remove();
             form.assistant_instructions.disabled = false;
             submit_chat.disabled = false;
         }
@@ -176,6 +177,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 suggestion.style.display = 'block';
             }
             cleanupChat();
+            // de-select the previous thread
+            let threadButtons = document.querySelectorAll('.thread-list .thread-btn');
+            for (let i = 0; i < threadButtons.length; i++) {
+                threadButtons[i].style.backgroundColor = "#CDD2EA";
+            }
             // call the API to create a new chat
             jQuery.ajax({
                 url: billy_localize.ajax_url,
@@ -185,10 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     nonce: billy_localize.nonce,
                 },
                 success: function(response) {
-                    console.log("success response");
-                    // TO do add the new chat button to history
-                    // prevent default
-                    
+                    console.log("created new chat");
                 },
                 error: function(error) {
                     // Handle errors here
@@ -214,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
             threadButtons.forEach(function(button) {
                 button.style.backgroundColor = "#CDD2EA";
             });
-            button.style.backgroundColor = "#ECEEF9";
+            button.style.backgroundColor = "#FAFAFC";
 
         });
     });

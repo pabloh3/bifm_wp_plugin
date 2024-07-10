@@ -39,7 +39,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
             </div>
             <div class='writer-input'>
                 <div class="input-field col s12">
-                    <input id="description" type="text" class="validate">
+                    <input id="description" type="text" class="writer-input-box validate">
                     <label for="description">Keyphrase (online search term) you'd like to capture</label>
                     <select id="category_input" class="browser-default category-dropdown">
                         <option value="" disabled selected>Category</option>
@@ -58,6 +58,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                     </div>
                 </button>
             </div>
+            <div id ="billy-form-footer" class="grey-text">Go to &ZeroWidthSpace;<a href="/admin.php?page=writer-settings" class="black-text"> Writer Settings </a>&ZeroWidthSpace;  to change the tone, language and image style.</div>
             <div id="cbc_response" class="card-panel grey" style="display:none;"></div>
         </div>
     
@@ -75,6 +76,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
             <table id="posts-table" class="highlight">
                 <tbody>
                     <?php
+                    // for each request, get the post id and status, if none, then display the keyphrase
                     foreach ($requests as $request) {
                         $post = get_posts(array(
                             'meta_key' => 'bifm_uuid',
@@ -83,7 +85,6 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                             'post_status' => 'any',
                             'numberposts' => 1
                         ));
-
                         if ($post) {
                             $post_id = $post[0]->ID;
                             $title = $post[0]->post_title ? $post[0]->post_title : NULL;
@@ -119,7 +120,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                                         <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Glasses.svg'); ?>
                                     </a>
                                 <?php } else { ?>
-                                    <a class="waves-effect billy-button tooltipped disabled" data-tooltip="Pending">    
+                                    <a class="waves-effect billy-button tooltipped disabled" data-tooltip="Not ready">    
                                         <i class="material-icons">hourglass_empty</i>
                                     </a>
                                 <?php } ?>

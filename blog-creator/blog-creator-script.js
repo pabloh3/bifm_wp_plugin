@@ -71,13 +71,15 @@
         function addNewInput() {
             itemCount++;
             let newInput = `
-                <div class="input-field col s12 writer-input">
-                    <input id="description${itemCount}" type="text" class="validate">
+            <div class='writer-input'>
+                <div class="input-field col s12">
+                    <input id="description${itemCount}" type="text" class="writer-input-box validate">
                     <label for="description${itemCount}">Keyphrase (online search term) you'd like to capture</label>
                     <select id="category_input${itemCount}" class="browser-default category-dropdown">
                         <option value="" disabled selected>Category</option>
                     </select>
-                </div>`;
+                </div>
+            </div>`;
             $('#writer-buttons').before(newInput);
 
             // Fetch categories for new input

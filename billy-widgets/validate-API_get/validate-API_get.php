@@ -25,7 +25,7 @@ function get_widget($parameters, $run_id, $tool_call_id) {
         event.preventDefault();
         data['authorize'] = true;
         var bubble = document.createElement('div');
-        bubble.classList.add('writer-bubble', 'bubble');
+        bubble.classList.add('billy-bubble', 'bubble');
         bubble.innerHTML = '<p>You authorized Billy to read drafts and site configuration.</p>';
         document.getElementById('validate-API_get-widget-" . $widget_id . "').outerHTML = bubble.outerHTML;
         var processingMessage = document.createElement('div');
@@ -38,7 +38,7 @@ function get_widget($parameters, $run_id, $tool_call_id) {
         console.log('reject API_get');
         data['authorize'] = false;
         var bubble = document.createElement('div');
-        bubble.classList.add('writer-bubble', 'bubble');
+        bubble.classList.add('billy-bubble', 'bubble');
         bubble.innerHTML = '<p>You rejected granting Billy private access to your site.</p>';
         document.getElementById('validate-API_get-widget-" . $widget_id . "').outerHTML = bubble.outerHTML;
         var processingMessage = document.createElement('div');

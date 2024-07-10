@@ -14,7 +14,6 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
     } else {
         error_log("not authorized blog creation");
         $tool_message = "User did not authorize blog creation";
-
     }
 
     global $API_URL;

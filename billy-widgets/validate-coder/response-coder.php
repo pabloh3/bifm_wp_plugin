@@ -4,22 +4,10 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
     if ($authorized === true or $authorized === "true"){
         error_log("requesting API access");
         // to do grant API access
-        $tool_message = "User ganted API access";
-        $user_id = get_current_user_id();
-        $username = get_user_meta($user_id, 'username', true);
-        error_log("username in response-API_get: " . $username);
-        $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
-        if (!$username || !$encrypted_password) {
-            wp_send_json_error(array('message' => "Please set a username and password in the [settings page](/wp-admin/admin.php?page=bifm-plugin#settings)."));
-        }
-        $random_key = get_user_meta($user_id, 'random_key', true);
-        $password = decrypt($encrypted_password, $random_key);
+        $tool_message = "redirecting to coder";
     } else {
-        error_log("Rejected granting API access");
-        $tool_message = "User rejectes your request for API access.";
-        $user_id = NULL;
-        $username = NULL;
-        $password = NULL;
+        error_log("Rejected going to coder");
+        $tool_message = "User rejected going to coder";
     }
 
     global $API_URL;
@@ -27,8 +15,6 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
     $website = home_url();  // Current website URL
     $site_info = array(
         'website' => $website,
-        'username' => $username,
-        'password' => $password,
     );
 
     $response_tool = wp_remote_post($url, array(
@@ -40,13 +26,9 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
                 'output' => $tool_message,
                 'status' => 'execute_tool',
                 'function' => array(
-                    'name' => 'API_get',
+                    'name' => 'coder',
                     'arguments' => array(),
                     'id' => $tool_call_id,
-                    'endpoint' => $data['endpoint'],
-                    'how_many' => $data['how_many'],
-                    'query_params' => $data['query_params'],
-                    
                 )
             ),
             'thread_id' => $thread_id,

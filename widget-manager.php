@@ -188,7 +188,7 @@ function builditforme_ewm_enqueue_admin_scripts($hook) {
 add_action('admin_enqueue_scripts', 'builditforme_ewm_enqueue_admin_scripts',90);
 
 require_once( __DIR__ . '/blog-creator/blog-manager.php' );
-require_once( __DIR__ . '/billy/smart-chat-manager.php' );
+require_once( __DIR__ . '/billy/chat-settings-callbacks.php' );
 require_once( __DIR__ . '/shared-widget-registration.php' );
 require_once( __DIR__ . '/billy-coder/billy-coder.php' );
 require_once( __DIR__ . '/billy-coder/manage-widgets.php' );

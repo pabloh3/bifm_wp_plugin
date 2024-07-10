@@ -58,7 +58,7 @@
     pointer-events: none;
 }
 
-#description {
+.writer-input-box {
     margin: 0px !important;
     line-height: 24px !important;
     height: 24px !important; 
@@ -181,4 +181,9 @@ table tbody td {
 
 #posts-table a:focus{
     box-shadow: none;
+}
+
+#billy-form-footer {
+    display: flex;
+    justify-content: center;
 }
