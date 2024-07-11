@@ -20,7 +20,8 @@ jQuery(document).ready(function($) {
     $('.billy-chat-button a').on('click', function(e) {
         e.preventDefault();
         console.log("Billy chat button clicked");
-        $('#billy_chat_widget').toggle();
+        // old $('#billy_chat_widget').toggle();
+        minimize_unminimize();
         loadCurrentSessionThread();
     });
 
@@ -36,12 +37,11 @@ jQuery(document).ready(function($) {
 
     // Minimize chat widget
     $('#billy_chat_minimize').on('click', function() {
-        $('#billy_chat_widget').toggle();
+        minimize_unminimize();
     });
 
     // Close chat widget and redirect
     $('#billy_chat_close').on('click', function() {
-        $('#billy_chat_widget').toggle();
         window.location.href = '/wp-admin/admin.php?page=bifm-plugin';
     });
 
@@ -132,6 +132,37 @@ jQuery(document).ready(function($) {
             }
         });
     }
+
+    function minimize_unminimize(){
+        const chatWidget = $('#billy_chat_widget');
+        const targetElement = $('#wp-admin-bar-billy-chat-button');
+        const widgetOffset = chatWidget.offset();
+        const targetOffset = targetElement.offset();
+        const translateX = targetOffset.left - (widgetOffset.left + chatWidget.outerWidth());
+        const translateY = targetOffset.top - (widgetOffset.top + chatWidget.outerHeight());
+        if (chatWidget.hasClass('collapsed')) {
+            chatWidget.removeClass('collapsed');
+            setTimeout(() => {
+                chatWidget.css('opacity', '1');
+                chatWidget.css('width', '38%');
+                chatWidget.css('height', '80%');
+                chatWidget.css({
+                    right: '20px',
+                    bottom: '20px'});
+                chatWidget.css({transform: `translate(0px, 0px) scale(1)`});
+                
+            }, 10); // Delay to trigger transition effect
+        } else {
+            chatWidget.addClass('collapsed');
+            setTimeout(() => {
+                chatWidget.css('opacity', '0');
+                chatWidget.css('width', '0');
+                chatWidget.css('height', '0');
+                chatWidget.css({transform: `translate(${translateX}px, ${translateY}px) scale(0.1)`});
+            }, 10); // Wait for transition to complete before fully collapsing
+        }
+    }
+
 });
 
 

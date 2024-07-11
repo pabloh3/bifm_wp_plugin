@@ -260,10 +260,11 @@ function loadThread(threadId) {
                 chatbox.scrollTop = chatbox.scrollHeight;
             }
         },
-        
         error: function(error) {
             console.error('Error loading thread:', error);
+            chatbox.innerHTML = "";
             displayWarning("Failed to load messages. Please try again.");
+            
         }
     });
 }

@@ -26,7 +26,7 @@ add_action('admin_enqueue_scripts', 'billy_button_enqueue_scripts');
 
 function billy_add_chat_widget() {
     ?>
-    <div id="billy_chat_widget" style="display: none;">
+    <div id="billy_chat_widget" class="collapsed">
         <!-- Chat widget HTML here -->
         <div id="billy_chat_container">
             <div class="billy_top_bar">
