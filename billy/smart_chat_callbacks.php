@@ -177,11 +177,16 @@ function load_billy_chat() {
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
         wp_send_json_error(array('message' => "Couldn't verify user"), 500);
     }
-    $thread_id = sanitize_text_field($_POST['thread_id']);
     if (!session_id()) {
         session_start();
     }
-    $_SESSION['thread_id'] = $thread_id; // Set the new current thread ID
+    // if no thread_id is passed, load current thread
+    if (!isset($_POST['thread_id']) && isset($_SESSION['thread_id'])) {
+            $thread_id = $_SESSION['thread_id'];
+    } else {
+        $thread_id = sanitize_text_field($_POST['thread_id']);
+        $_SESSION['thread_id'] = $thread_id; // Set the new current thread ID
+    }
 
     $thread_ids = get_option('assistant_thread_data');
     if (($key = array_search($thread_id, $thread_ids)) !== false) {

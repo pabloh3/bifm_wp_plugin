@@ -35,8 +35,11 @@ function get_widget($parameters, $run_id, $tool_call_id) {
         let div = document.createElement('div');
         div.classList.add('writer-bubble');
         div.classList.add('bubble');
+        div.style.backgroundColor = '#fffaf4';
+        div.style.alignSelf = 'flex-start';
         div.innerHTML = '<p>You authorized the writer bot to build blog posts for: <b>" . $keyphrase . "</b> <br> It usually takes about two minutes, you can keep track of your request in the <a href=\"/wp-admin/admin.php?page=create-blog\">requests page</a>.</p>';
         document.getElementById('validate-writer-widget-" . $widget_id . "').outerHTML = div.outerHTML;
+        var processingMessage = document.createElement('div');
         processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
         document.getElementById('billy-chatbox').appendChild(processingMessage);
         sendMessage(data, 'writer', '" . $run_id . "', '" . $tool_call_id . "');
@@ -47,8 +50,11 @@ function get_widget($parameters, $run_id, $tool_call_id) {
         let div = document.createElement('div');
         div.classList.add('writer-bubble');
         div.classList.add('bubble');
+        div.style.backgroundColor = '#fffaf4';
+        div.style.alignSelf = 'flex-start';
         div.innerHTML = '<p>You rejected to build blog posts for: <b>" . $keyphrase . "</b></p>';
         document.getElementById('validate-writer-widget-" . $widget_id . "').outerHTML = div.outerHTML;
+        var processingMessage = document.createElement('div');
         processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
         document.getElementById('billy-chatbox').appendChild(processingMessage);
         sendMessage(data, 'writer', '" . $run_id . "', '" . $tool_call_id . "');

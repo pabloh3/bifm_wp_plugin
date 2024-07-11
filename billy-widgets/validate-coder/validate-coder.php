@@ -19,7 +19,7 @@ function get_widget($parameters, $run_id, $tool_call_id) {
                     <div class='svg-icon coder-icon'>" . $coder_icon . "
                     </div>
                 </div>
-                <span class='card-title'>Billy suggests to create a new elementor widget</span>
+                <span class='card-title'>Billy suggests to create a new elementor widget. You can use the Billy coder.</span>
                 <p>Do you want to authorize our coder bot to build a new widget: <b>" . $keyphrase . "</b>?</p>
             </div>
             <div style='display:flex;'>
@@ -37,6 +37,9 @@ function get_widget($parameters, $run_id, $tool_call_id) {
         let div = document.createElement('div');
         div.classList.add('coder-bubble');
         div.classList.add('bubble');
+        // make the bubble style backgound green
+        div.style.backgroundColor = '#fef7ff';
+        div.style.alignSelf = 'flex-start';
         div.innerHTML = '<p>You will be redirected to the coder soon.';
         document.getElementById('validate-coder-widget-" . $widget_id . "').outerHTML = div.outerHTML;
         window.location.href = '/wp-admin/admin.php?page=widget-manager&keyphrase=" . $keyphrase_url . "';
@@ -47,8 +50,11 @@ function get_widget($parameters, $run_id, $tool_call_id) {
         let div = document.createElement('div');
         div.classList.add('coder-bubble');
         div.classList.add('bubble');
+        div.style.backgroundColor = '#fef7ff';
+        div.style.alignSelf = 'flex-start';
         div.innerHTML = '<p>You rejected to build an Elementor widget for: <b>" . $keyphrase . "</b></p>';
         document.getElementById('validate-coder-widget-" . $widget_id . "').outerHTML = div.outerHTML;
+        var processingMessage = document.createElement('div');
         processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
         document.getElementById('billy-chatbox').appendChild(processingMessage);
         sendMessage(data, 'coder', '" . $run_id . "', '" . $tool_call_id . "');
