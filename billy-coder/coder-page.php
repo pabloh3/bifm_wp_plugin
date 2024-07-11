@@ -9,11 +9,9 @@ $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php ";
 // for testing
 ?>
 
-<a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
-    <i class="material-icons left">arrow_back</i>
-    Back
-</a>
-
+<div id="backButton" class="icon-button btn-floating btn-small waves-effect waves-light non-menu-back-button">
+    <i class="arrow-left material-icons">arrow_back</i>    
+</div>
 
 <head>
     <meta charset='utf-8'>
@@ -41,18 +39,19 @@ $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php ";
                 <button class='bifm-btn waves-effect waves-light' id='reset-button'>Reset</button>
                 <button class='bifm-btn waves-effect waves-light' id='undo-button'>Undo</button>
             </div>
-            <div class='aspect-16-9'>
+            <div class='aspect-16-9' style="margin: 10px;">
                 <iframe id='myframe' src=<?php echo $url; ?>frameborder='0' allowfullscreen></iframe>
-                
             </div>
-            
-            <button class='bifm-btn waves-effect waves-light' id='save-button'>Save</button>
-            <button class='bifm-btn waves-effect waves-light' id='previous-stage' style='display: none;'>< Back (modify visuals)</button>
-            <button class='bifm-btn waves-effect waves-light' id='next-stage' >Next (modify controls) ></button>
+            <div id="coder-buttons">
+                <button class='bifm-btn waves-effect waves-light' id='previous-stage' style='display: none;'>< Back (modify visuals)</button>
+                <button class='bifm-btn waves-effect waves-light' id='next-stage' >Next (modify controls) ></button>
+                <button class='bifm-btn waves-effect waves-light' id='save-button' style="margin-left: auto;">Save</button>
+            </div>
         </div>
     </div>
     
     <!-- Materialize JavaScript -->
     <script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js'></script>
 </body>
 </html>

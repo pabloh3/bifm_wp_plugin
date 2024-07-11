@@ -14,7 +14,20 @@ var folderName = urlParams.get('foldername');
 var client_folder = folderName.replace(/[a-zA-Z]/g, '');
 console.log('JS loaded v1.0.71');
 
-//stages = {visuals, functional, controls}
+
+// Initialize markdown-it and highlight.js
+const md = window.markdownit({
+    highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return '<pre class="hljs"><code>' +
+                    hljs.highlight(str, { language: lang }).value +
+                    '</code></pre>';
+            } catch (__) {}
+        }
+        return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+    }
+});
 
 // listens to chat submissions
 // when document is ready
@@ -33,11 +46,12 @@ document.addEventListener('DOMContentLoaded', function() {
         sendMessage(folderName, 'processgpt', form.user_message.value, currentStage);
     });
 
-    // process clicks on back button
+    // Process clicks on back button
     document.getElementById('backButton').addEventListener('click', goBack);
     function goBack() {
         window.location.href = 'admin.php?page=bifm-plugin';
     }
+
 });
 
 // send the message from either submit or debug to the server
@@ -117,9 +131,10 @@ function pollForGptResponse(folderName, jobId, retryCount) {
                         while (chatbox.getElementsByTagName('p').length > prevMessageCounts[prevMessageCounts.length - 1]+1){
                             chatbox.removeChild(chatbox.lastChild);
                         }
-                        let p = document.createElement('p');
-                        p.textContent = `GPT: ${lastMsg}`;
-                        chatbox.appendChild(p);
+                        let div = document.createElement('div');
+                        lastMsg = md.render(lastMsg);
+                        div.innerHTML = `<p>GPT: ${lastMsg}</p>`;
+                        chatbox.appendChild(div);
                         displayedMessageIds.add(lastMsgId);
                     }
                 } else {
@@ -149,9 +164,10 @@ function pollForGptResponse(folderName, jobId, retryCount) {
                         while(chatbox.getElementsByTagName('p').length > prevMessageCounts[prevMessageCounts.length - 1]+1){
                             chatbox.removeChild(chatbox.lastChild);
                         }
-                        let p = document.createElement('p');
-                        p.textContent = `GPT: ${lastMsg}`;
-                        chatbox.appendChild(p);
+                        let div = document.createElement('div');
+                        lastMsg = md.render(lastMsg);
+                        div.innerHTML = `<p>GPT: ${lastMsg}</p>`;
+                        chatbox.appendChild(div);
                         displayedMessageIds.add(lastMsgId);
                     }
                     processingMessage.innerHTML = '<div class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';

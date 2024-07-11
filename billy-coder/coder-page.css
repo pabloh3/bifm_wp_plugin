@@ -72,3 +72,11 @@
     box-sizing: border-box;
     /*height: auto !important;*/
 }
+
+#coder-buttons {
+    display: flex;
+}
+
+.bifm-btn {
+    margin-left: 10px;
+}

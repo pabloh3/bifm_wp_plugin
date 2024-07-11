@@ -135,6 +135,7 @@ jQuery(document).ready(function($) {
 
     function minimize_unminimize(){
         const chatWidget = $('#billy_chat_widget');
+        chatWidget.toggle();
         const targetElement = $('#wp-admin-bar-billy-chat-button');
         const widgetOffset = chatWidget.offset();
         const targetOffset = targetElement.offset();
