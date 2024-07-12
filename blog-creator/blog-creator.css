@@ -67,6 +67,7 @@
 .input-field label{
     height: 24px !important;
     margin-top: 10px;
+    margin-left: 16px;
 }
 
 .input-field label.active {

@@ -38,7 +38,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
             </div>
             <div class='writer-input'>
-                <div class="input-field col s12">
+                <div class="input-field bifm-col s12">
                     <input id="description" type="text" class="writer-input-box validate">
                     <label for="description">Keyphrase (online search term) you'd like to capture</label>
                     <select id="category_input" class="browser-default category-dropdown">

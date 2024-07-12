@@ -72,7 +72,7 @@
             itemCount++;
             let newInput = `
             <div class='writer-input'>
-                <div class="input-field col s12">
+                <div class="input-field bifm-col s12">
                     <input id="description${itemCount}" type="text" class="writer-input-box validate">
                     <label for="description${itemCount}">Keyphrase (online search term) you'd like to capture</label>
                     <select id="category_input${itemCount}" class="browser-default category-dropdown">
