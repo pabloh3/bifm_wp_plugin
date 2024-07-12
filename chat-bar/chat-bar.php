@@ -3,7 +3,7 @@ function billy_add_admin_bar_button($wp_admin_bar) {
     $args = array(
         'id'    => 'billy-chat-button',
         'title' => '<img src="' . plugin_dir_url(__FILE__) . '../static/icons/bar-logo-full.png" style="height: 20px; margin: 6px;" />',
-        'href'  => '#',
+        'href'  => '/wp-admin/admin.php?page=bifm-plugin',
         'meta'  => array(
             'class' => 'billy-chat-button',
             'title' => 'Ask Billy'
