@@ -2,13 +2,13 @@
 /*
 Plugin Name: Build It For Me - AI creator
 Description: Ask a bot to create for you.
-Version: 1.2.0
+Version: 1.2.1
 Author: Build It For Me
 */
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-$current_version = '1.2.0';
+$current_version = '1.2.1';
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
