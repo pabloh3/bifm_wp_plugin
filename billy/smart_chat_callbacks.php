@@ -14,7 +14,6 @@ function handle_chat_message() {
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
         wp_send_json_error(array('message' => "Couldn't verify user"), 500);
     }
-    error_log("back end handle message called");
     $message = $_POST['message'];
     $tool_call_id = $_POST['tool_call_id'];
     $widget_name = $_POST['widget_name'];
@@ -24,16 +23,15 @@ function handle_chat_message() {
     $response = callAPI($message, $widget_name, $run_id, $tool_call_id);
 }
 
+
+// Call the API
 function callAPI($message, $widget_name, $run_id, $tool_call_id) {
     $assistant_id = get_option('assistant_id');
-    error_log("Assistant ID: " . $assistant_id);
     if ($assistant_id === false) {
         update_option('assistant_instructions', '');
         update_option('uploaded_file_names', array());
         update_option('assistant_id', NULL);
         update_option('vector_store_id', NULL);
-        //wp_send_json_error(array('message' => "Your admin hasn't configured the smart chat in the BIFM plugin."), 500);
-        //wp_die();
     }
     if (isset($_SESSION['thread_id'])) {
         $thread_id = $_SESSION['thread_id'];
@@ -60,6 +58,7 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
     } else {
         $response = widget_submission($message, $run_id, $widget_name, $assistant_id, $thread_id, $tool_call_id);
     }
+
     if (is_wp_error($response)) {
         $error_response = $response->get_error_message() ? $response->get_error_message() : "Unknown error when calling chat API";
         error_log($error_response);
@@ -68,32 +67,66 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
         $status_code = wp_remote_retrieve_response_code($response);
         error_log("Status code from chat response: " . $status_code);
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
-        if ($status_code == 200) {
-            // check if site_info is set, if so save assistant_id to options
-            if ($assistant_id == NULL && isset($response_body['site_info'])) {
-                $site_info = $response_body['site_info'];
-                if (isset($site_info['assistant_id'])) {
-                    error_log("Assistant ID stored from first-time call to chat: " . $site_info['assistant_id']);
-                    update_option('assistant_id', $site_info['assistant_id']);
-                }
-            }
+
+        if ($status_code == 202) {
+            // log response array as string
+            error_log("202 response: " . print_r($response_body, true));
+            $job_id = $response_body['jobId'];
+            wp_send_json_success(array('job_id' => $job_id), 202);
+        } else if ($status_code == 200) {
             handle_response($response_body, $message);
         } else {
-            error_log("Got a not 200 response" . $status_code);
-            if (isset($response_body['message'])){
-                $error_response = $response_body['message'];
-            } elseif (isset($response_body['error'])){
-                $error_response =  $response_body['error'];
-            } else{
-                $error_response = "API for chat returned an error with code: " .  $status_code;
-            }        
-            error_log("Error_message: ");
-            error_log($error_response);
+            $error_response = isset($response_body['message']) ? $response_body['message'] : "API for chat returned an error with code: " .  $status_code;
+            error_log("Error_message: " . $error_response);
             wp_send_json_error(array('message' => $error_response), $status_code > 0 ? $status_code : 500);
         }
     }
     wp_die();
 }
+
+// endpoint for polling
+function billy_check_job_status() {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
+        wp_send_json_error(array('message' => "Couldn't verify user"), 500);
+    }
+    $job_id = sanitize_text_field($_POST['job_id']);
+    $message = sanitize_text_field($_POST['message']);
+
+    global $API_URL;
+    $url = $API_URL . '/chat_job_status/' . $job_id;
+
+    $response = wp_remote_get($url, array('timeout' => 60));
+
+    if (is_wp_error($response)) {
+        $error_response = $response->get_error_message() ? $response->get_error_message() : "Unknown error when checking job status";
+        error_log("Error in checking chat job status: " . $error_response);
+        wp_send_json_error(array('message' => "Something went wrong: $error_response"), 500);
+    } else {
+        $status_code = wp_remote_retrieve_response_code($response);
+        $response_body = json_decode(wp_remote_retrieve_body($response), true);
+        if ($status_code == 200) {
+            if ($assistant_id == NULL && isset($response_body['site_info'])) {
+                $site_info = $response_body['site_info'];
+                if (isset($site_info['assistant_id'])) {
+                    update_option('assistant_id', $site_info['assistant_id']);
+                }
+            }
+            handle_response($response_body, $message);
+        } else if ($status_code == 202) {
+            // log response array
+            $response_data = json_decode(wp_remote_retrieve_body($response), true);
+            $job_id = $response_data['job_id'];
+            wp_send_json_success(array('job_id' => $job_id), 202);
+        } else {
+            $error_response = isset($response_body['message']) ? $response_body['message'] : "API for job status returned an error with code: " .  $status_code;
+            error_log("Error_message: " . $error_response);
+            wp_send_json_error(array('message' => $error_response), $status_code > 0 ? $status_code : 500);
+        }
+    }
+    wp_die();
+}
+add_action('wp_ajax_billy_check_job_status', 'billy_check_job_status');
+
 
 // Handle response from API
 function handle_response($body, $message) {
@@ -198,7 +231,6 @@ function load_billy_chat() {
     // Call the API to get the thread
     global $API_URL;
     $url = $API_URL . '/load_thread'; // Make sure this matches your Flask route
-    error_log("calling api for load threads");
     // post to the API
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),

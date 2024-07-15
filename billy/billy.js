@@ -56,7 +56,7 @@ form.addEventListener('submit', (event) => {
     sendMessage(form.assistant_instructions.value, null, null, null);
 });
 
-// Send the message from either submit or debug to the server
+
 function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
     jQuery.ajax({
         url: billy_localize.ajax_url,
@@ -69,67 +69,139 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
             run_id: run_id,
             tool_call_id: tool_call_id
         },
-        success: function(response) {
-            console.log("success response");
-            // delete processing...
-            document.getElementById('billy-responding').remove();
-            // Convert the response message from Markdown to HTML
-            const htmlContent = md.render(response.data.message);
-            if (htmlContent) {
-                let div = document.createElement('div');
-                //add classes to div
-                div.classList.add('billy-bubble');
-                div.classList.add('bubble');
-                div.innerHTML = `${htmlContent}`;
-                chatbox.appendChild(div);
-                chatbox.scrollTop = chatbox.scrollHeight;
+        success: function(response, textStatus, jqXHR) {
+            if (jqXHR.status === 202) {
+                const jobId = response.data.job_id;
+                pollForResult(jobId, messageBody);
+            } else {
+                handleResponse(response);
             }
-            
-
-            // if response contain widget, append as html
-            if (response.data.widget_object) {
-                console.log("contains widget");
-                let div = document.createElement('div');
-                div.innerHTML = response.data.widget_object.widget;
-                chatbox.appendChild(div);
-                if (response.data.widget_object.script) {
-                    console.log("contains script");
-                    // if response contain script, append to the document's existing <script> tag
-                    let script = document.createElement('script');
-                    script.innerHTML = response.data.widget_object.script;
-                    document.body.appendChild(script);
-                    chatbox.scrollTop = chatbox.scrollHeight;
-                }
-                return;
-            }
-            // Highlight the code blocks
-            hljs.highlightAll();
         },
         error: function(error) {
-            // Handle errors here
-            console.log("error response");
-            // check if there's data.message
-            let errorMessage = "";
-            try {
-                errorMessage = error.responseJSON.data.message;
-            } catch (error2) {
-                try {
-                    errorMessage = error.responseText;
-                } catch (error3) {
-                    errorMessage = "An error occurred. Please try again.";
-                }
-            }
-            console.log(errorMessage);
-            displayWarning(errorMessage);
-            document.getElementById('billy-responding').remove();
-            form.assistant_instructions.disabled = false;
-            submit_chat.disabled = false;
+            handleError(error);
         }
     });
-    form.assistant_instructions.value = ''; 
-    // Scroll to the bottom of the chatbox
+    form.assistant_instructions.value = '';
     chatbox.scrollTop = chatbox.scrollHeight;
 }
+
+function pollForResult(jobId, messageBody) {
+    const pollInterval = 3000; // Poll every 3 seconds
+
+    const poll = setInterval(() => {
+        jQuery.ajax({
+            url: billy_localize.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'billy_check_job_status',
+                nonce: billy_localize.nonce,
+                job_id: jobId,
+                message: messageBody
+            },
+            success: function(response, textStatus, jqXHR) {
+                if (jqXHR.status === 200) {
+                    clearInterval(poll);
+                    handleResponse(response);
+                } else if (jqXHR.status === 202) {
+                    // Keep polling
+                    console.log('Job is still processing. Polling will continue.');
+                } else {
+                    clearInterval(poll);
+                    handleError({ responseJSON: { data: { message: 'Unexpected status. Please try again.' } } });
+                }
+            },
+            error: function(error) {
+                clearInterval(poll);
+                handleError(error);
+            }
+        });
+    }, pollInterval);
+}
+
+function handleResponse(response) {
+    document.getElementById('billy-responding').remove();
+    const htmlContent = md.render(response.data.message);
+    if (htmlContent) {
+        let div = document.createElement('div');
+        div.classList.add('billy-bubble', 'bubble');
+        div.innerHTML = htmlContent;
+        chatbox.appendChild(div);
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
+    if (response.data.widget_object) {
+        let div = document.createElement('div');
+        div.innerHTML = response.data.widget_object.widget;
+        chatbox.appendChild(div);
+        if (response.data.widget_object.script) {
+            let script = document.createElement('script');
+            script.innerHTML = response.data.widget_object.script;
+            document.body.appendChild(script);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    }
+    hljs.highlightAll();
+}
+
+function handleError(error) {
+    let errorMessage = "";
+    try {
+        errorMessage = error.responseJSON.data.message;
+    } catch (error2) {
+        try {
+            errorMessage = error.responseText;
+        } catch (error3) {
+            errorMessage = "An error occurred. Please try again.";
+        }
+    }
+    displayWarning(errorMessage);
+    document.getElementById('billy-responding').remove();
+    form.assistant_instructions.disabled = false;
+    submit_chat.disabled = false;
+}
+
+
+function handleResponse(response) {
+    document.getElementById('billy-responding').remove();
+    const htmlContent = md.render(response.data.message);
+    if (htmlContent) {
+        let div = document.createElement('div');
+        div.classList.add('billy-bubble', 'bubble');
+        div.innerHTML = htmlContent;
+        chatbox.appendChild(div);
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
+    if (response.data.widget_object) {
+        let div = document.createElement('div');
+        div.innerHTML = response.data.widget_object.widget;
+        chatbox.appendChild(div);
+        if (response.data.widget_object.script) {
+            let script = document.createElement('script');
+            script.innerHTML = response.data.widget_object.script;
+            document.body.appendChild(script);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    }
+    hljs.highlightAll();
+}
+
+function handleError(error) {
+    let errorMessage = "";
+    try {
+        errorMessage = error.responseJSON.data.message;
+    } catch (error2) {
+        try {
+            errorMessage = error.responseText;
+        } catch (error3) {
+            errorMessage = "An error occurred. Please try again.";
+        }
+    }
+    displayWarning(errorMessage);
+    document.getElementById('billy-responding').remove();
+    form.assistant_instructions.disabled = false;
+    submit_chat.disabled = false;
+}
+
+
 
 // when one of the suggestions is clicked
 document.addEventListener('DOMContentLoaded', function() {
