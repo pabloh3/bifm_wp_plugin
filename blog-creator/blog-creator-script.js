@@ -76,7 +76,7 @@
                     <input id="description${itemCount}" type="text" class="writer-input-box validate">
                     <label for="description${itemCount}">Keyphrase (online search term) you'd like to capture</label>
                     <select id="category_input${itemCount}" class="browser-default category-dropdown">
-                        <option value="" disabled selected>Category</option>
+                        <option value="1" disabled selected>Category</option>
                     </select>
                 </div>
             </div>`;
@@ -111,6 +111,9 @@
             $('.writer-input').each(function() {
                 let keyphrase = $(this).find('input[type="text"]').val();
                 let categoryValue = $(this).find('select').val();
+                if (categoryValue === '' || categoryValue === null) {
+                    categoryValue = 1;
+                }
                 let categoryName = $(this).find('select option:selected').text();
                 if (keyphrase) {
                     items.push({ keyphrase, category: categoryValue, category_name: categoryName });

@@ -84,9 +84,8 @@
 
         <button class="bifm-btn waves-effect waves-light" type="submit" name="action">Update</button>
     </form>
+    <div id="warningMessage" class="card-panel yellow darken-2" style="position: relative; left: 0; bottom: 0; width: 100%; text-align: center; display: none; z-index: 1000;">This is a warning message!</div>
 </div>
-
-<div id="warningMessage" class="card-panel yellow darken-2" style="position: fixed; left: 0; bottom: 0; width: 100%; text-align: center; display: none; z-index: 1000;">This is a warning message!</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script>

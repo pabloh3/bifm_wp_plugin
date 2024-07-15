@@ -42,7 +42,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                     <input id="description" type="text" class="writer-input-box validate">
                     <label for="description">Keyphrase (online search term) you'd like to capture</label>
                     <select id="category_input" class="browser-default category-dropdown">
-                        <option value="" disabled selected>Category</option>
+                        <option value="1" disabled selected>Category</option>
                     </select>
                 </div>
             </div>
@@ -89,12 +89,27 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                             $post_id = $post[0]->ID;
                             $title = $post[0]->post_title ? $post[0]->post_title : NULL;
                             $status = get_post_status($post_id);
-                            $status_text = $status ? ucfirst($status) : 'Not ready or deleted by user';
+                            $status_text = $status ? ucfirst($status) : 'Undefined';
                             $title_link = get_permalink($post_id);
                         } else {
+                            // if requested_at > 20 mins ago, status is "Request failed"
+                            $request_time = strtotime($request->requested_at);
+                            $current_time = time();
+                            $time_diff = $current_time - $request_time;
+                            // count how many requests were made at the same time as this one
+                            $same_time_requests = $wpdb->get_results("SELECT * FROM $table_name WHERE requested_at = '$request->requested_at'");
+                            $count_same_time_requests = count($same_time_requests);
+                            if ($time_diff > 600 && $count_same_time_requests < 5) {
+                                # don't fail batches of requests that are less than 10 minutes old
+                                $status_text = 'Request failed';
+                            } else if ($time_diff > 12000) {
+                                # fail requests that are older than 3 hours regardless of how many requests were made at the same time
+                                $status_text = 'Request failed';
+                            } else {
+                                $status_text = 'Writing in progress...';
+                            }
                             $post_id = false;
                             $title = false;
-                            $status_text = 'Not ready or deleted by user';
                             $title_link = '#';
                         }
                         ?>
