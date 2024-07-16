@@ -14,7 +14,7 @@ function billy_add_admin_bar_button($wp_admin_bar) {
 add_action('admin_bar_menu', 'billy_add_admin_bar_button', 999);
 
 function billy_button_enqueue_scripts() {
-    wp_enqueue_script('billy_chat_script', plugin_dir_url(__FILE__) . '/chat-bar.js', array('jquery'), '1.0', true);
+    wp_enqueue_script('billy_chat_script', plugin_dir_url(__FILE__) . '/chat-bar.js', array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/chat-bar.js'), true);
     wp_enqueue_style('billy_chat_style', plugin_dir_url(__FILE__) . '/chat-bar.css');
     // localize
     wp_localize_script('billy_chat_script', 'billy_chat_vars', array(

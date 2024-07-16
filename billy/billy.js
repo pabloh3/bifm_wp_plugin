@@ -71,7 +71,7 @@ function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
         },
         success: function(response, textStatus, jqXHR) {
             if (jqXHR.status === 202) {
-                const jobId = response.data.job_id;
+                const jobId = response.data.jobId;
                 pollForResult(jobId, messageBody);
             } else {
                 handleResponse(response);
@@ -95,7 +95,7 @@ function pollForResult(jobId, messageBody) {
             data: {
                 action: 'billy_check_job_status',
                 nonce: billy_localize.nonce,
-                job_id: jobId,
+                jobId: jobId,
                 message: messageBody
             },
             success: function(response, textStatus, jqXHR) {

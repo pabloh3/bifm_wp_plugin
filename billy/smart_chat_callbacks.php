@@ -71,8 +71,8 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
         if ($status_code == 202) {
             // log response array as string
             error_log("202 response: " . print_r($response_body, true));
-            $job_id = $response_body['jobId'];
-            wp_send_json_success(array('job_id' => $job_id), 202);
+            $jobId = $response_body['jobId'];
+            wp_send_json_success(array('jobId' => $jobId), 202);
         } else if ($status_code == 200) {
             handle_response($response_body, $message);
         } else {
@@ -89,11 +89,11 @@ function billy_check_job_status() {
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
         wp_send_json_error(array('message' => "Couldn't verify user"), 500);
     }
-    $job_id = sanitize_text_field($_POST['job_id']);
+    $jobId = sanitize_text_field($_POST['jobId']);
     $message = sanitize_text_field($_POST['message']);
 
     global $API_URL;
-    $url = $API_URL . '/chat_job_status/' . $job_id;
+    $url = $API_URL . '/chat_job_status/' . $jobId;
 
     $response = wp_remote_get($url, array('timeout' => 60));
 
@@ -115,8 +115,8 @@ function billy_check_job_status() {
         } else if ($status_code == 202) {
             // log response array
             $response_data = json_decode(wp_remote_retrieve_body($response), true);
-            $job_id = $response_data['job_id'];
-            wp_send_json_success(array('job_id' => $job_id), 202);
+            $jobId = $response_data['jobId'];
+            wp_send_json_success(array('jobId' => $jobId), 202);
         } else {
             $error_response = isset($response_body['message']) ? $response_body['message'] : "API for job status returned an error with code: " .  $status_code;
             error_log("Error_message: " . $error_response);

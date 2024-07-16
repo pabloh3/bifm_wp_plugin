@@ -1,3 +1,6 @@
+
+
+
 // Initialize markdown-it and highlight.js
 const md_bifm = window.markdownit({
     highlight: function (str, lang) {
@@ -15,12 +18,11 @@ const md_bifm = window.markdownit({
 let billy_processingMessage = document.createElement('div');
 billy_processingMessage.innerHTML = '<div id="billy-responding" class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
 
+
 jQuery(document).ready(function($) {
     // Toggle chat widget visibility
     $('.billy-chat-button a').on('click', function(e) {
         e.preventDefault();
-        console.log("Billy chat button clicked");
-        // old $('#billy_chat_widget').toggle();
         minimize_unminimize();
         loadCurrentSessionThread();
     });
@@ -87,9 +89,9 @@ jQuery(document).ready(function($) {
             }
         });
     }
-
+    
     function sendMessage(message) {
-        // add processing... message
+        console.log("Sending message:", message);
         document.getElementById('billy_chat_messages').appendChild(billy_processingMessage);
         $('#billy_chat_messages').scrollTop($('#billy_chat_messages')[0].scrollHeight);
         $.ajax({
@@ -100,37 +102,88 @@ jQuery(document).ready(function($) {
                 nonce: billy_chat_vars.nonce,
                 message: message
             },
-            success: function(response) {
-                console.log("Message received successfully:", response);
-                // if response contains message append message
-                if (response.data.message) {
-                    appendBotMessage(response.data.message);
+            success: function(response, textStatus, jqXHR) {
+                console.log("response.status: ", response.status);
+                if (jqXHR.status === 202) {
+                    console.log("Job submitted successfully. Polling for result...");
+                    const jobId = response.data.jobId;
+                    pollForResult(jobId, message);
+                } else {
+                    console.log("not 202 response received");
+                    handleResponse(response);
                 }
-                // if response contain widget, append as html
-                if (response.data.widget_object) {
-                    let chatbox = document.getElementById('billy_chat_messages');
-                    console.log("contains widget");
-                    let div = document.createElement('div');
-                    div.innerHTML = response.data.widget_object.widget;
-                    chatbox.appendChild(div);
-                    if (response.data.widget_object.script) {
-                        console.log("contains script");
-                        // if response contain script, append to the document's existing <script> tag
-                        let script = document.createElement('script');
-                        script.innerHTML = response.data.widget_object.script;
-                        document.body.appendChild(script);
-                        chatbox.scrollTop = chatbox.scrollHeight;
-                    }
-                }
-                document.getElementById('billy_chat_messages').removeChild(billy_processingMessage);
             },
             error: function(error) {
-                console.error('Error sending message:', error);
-                // append error
-                appendBotMessage('Sorry, I am having trouble processing your request. Please try again later.');
-                document.getElementById('billy_chat_messages').removeChild(billy_processingMessage);
+                handleError(error);
             }
         });
+    }
+
+    function pollForResult(jobId, message) {
+        const pollInterval = 3000; // Poll every 3 seconds
+
+        const poll = setInterval(() => {
+            $.ajax({
+                url: billy_chat_vars.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'billy_check_job_status',
+                    nonce: billy_chat_vars.nonce,
+                    jobId: jobId,
+                    message: message
+                },
+                success: function(response, textStatus, jqXHR) {
+                    if (jqXHR.status === 200) {
+                        clearInterval(poll);
+                        handleResponse(response);
+                    } else if (jqXHR.status === 202) {
+                        console.log('Job is still processing. Polling will continue.');
+                    } else {
+                        clearInterval(poll);
+                        handleError({ responseJSON: { data: { message: 'Unexpected status. Please try again.' } } });
+                    }
+                },
+                error: function(error) {
+                    clearInterval(poll);
+                    handleError(error);
+                }
+            });
+        }, pollInterval);
+    }
+
+    function handleResponse(response) {
+        document.getElementById('billy_chat_messages').removeChild(billy_processingMessage);
+        if (response.data.message) {
+            appendBotMessage(response.data.message);
+        }
+        if (response.data.widget_object) {
+            let chatbox = document.getElementById('billy_chat_messages');
+            console.log("contains widget");
+            let div = document.createElement('div');
+            div.innerHTML = response.data.widget_object.widget;
+            chatbox.appendChild(div);
+            if (response.data.widget_object.script) {
+                // if response contain script, append to the document's existing <script> tag
+                let script = document.createElement('script');
+                script.innerHTML = response.data.widget_object.script;
+                document.body.appendChild(script);
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
+        }
+    }
+
+    function handleError(error) {
+        console.error('Error polling for job status:', error);
+        let errorMessage = "An error occurred. Please try again.";
+        try {
+            errorMessage = error.responseJSON.data.message;
+        } catch (e) {
+            try {
+                errorMessage = error.responseText;
+            } catch (e) {}
+        }
+        appendBotMessage(errorMessage);
+        document.getElementById('billy_chat_messages').removeChild(billy_processingMessage);
     }
 
     function minimize_unminimize(){
