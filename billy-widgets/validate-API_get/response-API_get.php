@@ -42,7 +42,7 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
                 'function' => array(
                     'name' => 'API_get',
                     'arguments' => array(),
-                    'id' => $tool_call_id,
+                    'id' => $data['id'],
                     'endpoint' => $data['endpoint'],
                     'how_many' => $data['how_many'],
                     'query_params' => $data['query_params'],
