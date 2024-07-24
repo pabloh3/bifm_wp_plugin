@@ -12,14 +12,12 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
         if (!$username || !$encrypted_password) {
             wp_send_json_error(array('message' => "Please set a username and password in the [settings page](/wp-admin/admin.php?page=bifm-plugin#settings)."));
         }
-        $random_key = get_user_meta($user_id, 'random_key', true);
-        $password = decrypt($encrypted_password, $random_key);
     } else {
         error_log("Rejected granting API access");
         $tool_message = "User rejectes your request for API access.";
         $user_id = NULL;
         $username = NULL;
-        $password = NULL;
+        $encrypted_password = NULL;
     }
 
     global $API_URL;
@@ -28,7 +26,7 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
     $site_info = array(
         'website' => $website,
         'username' => $username,
-        'password' => $password,
+        'password' => $encrypted_password,
     );
 
     $response_tool = wp_remote_post($url, array(

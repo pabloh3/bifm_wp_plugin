@@ -1,11 +1,6 @@
 <?php 
 require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
-function decrypt($data, $random_key) {
-    list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
-    return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
-}
-
 // Create blog
 add_action('wp_ajax_cbc_create_blog', 'handle_cbc_create_blog');
 function handle_cbc_create_blog() {
@@ -43,12 +38,13 @@ function create_blog($keyphrase, $category, $category_name) {
     # Extract website info
     $username = get_user_meta($user_id, 'username', true);
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
+    error_log("username: " . $username);
+    error_log("encrypted_password: " . $encrypted_password);
     // return an error if the user has not set their username and password
     if (!$username || !$encrypted_password) {
         wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
     }
-    $random_key = get_user_meta($user_id, 'random_key', true);
-    $password = decrypt($encrypted_password, $random_key);
+
     $website_description = get_user_meta($user_id, 'website_description', true);
     if (!$website_description) {
         $website_description = "";
@@ -84,7 +80,7 @@ function create_blog($keyphrase, $category, $category_name) {
             'requester' => $user_email,
             'related_links' => $related_links,
             'username' => $username,
-            'password' => $password,
+            'password' => $encrypted_password,
             'website_description' => $website_description,
             'image_style' => $image_style,
             'blog_language' => $blog_language,
@@ -256,8 +252,6 @@ function cbc_process_items($items) {
     if (!$username || !$encrypted_password) {
         wp_send_json_error(array('message' => "Please set your blog author username and password in the [settings page](/wp-admin/admin.php?page=bifm-plugin#settings)."));
     }
-    $random_key = get_user_meta($user_id, 'random_key', true);
-    $password = decrypt($encrypted_password, $random_key);
     $website_description = get_user_meta($user_id, 'website_description', true);
     if (!$website_description) {
         $website_description = "";
@@ -296,7 +290,7 @@ function cbc_process_items($items) {
         'requester' => $user_email,
         'related_links' => $related_links,
         'username' => $username,
-        'password' => $password,
+        'password' => $encrypted_password,
         'website_description' => $website_description,
         'image_style' => $image_style,
         'blog_language' => $blog_language,

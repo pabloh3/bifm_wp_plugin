@@ -21,10 +21,9 @@ function handle_bifm_save_settings() {
         
         // Update password only if the user is different than the one set
         if (!empty($_POST['blog_author_username'])) {
-            $random_key = bin2hex(random_bytes(32));
             // generate an application p
             if(!empty($_POST['blog_author_password'])) {
-                $password = encrypt_data($_POST['blog_author_password'], $random_key);
+                $password = $_POST['blog_author_password'];
             } else {
                 // try catch block to handle exceptions
                 try {
@@ -35,9 +34,10 @@ function handle_bifm_save_settings() {
                     wp_send_json_error($e->getMessage(), 400);
                 }
             }
-            $password = encrypt_data($password, $random_key);
+            error_log("Pass to encrypt: " . $password);
+            $password = encrypt_data($password);
+            error_log("Encrypted password: " . $password);
             update_user_meta($user_id, 'encrypted_password', $password);
-            update_user_meta($user_id, 'random_key', $random_key);
         }
         
         // Always update these settings
@@ -55,16 +55,16 @@ function handle_bifm_save_settings() {
 }
 
 // Define a secret key. Store this securely and do not expose it.
-function encrypt_data($data, $random_key) {
-    $ivLength = openssl_cipher_iv_length($cipher = 'AES-128-CBC');
-    $iv = openssl_random_pseudo_bytes($ivLength);
-    $encrypted = openssl_encrypt($data, $cipher, $random_key, $options = 0, $iv);
-    return base64_encode($encrypted . '::' . $iv);
-}
-
-function decrypt_data($data, $random_key) {
-    list($encrypted_data, $iv) = explode('::', base64_decode($data), 2);
-    return openssl_decrypt($encrypted_data, 'AES-128-CBC', $random_key, $options = 0, $iv);
+function encrypt_data($data) {
+    // Load the public key from this folder's public_key.pem file
+    error_log("data to encrypt: " . $data);
+    $public_key = file_get_contents(plugin_dir_path(__FILE__) . 'public_key.pem');
+    error_log("Public key: " . $public_key);
+    // Encrypt the password using the public key
+    openssl_public_encrypt($data, $encrypted_password, $public_key);
+    error_log("decoded password: " . $encrypted_password);
+    $encrypted_password_base64 = base64_encode($encrypted_password);
+    return $encrypted_password_base64;
 }
 
 function generate_new_password($author_id, $user_id) {
