@@ -8,7 +8,7 @@ if (strpos($host, 'stg-') === 0 ||
     $environment = 'staging';
 }
 
-$testing = false;
+$testing = true;
 
 if ($testing) {
     $API_URL = 'http://localhost:5001/';

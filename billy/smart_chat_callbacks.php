@@ -93,7 +93,7 @@ function billy_check_job_status() {
     $message = sanitize_text_field($_POST['message']);
 
     global $API_URL;
-    $url = $API_URL . '/chat_job_status/' . $jobId;
+    $url = $API_URL . 'chat_job_status/' . $jobId;
 
     $response = wp_remote_get($url, array('timeout' => 60));
 

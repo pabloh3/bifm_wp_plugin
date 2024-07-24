@@ -58,7 +58,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                     </div>
                 </button>
             </div>
-            <div id ="billy-form-footer" class="grey-text">Go to &ZeroWidthSpace;<a href="/admin.php?page=writer-settings" class="black-text"> Writer Settings </a>&ZeroWidthSpace;  to change the tone, language and image style.</div>
+            <div id ="billy-form-footer" class="grey-text">Go to &ZeroWidthSpace;<a href="/wp-admin/admin.php?page=writer-settings" class="black-text"> Writer Settings </a>&ZeroWidthSpace;  to change the tone, language and image style.</div>
             <div id="cbc_response" class="card-panel grey" style="display:none;"></div>
         </div>
     

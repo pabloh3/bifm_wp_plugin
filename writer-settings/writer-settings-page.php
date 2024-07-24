@@ -1,4 +1,16 @@
-<?php require ( __DIR__ . '/../bifm-config.php' ) ?>
+<?php 
+    require ( __DIR__ . '/../bifm-config.php' );
+    function get_all_usernames() {
+        $users = get_users();
+        $usernames = [];
+
+        foreach ($users as $user) {
+            $usernames[] = $user->user_login;
+        }
+
+        return $usernames;
+    }
+?>
 
 <style>
     .input-field {
@@ -14,22 +26,29 @@
 <div id="settings" class="bifm-col s12">
     <h5>Settings</h5>
     <p>Here you can update the settings for blog creation.</p>
-    <p>Please note that the blog creator requires the <a href="https://github.com/WP-API/Basic-Auth">"JSON Basic Authentication"</a> plugin by the Wordpress API team to be installed.</p>
-
+    <p>This is the user in your account that will be shown as the author of your blog posts, and whose credentials Billy will use to review and modify the site.</p>
     <form id="bifm-settings-form" action="#" method="post">
         <?php $user_id = get_current_user_id(); ?>
         <?php $username = get_user_meta($user_id, 'username', true); ?>
         <div class="bifm-row">
+            <?php $usernames = get_all_usernames(); ?>
             <div class="input-field bifm-col s12 l4">
-                <input id="blog_author_username" type="text" name="blog_author_username" class="validate materialize-textarea" value="<?= htmlspecialchars($username) ?>" <?= is_null($username) ? '' : 'required' ?>>
+                <select id="blog_author_username" name="blog_author_username" class="materialize-select" required>
+                    <option value="" disabled <?= is_null($username) ? 'selected' : '' ?>>Choose an author</option>
+                    <?php foreach ($usernames as $user): ?>
+                        <option value="<?= htmlspecialchars($user) ?>" <?= $user === $username ? 'selected' : '' ?>><?= htmlspecialchars($user) ?></option>
+                    <?php endforeach; ?>
+                </select>
                 <label for="blog_author_username">Blog author's username</label>
-                <p style="color:red">Create an author account that only has author access, DO NOT use an admin account.</p>
             </div>
-
-            <div class="input-field bifm-col s12 l4">
-                <input id="blog_author_password" type="password" name="blog_author_password" class="validate materialize-textarea">
-                <label for="blog_author_password">Blog author's password</label>
-            </div>
+            <!-- if the user is not admin, ask for the password too -->
+            <?php if (!current_user_can('manage_options')): ?>
+                <div class="input-field bifm-col s12 l4">
+                    <input id="blog_author_password" type="password" name="blog_author_password" class="validate materialize-textarea">
+                    <label for="blog_author_password">Blog author's password</label>
+                    <div>Will you be credited as the author of Billy's posts? If so, create an "Application Password" <a href="/wp-admin/profile.php">here</a>.<br/>If not, ask your admin for the author's "Application Password".</div>
+                </div>
+            <?php endif; ?>
         </div>
 
         <?php $blog_language = get_user_meta($user_id, 'blog_language', true); ?>
