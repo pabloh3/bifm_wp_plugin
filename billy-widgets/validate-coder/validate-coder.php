@@ -19,8 +19,8 @@ function get_widget($parameters, $run_id, $tool_call_id) {
                     <div class='svg-icon coder-icon'>" . $coder_icon . "
                     </div>
                 </div>
-                <span class='card-title'>Billy suggests to create a new elementor widget. You can use the Billy coder.</span>
-                <p>Do you want to authorize our coder bot to build a new widget: <b>" . $keyphrase . "</b>?</p>
+                <span class='card-title'>Billy suggests to create a new elementor widget. You can use the Billy Builder.</span>
+                <p>Do you want to authorize our Widget Builder bot to create a new widget: <b>" . $keyphrase . "</b>?</p>
             </div>
             <div style='display:flex;'>
                 <button id='authorize-coder-" . $widget_id . "' class='bifm-btn waves-effect waves-light card-button coder-button'>Let's go!</button>
@@ -40,7 +40,7 @@ function get_widget($parameters, $run_id, $tool_call_id) {
         // make the bubble style backgound green
         div.style.backgroundColor = '#fef7ff';
         div.style.alignSelf = 'flex-start';
-        div.innerHTML = '<p>You will be redirected to the coder soon.';
+        div.innerHTML = '<p>You will be redirected to the widget builder soon.';
         document.getElementById('validate-coder-widget-" . $widget_id . "').outerHTML = div.outerHTML;
         window.location.href = '/wp-admin/admin.php?page=widget-manager&keyphrase=" . $keyphrase_url . "';
     });

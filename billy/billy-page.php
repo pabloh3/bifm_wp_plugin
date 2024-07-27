@@ -72,7 +72,7 @@ if (isset($_SESSION['thread_id'])) {
           <div class="svg-icon coder-icon inline-icon">
             <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Coder.svg'); ?>
           </div>
-          Coder Bot
+          Widget Builder
         </a>
       </li>
       <li>
@@ -112,7 +112,7 @@ if (isset($_SESSION['thread_id'])) {
                   <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Coder.svg'); ?>
                 </div>
               </div>
-              <span class="card-title">Coder bot</span>
+              <span class="card-title">Widget Builder</span>
               <p>Create interactive widgets and calculators for your site (requires Elementor).</p>
             </button>
         </div>
