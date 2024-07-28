@@ -123,7 +123,7 @@ if (isset($_SESSION['thread_id'])) {
                 <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"></textarea>
                 <label for="assistant_instructions">Ask Billy for any assistance you need:</label>
                 <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit" id="billy-submit_chat">
-                    <i class="material-icons">send</i>
+                    <i class="material-icons">arrow_forward</i>
                 </button>
         </form>
         <div id ="billy-form-footer" class="grey-text lighten-2">Go to <a href="admin.php?page=create-chat" class="black-text">Settings</a> to change the way Billy responds.</div>

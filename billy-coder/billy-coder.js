@@ -1,6 +1,6 @@
-const form = document.getElementById('my-form');
-const chatbox = document.getElementById('chatbox');
-const submit_chat = document.getElementById('submit_chat');
+const form = document.getElementById('builder-form');
+const chatbox = document.getElementById('builder-chatbox');
+const submit_chat = document.getElementById('builder-submit-chat');
 let commandCount = 0;
 const MAX_COMMANDS = 50;
 let processingMessage = document.createElement('div');
@@ -13,6 +13,10 @@ var folderName = urlParams.get('foldername');
 // Remove any letters from the folderName to get client_folder
 var client_folder = folderName.replace(/[a-zA-Z]/g, '');
 console.log('JS loaded v1.0.71');
+var undoButton = document.getElementById('undo-button');
+undoButton.style.display = 'none';
+
+
 
 
 // Initialize markdown-it and highlight.js
@@ -32,18 +36,31 @@ const md = window.markdownit({
 // listens to chat submissions
 // when document is ready
 document.addEventListener('DOMContentLoaded', function() {
+    form.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter' && !(event.shiftKey || event.ctrlKey || event.metaKey)) {
+            event.preventDefault();
+            submit_chat.click();
+        }
+    });
     form.addEventListener('submit', (event) => {
         event.preventDefault();
-        prevMessageCounts.push(chatbox.getElementsByTagName('p').length);
+        prevMessageCounts.push(chatbox.getElementsByClassName('bubble').length);
+        let message;
         if (commandCount < MAX_COMMANDS) {
-            let userInput = form.user_message.value;
-            let p = document.createElement('p');
-            p.textContent = `You: ${userInput}`;
-            chatbox.appendChild(p);
+            let userInput = form.builder_instructions.value;
+            
+            let div = document.createElement('div');
+            div.classList.add('bubble');
+            div.classList.add('user-bubble');
+            div.textContent = `${userInput}`;
+            chatbox.appendChild(div);
+            message = form.builder_instructions.value;
+            form.builder_instructions.value = '';
+            // scroll to bottom of chatbox
+            chatbox.scrollTop = chatbox.scrollHeight;
         }
-        var stageDisplay = document.getElementById('stageDisplay');
-        var currentStage = stageDisplay.getAttribute('data-stage');
-        sendMessage(folderName, 'processgpt', form.user_message.value, currentStage);
+        var currentStage = 'visual';
+        sendMessage(folderName, 'processgpt', message, currentStage);
     });
 
     // Process clicks on back button
@@ -56,52 +73,66 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // send the message from either submit or debug to the server
 function sendMessage(folderName, endpoint, messageBody, currentStage) {
-    jQuery.ajax({
-        url: my_plugin.ajax_url,
-        type: 'POST',
-        data: {
-            action: 'plugin_send_message',
-            nonce: my_plugin.nonce,
-            folderName: folderName,
-            endpoint: endpoint,
-            messageBody: messageBody,
-            stage: currentStage
-        },
-        success: function(response) {
-            let innerData = JSON.parse(response.data);
-            jobId = innerData.jobId;
-            warning = innerData.warning;
-            if(warning){
-                displayWarning(warning);
+    // try - catch
+    try {
+        jQuery.ajax({
+            url: my_plugin.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'plugin_send_message',
+                nonce: my_plugin.nonce,
+                folderName: folderName,
+                endpoint: endpoint,
+                messageBody: messageBody,
+                stage: currentStage
+            },
+            success: function(response) {
+                if (response.status === 202 || response.status === 200) {
+                    let innerData = JSON.parse(response.data);
+                    jobId = innerData.jobId;
+                    warning = innerData.warning;
+                    if(warning){
+                        displayWarning(warning);
+                    }
+                    if (response.status === 202) {
+                        processingMessage.innerHTML = '<div class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
+                        document.getElementById('builder-chatbox').appendChild(processingMessage);
+                        form.builder_instructions.disabled = true;
+                        submit_chat.disabled = true;
+                        setTimeout(pollForGptResponse, 5000, folderName, jobId);
+                    } else if (response.status === 200) {
+                        addCoderBubble(`I've completed your request, please review.`,false);
+                    }
+
+                } else if (response.success === false) {
+                    if(response.data.message) {
+                        displayWarning(response.data.message);
+                    }
+                    else { 
+                        displayWarning(response);
+                    }
+                }else {
+                    throw new Error('An error occurred while processing your request');
+                }
+            },
+            error: function(error) {
+                if(JSON.parse(error.responseJSON.data).message) {
+                    displayWarning(JSON.parse(error.responseJSON.data).message);
+                }
+                else { 
+                    displayWarning(error);
+                }
+                document.getElementById('builder-chatbox').removeChild(processingMessage);
+                form.builder_instructions.disabled = false;
+                submit_chat.disabled = false;
             }
-            if (response.status === 202) {
-                processingMessage.innerHTML = '<div class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
-                document.getElementById('chatbox').appendChild(processingMessage);
-                form.user_message.disabled = true;
-                submit_chat.disabled = true;
-                setTimeout(pollForGptResponse, 5000, folderName, jobId);
-            } else if (response.status === 200) {
-                let p = document.createElement('p');
-                p.textContent = `GPT: I've completed your request, please review.`;
-                chatbox.appendChild(p);
-            } else {
-                throw new Error('An error occurred while processing your request');
-            }
-        },
-        error: function(error) {
-            if(JSON.parse(error.responseJSON.data).message) {
-                displayWarning(JSON.parse(error.responseJSON.data).message);
-            }
-            else { 
-                displayWarning(error);
-            }
-            document.getElementById('chatbox').removeChild(processingMessage);
-            form.user_message.disabled = false;
-            submit_chat.disabled = false;
-        }
-    });
-    form.user_message.value = '';
-    form.user_message.style.height = "9px"; 
+        });
+    } catch (error) {
+        displayWarning(error);
+        document.getElementById('builder-chatbox').removeChild(processingMessage);
+        form.builder_instructions.disabled = false;
+        submit_chat.disabled = false;
+    }
 }
 
 
@@ -119,41 +150,40 @@ function pollForGptResponse(folderName, jobId, retryCount) {
         },
         success: function(response) {
             if (response.data && response.status === 200) {
-                form.user_message.disabled = false;
+                form.builder_instructions.disabled = false;
                 submit_chat.disabled = false;
-                document.getElementById('chatbox').removeChild(processingMessage);
+                document.getElementById('builder-chatbox').removeChild(processingMessage);
                 let response_gpt = JSON.parse(response.data);
                 // Get the last message id and message from response_gpt.gpt_says_dict
                 let lastMsgId = Object.keys(response_gpt.gpt_says_dict).pop();
                 if (lastMsgId) {
                     let lastMsg = response_gpt.gpt_says_dict[lastMsgId];
                     if (!displayedMessageIds.has(lastMsgId)) {
-                        while (chatbox.getElementsByTagName('p').length > prevMessageCounts[prevMessageCounts.length - 1]+1){
-                            chatbox.removeChild(chatbox.lastChild);
+                        while (chatbox.getElementsByClassName('bubble').length > prevMessageCounts[prevMessageCounts.length - 1]+1){
+                            // Remove the last bubble
+                            let bubbles = chatbox.querySelectorAll('.bubble');
+                            bubbles[bubbles.length - 1].remove();
                         }
-                        let div = document.createElement('div');
-                        lastMsg = md.render(lastMsg);
-                        div.innerHTML = `<p>GPT: ${lastMsg}</p>`;
-                        chatbox.appendChild(div);
+                        addCoderBubble(lastMsg, true);
                         displayedMessageIds.add(lastMsgId);
                     }
                 } else {
-                    document.getElementById('chatbox').innerHTML += `<p>Bot: Ok, I completed your request :)</p>`;
+                    addCoderBubble(`I've completed your request, please review.`,false);
                 }
     
-                var iframe = document.querySelector('.future-column iframe');
+                var iframe = document.querySelector('#bifm-builder-frame');
                 iframe.src = iframe.src;
                 commandCount++;
                 if (commandCount >= MAX_COMMANDS) {
-                    form.user_message.disabled = true;
+                    form.builder_instructions.disabled = true;
                     submit_chat.disabled = true;
-                    document.getElementById('chatbox').innerHTML += `<p>Thank you for using our beta product. Sign up for our waitlist <a href="https://www.builditforme.ai">here</a>.</p>`;
+                    addCoderBubble(`This request is now too long. Please save your work and start a new request. Contact us at www.builditforme.ai if you need help.`,false);
                 }
                 if (response.data.logs) {
                     document.getElementById('terminal-output').innerHTML = response.data.logs;
                 }
             } else if (response.status === 202) {
-                form.user_message.disabled = true;
+                form.builder_instructions.disabled = true;
                 submit_chat.disabled = true;
                 let response_gpt = JSON.parse(response.data);
                 // Get the last message id and message from response_gpt.gpt_says_dict
@@ -161,17 +191,15 @@ function pollForGptResponse(folderName, jobId, retryCount) {
                 if (lastMsgId) {
                     let lastMsg = response_gpt.gpt_says_dict[lastMsgId];
                     if (!displayedMessageIds.has(lastMsgId)) {
-                        while(chatbox.getElementsByTagName('p').length > prevMessageCounts[prevMessageCounts.length - 1]+1){
-                            chatbox.removeChild(chatbox.lastChild);
+                        while(chatbox.getElementsByClassName('bubble').length > prevMessageCounts[prevMessageCounts.length - 1]+1){
+                            let bubbles = chatbox.querySelectorAll('.bubble');
+                            bubbles[bubbles.length - 1].remove();
                         }
-                        let div = document.createElement('div');
-                        lastMsg = md.render(lastMsg);
-                        div.innerHTML = `<p>GPT: ${lastMsg}</p>`;
-                        chatbox.appendChild(div);
+                        addCoderBubble(lastMsg, true);
                         displayedMessageIds.add(lastMsgId);
                     }
                     processingMessage.innerHTML = '<div class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
-                    document.getElementById('chatbox').appendChild(processingMessage);
+                    document.getElementById('builder-chatbox').appendChild(processingMessage);
                 }
                 setTimeout(pollForGptResponse, 3000, folderName, jobId, 0); 
             }
@@ -183,11 +211,12 @@ function pollForGptResponse(folderName, jobId, retryCount) {
             if (retryCount < 2) {
                 setTimeout(pollForGptResponse, 3000, folderName, jobId, 1);
             } else {
-                document.getElementById('chatbox').removeChild(processingMessage);
-                form.user_message.disabled = false;
+                document.getElementById('builder-chatbox').removeChild(processingMessage);
+                form.builder_instructions.disabled = false;
                 submit_chat.disabled = false;
+                iframe = document.querySelector('#bifm-builder-frame');
                 iframe.src = iframe.src;
-                document.getElementById('chatbox').innerHTML += `<p>GPT: Your request has finished running.</p>`;
+                addCoderBubble(`I've completed your request, please review.`,false);
             }
         }
     });
@@ -196,7 +225,7 @@ function pollForGptResponse(folderName, jobId, retryCount) {
 
 // save button when document is ready
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('save-button').addEventListener('click', function() {
+    /*document.getElementById('save-button').addEventListener('click', function() {
         // Prompt user for name
         const name = prompt('Name for this version (max 60 chars):');
         if (name && name.length <= 60 && /^[A-Za-z]/.test(name)) {
@@ -227,15 +256,13 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             alert('Invalid name. Please enter a name starting with a letter and with a maximum of 40 characters.');
         }
-    });
+    });*/
 
 
     // reset button
-    document.getElementById('reset-button').addEventListener('click', function() {
-        var warningDiv = document.getElementById('warningMessage');
-        warningDiv.textContent = "";
-        // Make the warning box visible
-        warningDiv.style.display = 'none';
+    document.getElementById('reset-button').addEventListener('click', function(event) {
+        // prevent default
+        event.preventDefault();
         // Prompt user for name
         jQuery.ajax({
             url: my_plugin.ajax_url,  // Assuming you've localized the script with the admin-ajax.php URL
@@ -249,9 +276,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Handle the response if needed
                 if(response.success) {
                     // Empty the chat on the front end
-                    document.getElementById('chatbox').innerHTML = '';
+                    document.getElementById('builder-chatbox').innerHTML = '';
+                    undoButton.style.display = 'none';
                     // reset iframe
-                    var iframe = document.querySelector('.future-column iframe');
+                    var iframe = document.querySelector('#bifm-builder-frame');
                     commandCount = 0;
                     prevMessageCounts = [0];
                     //wait 1 second
@@ -260,16 +288,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     }, 1000);
                 } else {
                     console.error('Error:', response.data);
+                    displayWarning('An error occurred while resetting the widget. Please try again.');
                 }
             },
             error: function(errorThrown) {
                 console.error('Error:', errorThrown);
+                displayWarning('An error occurred while resetting the widget. Please try again.');
             }
         });
     });
 
-
-    document.getElementById('undo-button').addEventListener('click', function() {
+    // HANDLE UNDO BUTTON
+    undoButton.addEventListener('click', function() {
         jQuery.ajax({
             url: my_plugin.ajax_url,  // Assuming you've localized the script with the admin-ajax.php URL
             type: 'POST',
@@ -282,12 +312,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Handle the response if needed
                 if(response.success) {
                     // Refresh the iframe
-                    // Remove the messages added in the last operation
-                    while (chatbox.getElementsByTagName('p').length > prevMessageCounts[prevMessageCounts.length - 1]) {
-                        chatbox.removeChild(chatbox.lastChild);
+                    // Remove the messages added in the last operation while elemetns with class bubble are more than the last message count)
+                    while (chatbox.getElementsByClassName('bubble').length > prevMessageCounts[prevMessageCounts.length - 1]) {                    
+                        let bubbles = chatbox.querySelectorAll('.bubble');
+                        bubbles[bubbles.length - 1].remove();
                     }
+                    attachUndo();
                     prevMessageCounts.pop();
-                    var iframe = document.querySelector('.future-column iframe');
+                    var iframe = document.querySelector('#bifm-builder-frame');
                     iframe.src = iframe.src;
                 } else {
                     console.error('Error:', response.data);
@@ -300,8 +332,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
-    document.getElementById('next-stage').addEventListener('click', function() {
-        document.getElementById('chatbox').innerHTML = '';
+    /*document.getElementById('next-stage').addEventListener('click', function() {
+        document.getElementById('builder-chatbox').innerHTML = '';
         // reset iframe
         commandCount = 0;
         prevMessageCounts = [0];
@@ -314,10 +346,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('next-stage').style.display = 'none';
             document.getElementById('previous-stage').style.display = 'inline';
         } 
-    });
+    }); 
 
     document.getElementById('previous-stage').addEventListener('click', function() {
-        document.getElementById('chatbox').innerHTML = '';
+        document.getElementById('builder-chatbox').innerHTML = '';
         // reset iframe
         commandCount = 0;
         prevMessageCounts = [0];
@@ -330,15 +362,46 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('next-stage').style.display = 'inline';
             document.getElementById('previous-stage').style.display = 'none';
         }
-    });
+    });*/
 });
 
+// Creates and adds a red bubble to display a warning
 function displayWarning(message) {
-    var warningDiv = document.getElementById('warningMessage');
-    warningDiv.textContent = message;
-
-    // Make the warning box visible
-    warningDiv.style.display = 'block';
+    // display warning message as a warning bubble in the chat
+    var div = document.createElement('div');
+    div.classList.add('bubble');
+    div.classList.add('warning-bubble');
+    div.textContent = message;
+    chatbox.appendChild(div);
 }
 
 
+function addCoderBubble(message, isMarkdown) {
+    let div = document.createElement('div');
+    div.classList.add('bubble');
+    div.classList.add('coder-bubble');
+    if (isMarkdown) {
+        message = md.render(message);
+        div.innerHTML = `${message}`;
+    } else {
+        div.textContent = message;
+    }
+    chatbox.appendChild(div);
+    attachUndo();
+}
+
+// Attaches the undo button to the last coder-bubble in the chatbox (end of chatbox with width of last bubble as left margin)
+function attachUndo() {
+    console.log("attaching undo button");
+    undoButton.style.display = 'block';
+    undoButton.style.height = '40px';
+    // fetch the last coder-bubble
+    let bubbles = chatbox.querySelectorAll('.bubble');
+    lastBubble = bubbles[bubbles.length - 1];
+    //move the undo button to the last coder-bubble
+    chatbox.appendChild(undoButton);
+    //make the undo button's margin-left the same as the last coder-bubble's width
+    let offset = lastBubble.offsetWidth + 10;
+    undoButton.style.marginLeft = offset + 'px';
+    
+}
