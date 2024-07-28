@@ -15,6 +15,7 @@ var client_folder = folderName.replace(/[a-zA-Z]/g, '');
 console.log('JS loaded v1.0.71');
 var undoButton = document.getElementById('undo-button');
 undoButton.style.display = 'none';
+var currentStage = 'visual';
 
 
 
@@ -59,7 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // scroll to bottom of chatbox
             chatbox.scrollTop = chatbox.scrollHeight;
         }
-        var currentStage = 'visual';
         sendMessage(folderName, 'processgpt', message, currentStage);
     });
 
@@ -225,7 +225,8 @@ function pollForGptResponse(folderName, jobId, retryCount) {
 
 // save button when document is ready
 document.addEventListener('DOMContentLoaded', function() {
-    /*document.getElementById('save-button').addEventListener('click', function() {
+    document.getElementById('save-button').addEventListener('click', function(event) {
+        event.preventDefault();
         // Prompt user for name
         const name = prompt('Name for this version (max 60 chars):');
         if (name && name.length <= 60 && /^[A-Za-z]/.test(name)) {
@@ -256,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             alert('Invalid name. Please enter a name starting with a letter and with a maximum of 40 characters.');
         }
-    });*/
+    });
 
 
     // reset button
@@ -332,37 +333,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
-    /*document.getElementById('next-stage').addEventListener('click', function() {
-        document.getElementById('builder-chatbox').innerHTML = '';
+    document.getElementById('controls-stage').addEventListener('click', function(event) {
+        event.preventDefault();
         // reset iframe
+        displayWarning('You\'re asking the Builder for Elementor controls for your widget, so you can adapt it each time you\'re dragging it into a page. If you add text controls, don\'t worry if the preview breaks. Save and test in your pages. Once you\'re done, save your widget.', false);
         commandCount = 0;
         prevMessageCounts = [0];
-        
-        var stageDisplay = document.getElementById('stageDisplay');
-        var currentStage = stageDisplay.getAttribute('data-stage');
-        if (currentStage === 'visual') {
-            stageDisplay.innerHTML = "Add controls to your widget so you can modify it when dragging it into a page. If you add text controls, don't worry if the preview breaks. Save and test in your pages.";
-            stageDisplay.setAttribute('data-stage', 'controls');
-            document.getElementById('next-stage').style.display = 'none';
-            document.getElementById('previous-stage').style.display = 'inline';
-        } 
+        document.getElementById('controls-stage').style.display = 'none';
+        document.getElementById('visual-stage').style.display = 'block';
+        currentStage = 'controls';
     }); 
 
-    document.getElementById('previous-stage').addEventListener('click', function() {
-        document.getElementById('builder-chatbox').innerHTML = '';
+    document.getElementById('visual-stage').addEventListener('click', function(event) {
+        event.preventDefault();
         // reset iframe
+        displayWarning('You\'re back at editing the widget. Ask the bot for changes on your widget that will apply every time you use the widget.', false);
+        //scroll to top
         commandCount = 0;
         prevMessageCounts = [0];
-        
-        var stageDisplay = document.getElementById('stageDisplay');
-        var currentStage = stageDisplay.getAttribute('data-stage');
-        if (currentStage === 'controls') {
-            stageDisplay.innerHTML = 'Modify how your widget looks.';
-            stageDisplay.setAttribute('data-stage', 'visual');
-            document.getElementById('next-stage').style.display = 'inline';
-            document.getElementById('previous-stage').style.display = 'none';
-        }
-    });*/
+        document.getElementById('visual-stage').style.display ='none';
+        document.getElementById('controls-stage').style.display = 'block';
+        currentStage = 'visual';
+    });
 });
 
 // Creates and adds a red bubble to display a warning
@@ -373,6 +365,7 @@ function displayWarning(message) {
     div.classList.add('warning-bubble');
     div.textContent = message;
     chatbox.appendChild(div);
+    chatbox.scrollTop = chatbox.scrollHeight;
 }
 
 
@@ -387,21 +380,24 @@ function addCoderBubble(message, isMarkdown) {
         div.textContent = message;
     }
     chatbox.appendChild(div);
+    // scroll to bottom of chatbox
+    chatbox.scrollTop = chatbox.scrollHeight + 15;
     attachUndo();
 }
 
 // Attaches the undo button to the last coder-bubble in the chatbox (end of chatbox with width of last bubble as left margin)
 function attachUndo() {
-    console.log("attaching undo button");
     undoButton.style.display = 'block';
-    undoButton.style.height = '40px';
     // fetch the last coder-bubble
     let bubbles = chatbox.querySelectorAll('.bubble');
     lastBubble = bubbles[bubbles.length - 1];
-    //move the undo button to the last coder-bubble
     chatbox.appendChild(undoButton);
     //make the undo button's margin-left the same as the last coder-bubble's width
-    let offset = lastBubble.offsetWidth + 10;
-    undoButton.style.marginLeft = offset + 'px';
-    
+    try {    
+        let offset = lastBubble.offsetWidth + 10;
+        undoButton.style.marginLeft = offset + 'px';
+        //regenerate the undo button
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }

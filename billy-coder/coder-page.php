@@ -5,6 +5,8 @@ $folderName = isset($_GET['foldername']) ? sanitize_text_field($_GET['foldername
 $client_folder = preg_replace("/[a-zA-Z]/", "", $folderName); // Remove any letters
 require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php "; 
+$widgets_manager = \Elementor\Plugin::$instance->widgets_manager;
+$widget_types = $widgets_manager->get_widget_types();
 //localhost:3013/<foldername>/widget.php
 // for testing
 ?>
@@ -13,7 +15,7 @@ $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php ";
 <!--Stylesheet for handling markup-->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css'>
-<div id="undo-button" class="undo-buttonesque">
+<div id="undo-button" class="undo-buttonesque waves-effect tooltipped" data-tooltip="Undo last request">
     <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Undo.svg'); ?>
 </div>
 <div class="plugin-page">
@@ -31,11 +33,11 @@ $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php ";
         <div class="billy-menu">
           <div class="menu-label-center">Widgets</div>
           <div class="right-billy-buttons">
-            <a href="" id="new_chat_button" class="waves-effect billy-button tooltipped" data-tooltip="New widget">
+            <!--<a href="" id="new_chat_button" class="waves-effect billy-button tooltipped" data-tooltip="New widget">
               <div class="svg-icon inline-icon">
-                <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/New_chat.svg'); ?>
+                <?php //echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/New_chat.svg'); ?>
               </div>
-            </a>
+            </a> -->
             <a href="" id="reset-button" class="waves-effect billy-button tooltipped" data-tooltip="Reset widget">
               <div class="svg-icon inline-icon">
                 <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Broom.svg'); ?>
@@ -45,44 +47,32 @@ $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php ";
         </div>
       </li>
       <li>
-      <!-- load from uptions the values of builder_thread_ids and add a button for each -->
-      <?php
-        $assistant_thread_data = get_option('assistant_thread_data');
-        // invert order
-        $assistant_thread_data = array_reverse($assistant_thread_data);
-        if ($assistant_thread_data) {
-            echo "<div class='thread-list'>";
-            foreach ($assistant_thread_data as $thread_id => $message_snippet) {
-                $display_text = $message_snippet ?: htmlspecialchars($thread_id); // Fallback to thread ID if snippet is not available
-                echo "<a href='' class='waves-effect waves-light bifm-btn thread-btn' data-tooltip='Chat with Billy' data-thread-id='" . htmlspecialchars($thread_id) . "'>" . $display_text . "</a>";
-            }
-            echo "</div>";
-        }
-      ?>
+        <a href="" id="controls-stage" class="waves-effect tooltipped" data-tooltip="Ask bot to add Elementor controls">
+          <div class="svg-icon inline-icon">
+            <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Tune.svg'); ?>
+          </div>
+          Add Elementor Controls
+        </a>
+      </li>
+      <li>
+        <a href="" id="visual-stage" class="waves-effect tooltipped" data-tooltip="Back to modify widget" style="display:none" >
+          <div class="svg-icon inline-icon">
+            <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Back.svg'); ?>
+          </div>
+          Back to edit widget
+        </a>
+      </li>
+      <li>
+        <a href="" id="save-button" class="waves-effect">
+          <div class="svg-icon coder-icon inline-icon">
+            <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Save.svg'); ?>
+          </div>
+          Save Widget
+        </a>
+      </li>
+      <!-- end of new -->
       <!-- spacer -->
       <li><div class="section-spacer"></div></li>
-      <li><div class="section-header"><h6>Tools</h6></div></li>
-      <li>
-        <a href="admin.php?page=create-blog" class="waves-effect">
-          <div class="svg-icon writer-icon inline-icon">
-            <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Writer.svg'); ?>
-          </div>
-          Writer Bot
-        </a>
-      </li>
-      <li>
-        <a href="admin.php?page=widget-manager" class="waves-effect">
-          <div class="svg-icon coder-icon inline-icon">
-            <?php echo file_get_contents(plugin_dir_path(__FILE__) . '../static/icons/Coder.svg'); ?>
-          </div>
-          Widget Builder
-        </a>
-      </li>
-      <li>
-        <a href="admin.php?page=writer-settings" class="waves-effect">
-          <i class="material-icons">settings</i>Writer settings
-        </a>
-      </li>
     </ul>
   </div>
 
