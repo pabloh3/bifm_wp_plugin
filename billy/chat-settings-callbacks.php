@@ -234,56 +234,55 @@ function handle_bifm_smart_chat_settings() {
                 array_push($list_file_ids, $value['file_id']);
             }
 
-            // collect basic setup info:
+           // Collect basic setup info
             global $wp_version;
             $site_info = 'The site is running on WordPress version: ' . $wp_version . '. ';
-            $site_info .= 'The theme is: ' . wp_get_theme()->get('Name') . ' Version: ' . wp_get_theme()->get('Version') . '. ';
-            // check if using Elementor
+            $theme = wp_get_theme();
+            $site_info .= 'The theme is: ' . $theme->get('Name') . ' Version: ' . $theme->get('Version') . '. ';
+
             // Check if Elementor is active
-            $has_elementor = false;
             if (in_array('elementor/elementor.php', apply_filters('active_plugins', get_option('active_plugins')))) {
                 $elementor_data = get_plugin_data(WP_PLUGIN_DIR . '/elementor/elementor.php');
-                $site_info .= 'Elementor is active, unless specified otherwise, when user asks to edit pages guide them to use Elementor.';
+                $site_info .= 'Elementor is active. Please guide the user to use Elementor for editing pages. ';
+                $site_info .= 'Elementor Version: ' . $elementor_data['Version'] . '. ';
+                
+                // Check Elementor experiments
                 $experiments_manager = \Elementor\Plugin::$instance->experiments;
-
-                // Check if the Flexbox experiment is active
                 $is_flex_active = $experiments_manager->is_feature_active('flexbox-layout');
-            
-                if (!$is_flex_active) {
-                    error_log("Flexbox layout experiment is active.");
-                } else {
-                    error_log("Flexbox layout experiment is not active.");
+                $is_grid_active = $experiments_manager->is_feature_active('container');
+                
+                $site_info .= 'Flexbox Layout is ' . ($is_flex_active ? 'active' : 'not active') . '. ';
+                $site_info .= 'Grid Layout is ' . ($is_grid_active ? 'active' : 'not active') . '. ';
+            } else {
+                $other_editors = [];
+                
+                // Check if Gutenberg is active
+                if (function_exists('has_blocks')) {
+                    $other_editors[] = 'Gutenberg';
                 }
-                $site_info .= 'Elementor Version: ' . $elementor_data['Version'] . ' Remember that after version 3.6 Elementor doesn\'t use Inner Section, it uses Flex Container.';
-                $has_elementor = true;
-            }
-
-            $other_editors = [];
-            // Check if Gutenberg is active - Gutenberg is part of WordPress 5.0 and later by default
-            if (function_exists('has_blocks')) {
-                $other_editors[] = 'Gutenberg';
-                // Gutenberg does not have a separate version; it's tied to the WordPress version
-            }
-            // Array of popular page builders
-            $page_builders = [
-                'elementor/elementor.php', // Elementor
-                'classic-editor/classic-editor.php', // Classic Editor
-                'beaver-builder-lite-version/fl-builder.php', // Beaver Builder
-                'divi-builder/divi-builder.php', // Divi Builder
-                'js_composer/js_composer.php', // WPBakery Page Builder
-                'thrive-visual-editor/thrive-visual-editor.php', // Thrive Architect
-                'brizy/brizy.php' // Brizy
-            ];
-
-            // Check each page builder
-            if (!$has_elementor) {
+                
+                // Array of popular page builders
+                $page_builders = [
+                    'classic-editor/classic-editor.php', // Classic Editor
+                    'beaver-builder-lite-version/fl-builder.php', // Beaver Builder
+                    'divi-builder/divi-builder.php', // Divi Builder
+                    'js_composer/js_composer.php', // WPBakery Page Builder
+                    'thrive-visual-editor/thrive-visual-editor.php', // Thrive Architect
+                    'brizy/brizy.php' // Brizy
+                ];
+                
+                // Check each page builder
                 foreach ($page_builders as $builder) {
                     if (in_array($builder, apply_filters('active_plugins', get_option('active_plugins')))) {
                         $plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $builder);
                         $other_editors[] = $plugin_data['Name'] . ' Version: ' . $plugin_data['Version'];
                     }
                 }
-                $site_info .= 'Page builders active: ' . implode(', ', $other_editors) . '. ';
+                
+                // Append other editors to site info
+                if (!empty($other_editors)) {
+                    $site_info .= 'Page builders active: ' . implode(', ', $other_editors) . '. ';
+                }
             }
 
 

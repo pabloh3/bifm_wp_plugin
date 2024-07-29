@@ -25,6 +25,25 @@ const md = window.markdownit({
     }
 });
 
+
+// Custom link renderer to add target="_blank"
+const defaultRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
+    return self.renderToken(tokens, idx, options);
+};
+md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
+    // Add target="_blank" to all links
+    const aIndex = tokens[idx].attrIndex('target');
+
+    if (aIndex < 0) {
+        tokens[idx].attrPush(['target', '_blank']); // add new attribute
+    } else {
+        tokens[idx].attrs[aIndex][1] = '_blank';    // replace value of existing attr
+    }
+
+    // pass token to default renderer.
+    return defaultRender(tokens, idx, options, env, self);
+};
+
 // submit form if enter
 form.addEventListener('keypress', function(event) {
     if (event.key === 'Enter' && !(event.shiftKey || event.ctrlKey || event.metaKey)) {

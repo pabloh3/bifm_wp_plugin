@@ -13,7 +13,6 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
     <div id="backButton" class="icon-button btn-floating btn-small waves-effect waves-light non-menu-back-button">
         <i class="arrow-left material-icons">arrow_back</i>    
     </div>
-    
     <!-- Body outside of menu -->
     <div class="container">
         <div class="writer-content">

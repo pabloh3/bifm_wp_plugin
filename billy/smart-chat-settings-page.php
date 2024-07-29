@@ -1,10 +1,10 @@
 <?php require ( __DIR__ . '/../bifm-config.php' );// define base url for the API?>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<br/>
 <a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
     Back
 </a>
-
 <div class="container">
     <div id="smart-chat" class="bifm-col s12">
         <h5>Smart chat</h5>
@@ -14,7 +14,7 @@
             <?php $assistant_instructions = get_option('assistant_instructions'); ?>
             <div class="bifm-row">
                 <div class="input-field bifm-col s12 l8">
-                    <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea"><?= stripslashes($assistant_instructions) ?: ''; ?></textarea>
+                    <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea" style="height: 80px;"><?= stripslashes($assistant_instructions) ?: ''; ?></textarea>
                     <label for="assistant_instructions">Give the bot instructions for how to respond. Start with something like "We use Elementor to edit our pages..."</label>
                 </div>
             </div>
@@ -23,7 +23,7 @@
             <div>You can upload up to 5 files. The maximum file size is 512 MB and no more than 2 million tokens (approx 1.5M words).</div>
             <div>Accepted file types: .c, .cpp, .docx, .html, .java, .json, .md, .pdf, .php, .pptx, .py, .rb, .tex, .txt</div>
             <div class="bifm-row">
-                <div class="file-field input-field bifm-col s12 l6">
+                <div class="file-field input-field bifm-col s12 l6" style="border:none; background:none;">
                     <div class="bifm-btn waves-effect waves-light">
                         <i class="material-icons left">cloud_upload</i>
                         <span>Upload Files</span>

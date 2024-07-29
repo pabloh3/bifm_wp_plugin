@@ -108,7 +108,7 @@ $widget_types = $widgets_manager->get_widget_types();
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h5>Welcome to the Widget Builder!</h5>
-            <p>This tool generates new code for your website through AI. <br/>As with all new code, it should be generated in a "staging" or testing environment, else you risk temporarily taking down your site.</p><br/>
+            <p>This tool generates new Elementor widgets, and requires the Elementor plugin. <br/>As with all new code, it should be generated in a "staging" or testing environment, else you risk temporarily taking down your site.</p><br/>
             <a href="admin.php?page=bifm-plugin" id="backButton" class="bifm-btn modal-button waves-effect waves-light purple light-grey" style="width: 120px;">
                 Go Back
             </a>

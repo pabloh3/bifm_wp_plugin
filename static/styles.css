@@ -187,6 +187,10 @@ body {
   display: inline-flex;
 }
 
+.billy-button {
+  display: inline-block;
+}
+
 .billy-button .inline-icon {
   padding: 2px;
 }
