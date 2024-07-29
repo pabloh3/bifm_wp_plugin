@@ -5215,7 +5215,7 @@ small {
 .btn-large, .bifm-btn,
 .btn-floating,
 .btn-flat {
-  display: flex !important;
+  display: flex;
   align-items: center;
   padding: 16px 24px;
   border-radius: 24px;
@@ -5554,7 +5554,6 @@ body.keyboard-focused .dropdown-content li:focus {
 .waves-effect {
   position: relative;
   cursor: pointer;
-  display: inline-block;
   overflow: hidden;
   user-select: none;
   -webkit-tap-highlight-color: transparent;

@@ -401,3 +401,37 @@ function attachUndo() {
         console.error('Error:', error);
     }
 }
+
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const modal = document.getElementById("myModal");
+    const continueButton = document.getElementById("continueButton");
+    const closeButton = document.querySelector(".close-button");
+
+    // Show the modal when the page loads
+    modal.style.display = "block";
+
+    // Function to close the modal
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    closeButton.onclick = function() {
+        closeModal();
+    }
+
+    // When the user clicks on the continue button, close the modal and do something else
+    continueButton.onclick = function(event) {
+        event.preventDefault();
+        closeModal();
+        // Add any additional actions for the continue button here
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+});

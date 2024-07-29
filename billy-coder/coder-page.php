@@ -104,6 +104,19 @@ $widget_types = $widgets_manager->get_widget_types();
             </div>
         </div>
     </div>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h5>Welcome to the Widget Builder!</h5>
+            <p>This tool generates new code for your website through AI. <br/>As with all new code, it should be generated in a "staging" or testing environment, else you risk temporarily taking down your site.</p><br/>
+            <a href="admin.php?page=bifm-plugin" id="backButton" class="bifm-btn modal-button waves-effect waves-light purple light-grey" style="width: 120px;">
+                Go Back
+            </a>
+            <a href="" id="continueButton" class="bifm-btn modal-button waves-effect waves-light violet" style="width: 120px;">
+                Continue to Builder
+            </a>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
