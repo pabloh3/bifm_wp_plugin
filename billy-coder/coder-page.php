@@ -109,10 +109,10 @@ $widget_types = $widgets_manager->get_widget_types();
             <span class="bifm-close-button">&times;</span>
             <h5>Welcome to the Widget Builder!</h5>
             <p>This tool generates new Elementor widgets, and requires the Elementor plugin. <br/>As with all new code, it should be generated in a "staging" or testing environment, else you risk temporarily taking down your site.</p><br/>
-            <a href="admin.php?page=bifm-plugin" id="backButton" class="bifm-btn bifm-modal-button waves-effect waves-light purple light-grey" style="width: 120px;">
+            <a href="admin.php?page=bifm-plugin" id="backButton" class="bifm-btn bifm-modal-button bifm-backButton waves-effect waves-light purple light-grey" style="width: 120px;">
                 Go Back
             </a>
-            <a href="" id="continueButton" class="bifm-btn bifm-modal-button waves-effect waves-light violet" style="width: 120px;">
+            <a href="" id="continueButton" class="bifm-btn bifm-modal-button bifm-continueButton waves-effect waves-light violet" style="width: 120px;">
                 Continue to Builder
             </a>
         </div>

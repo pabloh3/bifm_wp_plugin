@@ -388,33 +388,78 @@ function displayWarning(message) {
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const modal = document.getElementById("myModal");
-    const continueButton = document.getElementById("continueButton");
-    const closeButton = document.querySelector(".bifm-close-button");
+    const modal2 = document.getElementById("myModal2");
+    const agreeButton = document.getElementById("iAgreeButton");
+    const laterButton = document.getElementById("laterButton");
+    const closeButton = document.querySelectorAll(".bifm-close-button");
 
-    // Show the modal when the page loads
-    modal.style.display = "block";
 
+    // Show the modal 1  when the page loads if the modal is found
+    if (modal) {
+        modal.style.display = "block";
+        setupModal(modal, modal2, closeButton, agreeButton, laterButton, closeButton);
+    }
+});
+
+function setupModal(modal, modal2, closeButton, agreeButton, laterButton, closeButton) {
     // Function to close the modal
     function closeModal() {
         modal.style.display = "none";
+        // console log the display style of modal 2
+        console.log("modal 2 display style: ", modal2.style.display);
+        if (modal2.style.display === "block") {
+            console.log("closing modal 2");
+            modal2.style.display = "none";
+        } else {
+            modal2.style.display = "block";
+        }
     }
 
-    // When the user clicks on <span> (x), close the modal
-    closeButton.onclick = function() {
-        closeModal();
+    // When the user clicks on any of the <span> (x), close the modal
+    for (let i = 0; i < closeButton.length; i++) {
+        closeButton[i].onclick = function() {
+            closeModal();
+        }
     }
 
     // When the user clicks on the continue button, close the modal and do something else
-    continueButton.onclick = function(event) {
+    agreeButton.onclick = function(event) {
         event.preventDefault();
+        saveAgreement();
         closeModal();
         // Add any additional actions for the continue button here
     }
 
+    laterButton.onclick = function(event) {
+        event.preventDefault();
+        closeModal();
+        // Add any additional actions for the later button here
+    }
+
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
-        if (event.target == modal) {
+        console.log("clicked outside");
+        if (event.target == modal || event.target == modal2) {
             closeModal();
         }
     }
-});
+};
+
+function saveAgreement() {
+    // call the API to save the agreement
+    jQuery.ajax({
+        url: billy_localize.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'save_agreement',
+            nonce: billy_localize.nonce,
+        },
+        success: function(response) {
+            console.log("Agreement saved successfully");
+        },
+        error: function(error) {
+            // Handle errors here
+            console.log("There was an error when trying to save the agreement");
+        }
+    });
+}

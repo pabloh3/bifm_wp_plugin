@@ -321,11 +321,19 @@ body {
   font-weight: bold;
 }
 
-.bifm-modal-button#backButton, .bifm-modal-button#continueButton {
+/* give hte close button a hand on hover */
+.bifm-close-button:hover,
+.bifm-close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.bifm-modal-button.bifm-backButton, .bifm-modal-button.bifm-continueButton {
   display: inline !important;
 }
 
-.bifm-modal-button#backButton {
+.bifm-modal-button.bifm-backButton {
   margin-right: 20px;
 }
 

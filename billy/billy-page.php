@@ -85,20 +85,47 @@ if (isset($_SESSION['thread_id'])) {
 
   <!-- Body outside of menu -->
   <div class="plugin-content">
-  <div id="myModal" class="bifm-modal">
-    <div class="bifm-modal-content">
-      <span class="bifm-close-button">&times;</span>
-      <h5>Welcome to Billy!</h5>
-      <p>Thank you for trying our Beta, we appreciate any feedback at <a href="mailto:pablo@builditforme.ai">pablo@builditforme.ai</a></p>
-      <p>Please note that by using this plugin you are consenting with sharing your email and username with us. You can view our <a href="https://www.builditforme.ai/terms-and-conditions/">full privacy policy</a>.</p><br/>
-      <a href="admin.php?page=bifm-plugin" id="backButton" class="bifm-btn bifm-modal-button waves-effect waves-light purple light-grey" style="width: 120px;">
-          Go Back
-      </a>
-      <a href="" id="continueButton" class="bifm-btn bifm-modal-button waves-effect waves-light violet" style="width: 120px;">
-          I agree
-      </a>
-    </div>
-  </div>
+  <?php
+    // Get the current user ID
+    $user_id = get_current_user_id();
+
+    // Check if the user has accepted the terms and conditions
+    $has_accepted = get_user_meta($user_id, 'accepted_terms_conditions', true);
+
+    // Display the modal if the user has not accepted the terms and conditions
+    if (!$has_accepted) {
+        ?>
+        <div id="myModal" class="bifm-modal">
+            <div class="bifm-modal-content">
+                <span class="bifm-close-button">&times;</span>
+                <h5>Welcome to Billy!</h5>
+                <p>Thank you for trying our Beta, we appreciate any feedback at <a href="mailto:pablo@builditforme.ai">pablo@builditforme.ai</a></p>
+                <p>Please note that by using this plugin you are consenting with sharing your email and username with us. You can view our <a href="https://www.builditforme.ai/terms-and-conditions/">full privacy policy</a>.</p><br/>
+                <a href="admin.php?page=bifm-plugin" id="backButton" class="bifm-btn bifm-modal-button bifm-backButton waves-effect waves-light purple light-grey" style="width: 120px;">
+                    Go Back
+                </a>
+                <a href="#" id="iAgreeButton" class="bifm-btn bifm-modal-button bifm-continueButton waves-effect waves-light violet" style="width: 120px;">
+                    I agree
+                </a>
+            </div>
+        </div>
+        <div id="myModal2" class="bifm-modal">
+          <div class="bifm-modal-content">
+            <span class="bifm-close-button">&times;</span>
+            <h5>One more thing</h5>
+            <p>You can start using Billy, but it won't have access to your site's content and configuration until you give Billy a username and application password.</p>
+            <p>This also enables Billy to write blog posts.</p><br/>
+            <a href="" id="laterButton" class="bifm-btn bifm-modal-button bifm-backButton waves-effect waves-light purple light-grey" style="width: 120px;">
+                Later
+            </a>
+            <a href="/wp-admin/admin.php?page=writer-settings" id="setupBilly" class="bifm-btn bifm-modal-button bifm-continueButton waves-effect waves-light violet" style="width: 120px;">
+                Set up now
+            </a>
+          </div>
+        </div>
+        <?php
+    }
+  ?>
   <div class="container">
     <div id='billy-chatbox'>
       <div id="suggestion-buttons" class="bifm-row suggestions">

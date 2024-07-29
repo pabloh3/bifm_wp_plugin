@@ -273,3 +273,27 @@ function widget_submission($message, $run_id, $widget_name, $assistant_id, $thre
     $response = widget_response($message, $run_id, $assistant_id, $thread_id, $tool_call_id);
     return $response;
 }
+
+
+// Handle agreement saving
+function save_agreement() {
+    // Check nonce for security
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
+        wp_send_json_error(array('message' => "Couldn't verify user"), 500);
+    }
+
+    // Get the current user
+    $user_id = get_current_user_id();
+    if ($user_id == 0) {
+        wp_send_json_error('User not logged in');
+        return;
+    }
+
+    // Update user meta
+    update_user_meta($user_id, 'accepted_terms_conditions', true);
+    error_log("Agreement saved for user $user_id");
+
+    // Send a success response
+    wp_send_json_success('Agreement saved successfully');
+}
+add_action('wp_ajax_save_agreement', 'save_agreement');
