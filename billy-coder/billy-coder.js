@@ -406,7 +406,7 @@ function attachUndo() {
 document.addEventListener('DOMContentLoaded', (event) => {
     const modal = document.getElementById("myModal");
     const continueButton = document.getElementById("continueButton");
-    const closeButton = document.querySelector(".close-button");
+    const closeButton = document.querySelector(".bifm-close-button");
 
     // Show the modal when the page loads
     modal.style.display = "block";

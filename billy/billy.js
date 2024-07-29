@@ -386,82 +386,35 @@ function displayWarning(message) {
 }
 
 
+document.addEventListener('DOMContentLoaded', (event) => {
+    const modal = document.getElementById("myModal");
+    const continueButton = document.getElementById("continueButton");
+    const closeButton = document.querySelector(".bifm-close-button");
 
+    // Show the modal when the page loads
+    modal.style.display = "block";
 
-/*// listens for responses on messages sent.
-function pollForGptResponse(folderName, jobId, retryCount) {
-    jQuery.ajax({
-        url: billy_localize.ajax_url,
-        type: 'POST',
-        // to do figure out where to poll
-        data: {
-            action: 'my_plugin_poll_action',
-            nonce: billy_localize.nonce,
-            jobId: jobId
-        },
-        success: function(response) {
-            if (response.data && response.status === 200) {
-                form.assistant_instructions.disabled = false;
-                submit_chat.disabled = false;
-                document.getElementById('billy-chatbox').removeChild(processingMessage);
-                let response_gpt = JSON.parse(response.data);
-                // Get the last message id and message from response_gpt.gpt_says_dict
-                let lastMsgId = Object.keys(response_gpt.gpt_says_dict).pop();
-                if (lastMsgId) {
-                    let lastMsg = response_gpt.gpt_says_dict[lastMsgId];
-                    if (!displayedMessageIds.has(lastMsgId)) {
-                        while (chatbox.getElementsByTagName('p').length > prevMessageCounts[prevMessageCounts.length - 1]+1){
-                            chatbox.removeChild(chatbox.lastChild);
-                        }
-                        let p = document.createElement('p');
-                        p.textContent = `GPT: ${lastMsg}`;
-                        chatbox.appendChild(p);
-                        displayedMessageIds.add(lastMsgId);
-                    }
-                } else {
-                    document.getElementById('chatbox').innerHTML += `<p>Bot: I got lost, please ask again. :)</p>`;
-                }
-                commandCount++;
-                if (commandCount >= MAX_COMMANDS) {
-                    form.assistant_instructions.disabled = true;
-                    submit_chat.disabled = true;
-                    document.getElementById('chatbox').innerHTML += `<p>Thank you for using our beta product. Sign up for our waitlist <a href="https://www.builditforme.ai">here</a>.</p>`;
-                }
-            } else if (response.status === 202) {
-                form.assistant_instructions.disabled = true;
-                submit_chat.disabled = true;
-                let response_gpt = JSON.parse(response.data);
-                // Get the last message id and message from response_gpt.gpt_says_dict
-                let lastMsgId = Object.keys(response_gpt.gpt_says_dict).pop();
-                if (lastMsgId) {
-                    let lastMsg = response_gpt.gpt_says_dict[lastMsgId];
-                    if (!displayedMessageIds.has(lastMsgId)) {
-                        while(chatbox.getElementsByTagName('p').length > prevMessageCounts[prevMessageCounts.length - 1]+1){
-                            chatbox.removeChild(chatbox.lastChild);
-                        }
-                        let p = document.createElement('p');
-                        p.textContent = `GPT: ${lastMsg}`;
-                        chatbox.appendChild(p);
-                        displayedMessageIds.add(lastMsgId);
-                    }
-                    processingMessage.innerHTML = '<div class="processing-message">Processing<span class="processing-dot">.</span><span class="processing-dot">.</span><span class="processing-dot">.</span></div>';
-                    document.getElementById('chatbox').appendChild(processingMessage);
-                }
-                setTimeout(pollForGptResponse, 3000, jobId, 0); 
-            }
-        },
-        error: function(error) {
-            console.error('Error:', error);
-            retryCount += 1;
+    // Function to close the modal
+    function closeModal() {
+        modal.style.display = "none";
+    }
 
-            if (retryCount < 2) {
-                setTimeout(pollForGptResponse, 3000, folderName, jobId, 1);
-            } else {
-                document.getElementById('billy-chatbox').removeChild(processingMessage);
-                form.assistant_instructions.disabled = false;
-                submit_chat.disabled = false;
-                document.getElementById('billy-chatbox').innerHTML += `<p>GPT: Your request has finished running.</p>`;
-            }
+    // When the user clicks on <span> (x), close the modal
+    closeButton.onclick = function() {
+        closeModal();
+    }
+
+    // When the user clicks on the continue button, close the modal and do something else
+    continueButton.onclick = function(event) {
+        event.preventDefault();
+        closeModal();
+        // Add any additional actions for the continue button here
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
         }
-    });
-}*/
+    }
+});
