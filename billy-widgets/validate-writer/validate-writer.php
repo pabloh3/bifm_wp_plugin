@@ -9,6 +9,7 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     $keyphrase = htmlspecialchars($keyphrase);
     $path = plugin_dir_path(__FILE__) . '../../static/icons/Writer.svg';
     $writer_icon = wp_remote_get($path);
+    $writer_icon = wp_remote_retrieve_body($writer_icon);
     // widget as a piece of html with two buttons (authorize and reject)
     $widget = "
     <div id='validate-writer-widget-" . $widget_id . "'>

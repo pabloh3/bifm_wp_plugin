@@ -5,7 +5,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 // Handle change smart chat settings
 // Add action for logged-in users
 add_action('wp_ajax_bifm_smart_chat_settings', 'bifm_smart_chat_settings');
-add_action("wp_ajax_bifm_smart_chat_reset", "bifm_smart_chat_reset");
+add_action('wp_ajax_bifm_smart_chat_reset', 'bifm_smart_chat_reset');
 
 function bifm_smart_chat_reset() {
     error_log("requested handle_bifm_smart_chat_reset");

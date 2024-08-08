@@ -76,7 +76,7 @@ if (isset($_SESSION['thread_id'])) {
       </li>
       <li>
         <a href="admin.php?page=writer-settings" class="waves-effect">
-        <i class="material-icons">settings</i><?php esc_html_e('Writer settings','bifm'); ?>
+          <i class="material-icons">settings</i><?php esc_html_e('Writer settings','bifm'); ?>
         </a>
       </li>
     </ul>

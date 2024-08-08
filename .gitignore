@@ -4,3 +4,4 @@ widget-registration.php
 .DS_Store
 /shared-widgets/smart_chat/chat_files/
 /static/materialize-src/*
+design-system-page.php

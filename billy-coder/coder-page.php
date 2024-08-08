@@ -90,7 +90,7 @@ $widget_types = $widgets_manager->get_widget_types();
                         <textarea id="builder_instructions" name="builder_instructions" class="materialize-textarea"></textarea>
                         <label for="builder_instructions"><?php esc_html_e('Build me a widget that...','bifm'); ?></label>
                         <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit" id="builder-submit-chat">
-                            <i class="material-icons">arrow_forward</i>
+                          <i class="material-icons">arrow_forward</i>
                         </button>
                 </form>
             </div>
