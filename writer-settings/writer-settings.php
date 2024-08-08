@@ -1,5 +1,4 @@
 <?php 
-
 // Handle change blog settings
 // Add action for logged-in users
 add_action('wp_ajax_bifm_save_settings', 'handle_bifm_save_settings');
@@ -13,46 +12,74 @@ function handle_bifm_save_settings() {
             error_log("Nonce verification failed! New nonce: " . $nonce_new);
             throw new Exception('Nonce verification failed!');
         }
-        $user_id = get_current_user_id();
-        // Update username and password only if username is provided
-        if (isset($_POST['blog_author_username'])) {
-            update_user_meta($user_id, 'username', $_POST['blog_author_username']);
-        }
-        
-        // Update password only if the user is different than the one set
-        if (!empty($_POST['blog_author_username'])) {
-            // generate an application p
-            if(!empty($_POST['blog_author_password'])) {
-                $password = $_POST['blog_author_password'];
-            } else {
-                // try catch block to handle exceptions
-                try {
-                    $author_id = get_user_by('login', $_POST['blog_author_username'])->ID;
-                    delete_old_password($author_id, $user_id);
-                    $password = generate_new_password($author_id, $user_id);
-                } catch (Exception $e) {
-                    wp_send_json_error($e->getMessage(), 400);
-                }
-            }
-            error_log("Pass to encrypt: " . $password);
-            $password = encrypt_data($password);
-            error_log("Encrypted password: " . $password);
-            update_user_meta($user_id, 'encrypted_password', $password);
-        }
-        
-        // Always update these settings
-        update_user_meta($user_id, 'website_description', $_POST['website_description']);
-        update_user_meta($user_id, 'image_style', $_POST['image_style']);
-        update_user_meta($user_id, 'blog_language', $_POST['blog_language']);
-        update_user_meta($user_id, 'image_width', $_POST['image_width']);
-        update_user_meta($user_id, 'image_height', $_POST['image_height']);
 
-        wp_send_json_success('Settings saved successfully.');
+        $user_id = get_current_user_id();
+
+        // Extract POST data
+        $username = isset($_POST['blog_author_username']) ? $_POST['blog_author_username'] : null;
+        $password = isset($_POST['blog_author_password']) ? $_POST['blog_author_password'] : null;
+        $website_description = isset($_POST['website_description']) ? $_POST['website_description'] : null;
+        $image_style = isset($_POST['image_style']) ? $_POST['image_style'] : null;
+        $blog_language = isset($_POST['blog_language']) ? $_POST['blog_language'] : null;
+        $image_width = isset($_POST['image_width']) ? $_POST['image_width'] : null;
+        $image_height = isset($_POST['image_height']) ? $_POST['image_height'] : null;
+
+        // Call the function to set the settings
+        $response = bifm_set_settings($user_id, $username, $password, $website_description, $image_style, $blog_language, $image_width, $image_height);
+
+        if (is_wp_error($response)) {
+            wp_send_json_error($response->get_error_message(), 400);
+        } else {
+            wp_send_json_success('Settings saved successfully.');
+        }
 
     } catch (Exception $e) {
         wp_send_json_error($e->getMessage(), 400);
     }
 }
+
+// Function to set the settings
+function bifm_set_settings($user_id, $username, $password, $website_description, $image_style, $blog_language, $image_width, $image_height) {
+    try {
+        // Update username and password only if username is provided
+        if ($username) {
+            update_user_meta($user_id, 'username', $username);
+
+            // Update password only if provided
+            if ($password) {
+                error_log("Pass to encrypt: " . $password);
+                $encrypted_password = encrypt_data($password);
+                error_log("Encrypted password: " . $encrypted_password);
+                update_user_meta($user_id, 'encrypted_password', $encrypted_password);
+            } else {
+                try {
+                    $author_id = get_user_by('login', $username)->ID;
+                    delete_old_password($author_id, $user_id);
+                    $new_password = generate_new_password($author_id, $user_id);
+                    error_log("Pass to encrypt: " . $new_password);
+                    $encrypted_password = encrypt_data($new_password);
+                    error_log("Encrypted password: " . $encrypted_password);
+                    update_user_meta($user_id, 'encrypted_password', $encrypted_password);
+                } catch (Exception $e) {
+                    return new WP_Error('password_error', $e->getMessage());
+                }
+            }
+        }
+
+        // Always update these settings
+        update_user_meta($user_id, 'website_description', $website_description);
+        update_user_meta($user_id, 'image_style', $image_style);
+        update_user_meta($user_id, 'blog_language', $blog_language);
+        update_user_meta($user_id, 'image_width', $image_width);
+        update_user_meta($user_id, 'image_height', $image_height);
+
+        return true;
+
+    } catch (Exception $e) {
+        return new WP_Error('settings_error', $e->getMessage());
+    }
+}
+
 
 // Define a secret key. Store this securely and do not expose it.
 function encrypt_data($data) {
