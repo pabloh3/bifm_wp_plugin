@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 $environment = 'production'; // Default to production
 $host = $_SERVER['HTTP_HOST'];
 if (strpos($host, 'stg-') === 0 || 

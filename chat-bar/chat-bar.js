@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
 
     // Close chat widget and redirect
     $('#billy_chat_close').on('click', function() {
-        window.location.href = '/wp-admin/admin.php?page=bifm-plugin';
+        window.location.href = '/wp-admin/admin.php?page=bifm';
     });
 
     // Handle enter key submission
@@ -66,12 +66,12 @@ jQuery(document).ready(function($) {
     }
 
     function loadCurrentSessionThread() {
-        // call load_billy_chat 
+        // call bifm_load_billy_chat 
         $.ajax({
             url: billy_chat_vars.ajax_url,
             type: 'POST',
             data: {
-                action: 'load_billy_chat',
+                action: 'bifm_load_billy_chat',
                 nonce: billy_chat_vars.nonce
             },
             success: function(response) {
@@ -127,7 +127,7 @@ jQuery(document).ready(function($) {
                 url: billy_chat_vars.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'billy_check_job_status',
+                    action: 'bifm_billy_check_job_status',
                     nonce: billy_chat_vars.nonce,
                     jobId: jobId,
                     message: message

@@ -1,14 +1,14 @@
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <br/>
-<a href="admin.php?page=bifm-plugin" class="bifm-btn  waves-effect waves-light purple light-grey" style="width: 120px;">
+<a href="admin.php?page=bifm" class="bifm-btn  waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
-    Back
+    <?php esc_html_e('Back','bifm'); ?>
 </a>
 <div class="container">
     <div id="widget-generator" class="bifm-col s12">
-        <h5>Widget Generator</h5>
+        <h5><?php esc_html_e('Widget Generator','bifm'); ?></h5>
+        <?php if(is_plugin_active('elementor/elementor.php')): ?>
         <!-- Button to create a new widget -->
-        <button id="createNewWidget" class="bifm-btn  waves-effect waves-light">Create new widget</button>
+        <button id="createNewWidget" class="bifm-btn  waves-effect waves-light"><?php esc_html_e('Create new widget','bifm'); ?></button>
         <br/>
         <?php
         $widgets_manager = \Elementor\Plugin::$instance->widgets_manager;
@@ -16,7 +16,7 @@
         ?>
 
         <ul class="collection with-header" id="widget-list" style="max-width: 500px;">
-            <li class="collection-header" style="margin-bottom: 0;"><h4>Your widgets</h4></li>
+            <li class="collection-header" style="margin-bottom: 0;"><h4><?php esc_html_e('Your widgets','bifm'); ?></h4></li>
             <?php foreach ($widget_types as $widget): ?>
                 <?php
                 $reflector = new ReflectionClass(get_class($widget));
@@ -36,5 +36,8 @@
                 <?php endif; ?>
             <?php endforeach; ?>
         </ul>
+    <?php else: ?>
+        <p><?php esc_html_e('Elementor is not active. Please activate it to start creating your own widgets with this tool.','bifm'); ?></p>
+    <?php endif; ?>
     </div>
 </div>

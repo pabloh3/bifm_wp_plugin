@@ -3,13 +3,13 @@ Contributors: pablobifm
 Donate link: https://www.builditforme.ai/donate
 Tags: widgets, elementor, AI, automation, management
 Requires at least: 5.0
-Tested up to: 6.4.3
+Tested up to: 6.6
 Requires PHP: 7.0
 Stable tag: 1.2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Ask a bot to build Elementor widgets or blog posts for you. See the changes in real time. Save your widgets and include them in any of your pages with the Elementor editor.
+Ask a bot to build Elementor widgets or blog posts for you. See the changes in real time. Save your widgets and include them in any of your pages.
 
 == Description ==
 

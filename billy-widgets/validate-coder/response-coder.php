@@ -1,13 +1,14 @@
 <?php
-function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_id){
+if ( ! defined( 'ABSPATH' ) ) exit;
+function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_id){
     $authorized = $data['authorize'];
     if ($authorized === true or $authorized === "true"){
         error_log("requesting API access");
         // to do grant API access
-        $tool_message = "redirecting to coder";
+        $tool_message = __("redirecting to coder",'bifm');
     } else {
         error_log("Rejected going to coder");
-        $tool_message = "User rejected going to coder";
+        $tool_message = __("User rejected going to coder",'bifm');
     }
 
     global $API_URL;
@@ -19,7 +20,7 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
 
     $response_tool = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
-        'body' => json_encode(array(
+        'body' => wp_json_encode(array(
             'message' => null,
             'tool_outputs' => array(
                 'tool_call_id' => $tool_call_id,
