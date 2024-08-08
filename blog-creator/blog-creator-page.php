@@ -53,9 +53,10 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                     </div>
                 </button>
             </div>
-            <div id ="billy-form-footer" class="grey-text"><?php 
-/* translators: %s: writer settings page URL */
-            printf( wp_kses(__('Go to <a href="%s" class="black-text"> Writer Settings </a>  to change the tone, language and image style.','bifm'),['a'=>'href']) ,'/wp-admin/admin.php?page=writer-settings'); ?></div>
+            <div id ="billy-form-footer" class="grey-text">
+                <?php esc_html_e('Go to &#8203;', 'text-domain'); /* translators: %s: writer settings page URL */?> 
+                <a href="admin.php?page=create-chat" class="black-text"><?php esc_html_e('Writer Settings', 'text-domain'); ?></a>
+                <?php esc_html_e('&#8203; to change the tone, language and image style.', 'text-domain'); ?>
             <div id="cbc_response" class="card-panel grey" style="display:none;"></div>
         </div>
     

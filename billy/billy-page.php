@@ -76,7 +76,7 @@ if (isset($_SESSION['thread_id'])) {
       </li>
       <li>
         <a href="admin.php?page=writer-settings" class="waves-effect">
-          <i class="material-icons" style="padding: 8px;box-sizing: border-box;width: 44px;margin: 0 0 0 2px;height: 39px;">settings</i><?php esc_html_e('Writer settings','bifm'); ?>
+        <i class="material-icons">settings</i><?php esc_html_e('Writer settings','bifm'); ?>
         </a>
       </li>
     </ul>
@@ -186,7 +186,7 @@ if (isset($_SESSION['thread_id'])) {
         </form>
         <div id ="billy-form-footer" class="grey-text lighten-2">
           <?php /* translators: %s: create chat page URL */
-           printf(esc_html_e('Go to <a href="%s" class="black-text">Settings</a> to change the way Billy responds.','bifm'),'admin.php?page=create-chat'); ?>
+           printf(esc_html_e('Go to ')) ?><a href="admin.php?page=create-chat" class="black-text"><?php esc_html_e('Settings'); ?></a> <?php printf(esc_html_e(' to change the way Billy responds.')); ?>
           </div>
     </div>
   </div>
