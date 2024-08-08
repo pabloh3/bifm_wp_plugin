@@ -1,14 +1,15 @@
 <?php 
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Handle change blog settings
 // Add action for logged-in users
-add_action('wp_ajax_bifm_save_settings', 'handle_bifm_save_settings');
+add_action('wp_ajax_bifm_save_settings', 'bifm_save_settings');
 
 // Function to handle form submission
-function handle_bifm_save_settings() {
+function bifm_save_settings() {
     try {
         // Check for nonce security
-        if (!isset($_POST['bifm_nonce']) || !wp_verify_nonce($_POST['bifm_nonce'], 'bifm-writer-settings-nonce')) {
+        if (!isset($_POST['bifm_nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['bifm_nonce'])), 'bifm-writer-settings-nonce')) {
             $nonce_new = wp_create_nonce('bifm-writer-settings-nonce');
             error_log("Nonce verification failed! New nonce: " . $nonce_new);
             throw new Exception('Nonce verification failed!');
@@ -16,36 +17,36 @@ function handle_bifm_save_settings() {
         $user_id = get_current_user_id();
         // Update username and password only if username is provided
         if (isset($_POST['blog_author_username'])) {
-            update_user_meta($user_id, 'username', $_POST['blog_author_username']);
+            update_user_meta($user_id, 'username', sanitize_text_field($_POST['blog_author_username']));
         }
         
         // Update password only if the user is different than the one set
         if (!empty($_POST['blog_author_username'])) {
             // generate an application p
             if(!empty($_POST['blog_author_password'])) {
-                $password = $_POST['blog_author_password'];
+                $password = sanitize_text_field($_POST['blog_author_password']);
             } else {
                 // try catch block to handle exceptions
                 try {
-                    $author_id = get_user_by('login', $_POST['blog_author_username'])->ID;
-                    delete_old_password($author_id, $user_id);
-                    $password = generate_new_password($author_id, $user_id);
+                    $author_id = get_user_by('login', sanitize_text_field($_POST['blog_author_username']))->ID;
+                    bifm_delete_old_password($author_id, $user_id);
+                    $password = bifm_generate_new_password($author_id, $user_id);
                 } catch (Exception $e) {
                     wp_send_json_error($e->getMessage(), 400);
                 }
             }
             error_log("Pass to encrypt: " . $password);
-            $password = encrypt_data($password);
+            $password = bifm_encrypt_data($password);
             error_log("Encrypted password: " . $password);
             update_user_meta($user_id, 'encrypted_password', $password);
         }
         
         // Always update these settings
-        update_user_meta($user_id, 'website_description', $_POST['website_description']);
-        update_user_meta($user_id, 'image_style', $_POST['image_style']);
-        update_user_meta($user_id, 'blog_language', $_POST['blog_language']);
-        update_user_meta($user_id, 'image_width', $_POST['image_width']);
-        update_user_meta($user_id, 'image_height', $_POST['image_height']);
+        update_user_meta($user_id, 'website_description', sanitize_text_field($_POST['website_description']));
+        update_user_meta($user_id, 'image_style', sanitize_text_field($_POST['image_style']));
+        update_user_meta($user_id, 'blog_language', sanitize_text_field($_POST['blog_language']));
+        update_user_meta($user_id, 'image_width', sanitize_text_field($_POST['image_width']));
+        update_user_meta($user_id, 'image_height', sanitize_text_field($_POST['image_height']));
 
         wp_send_json_success('Settings saved successfully.');
 
@@ -55,10 +56,10 @@ function handle_bifm_save_settings() {
 }
 
 // Define a secret key. Store this securely and do not expose it.
-function encrypt_data($data) {
+function bifm_encrypt_data($data) {
     // Load the public key from this folder's public_key.pem file
     error_log("data to encrypt: " . $data);
-    $public_key = file_get_contents(plugin_dir_path(__FILE__) . 'public_key.pem');
+    $public_key = wp_remote_get(plugin_dir_path(__FILE__) . 'public_key.pem');
     error_log("Public key: " . $public_key);
     // Encrypt the password using the public key
     openssl_public_encrypt($data, $encrypted_password, $public_key);
@@ -67,7 +68,7 @@ function encrypt_data($data) {
     return $encrypted_password_base64;
 }
 
-function generate_new_password($author_id, $user_id) {
+function bifm_generate_new_password($author_id, $user_id) {
     if ( class_exists( 'WP_Application_Passwords' ) ) {
         // Ensure the current user has the necessary capability
         if ( current_user_can( 'edit_user', $author_id ) ) {
@@ -81,7 +82,7 @@ function generate_new_password($author_id, $user_id) {
             // Check if the password was successfully generated
             if ( is_wp_error( $new_password ) ) {
                 //raise exception
-                throw new Exception('Failed to generate a new application password ' . $new_password->get_error_message());
+                throw new Exception('Failed to generate a new application password ' . esc_html($new_password->get_error_message()));
             } else {
                 // Output the new application password
                 return $new_password[0];
@@ -94,7 +95,7 @@ function generate_new_password($author_id, $user_id) {
     }
 }
 
-function delete_old_password($author_id, $user_id) {
+function bifm_delete_old_password($author_id, $user_id) {
     if ( class_exists( 'WP_Application_Passwords' ) ) {
         // Ensure the current user has the necessary capability
         if ( current_user_can( 'edit_user', $author_id ) ) {
@@ -109,7 +110,7 @@ function delete_old_password($author_id, $user_id) {
                     $result = WP_Application_Passwords::delete_application_password( $author_id, $password['uuid'] );
                     // Check if the password was successfully deleted
                     if ( is_wp_error( $result ) ) {
-                        throw new Exception('Failed to delete the application password ' . $result->get_error_message());
+                        throw new Exception('Failed to delete the application password ' . esc_html($result->get_error_message()));
                     }
                 }
             }

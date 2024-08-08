@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Process clicks on back button
     document.getElementById('backButton').addEventListener('click', goBack);
     function goBack() {
-        window.location.href = 'admin.php?page=bifm-plugin';
+        window.location.href = 'admin.php?page=bifm';
     }
 
 });

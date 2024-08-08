@@ -23,7 +23,7 @@ function bifm_handle_plugin_send_message() {
     $url = $API_URL . "/{$folderName}/processgpt";
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
-        'body' => json_encode(array(
+        'body' => wp_json_encode(array(
             'message' => $messageBody,
             'stage' => $stage,
             'user_info' => $user_id_complete  // Here's where the user ID is added
@@ -35,7 +35,7 @@ function bifm_handle_plugin_send_message() {
     // Check for errors
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
+        wp_send_json_error(array('message' => "Something went wrong:" .  wp_kses($error_message)));
     } else {
         // Get the status code from the external server's response
         $status_code = wp_remote_retrieve_response_code($response);
@@ -48,13 +48,13 @@ function bifm_handle_plugin_send_message() {
     }
 
     // Always die at the end of AJAX functions in WordPress
-    wp_die("Reached end without success message");
+    wp_die(esc_html(__("Reached end without success message",'bifm')));
 }
 
 
 
-add_action('wp_ajax_my_plugin_poll_action', 'handle_my_plugin_poll_action');
-function handle_my_plugin_poll_action() {
+add_action('wp_ajax_my_plugin_poll_action', 'bifm_handle_my_plugin_poll_action');
+function bifm_handle_my_plugin_poll_action() {
     // Check nonce for security
     check_ajax_referer('my-plugin-nonce', 'nonce');
 
@@ -72,7 +72,7 @@ function handle_my_plugin_poll_action() {
     // Check for errors
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
+        wp_send_json_error(array('message' => esc_html(__("Something went wrong:",'bifm')) .  wp_kses($error_message)));
     } else {
         // Get the status code from the external server's response
         $status_code = wp_remote_retrieve_response_code($response);
@@ -85,23 +85,32 @@ function handle_my_plugin_poll_action() {
     }
 
     // Always die at the end of AJAX functions in WordPress
-    wp_die("Reached end without success message");
+    wp_die(esc_html( __("Reached end without success message",'bifm')));
 }
 
 // handle fatal error when saving
-function handle_fatal_error($dir_path, $widget_name) {
+function bifm_handle_fatal_error($dir_path, $widget_name) {
     $error = error_get_last();
-    error_log("Error type: " . $error['type']);
-    error_log("Error message: " . $error['message']);
+    error_log(esc_html(__("Error type: ",'bifm') . $error['type']));
+    error_log(esc_html(__("Error message: ",'bifm') . $error['message']));
     // list of what each error is: https://www.php.net/manual/en/errorfunc.constants.php
     if ($error && in_array($error['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_RECOVERABLE_ERROR, 4096))) {
         
         error_log("############### handle fatal error running dir: " . $dir_path);
         error_log("widget: " . $widget_name);
         // this function lives in widget-manager.php
-        remove_widget($dir_path,  $widget_name);
+        bifm_remove_widget($dir_path,  $widget_name);
     
-        wp_send_json_error(array('message' => "A fatal error occurred while saving the widget '{$widget_name}'. The widget has been deleted. Please check the widget data and try again."));
+        wp_send_json_error([
+
+            'message' => 
+            sprintf(
+            /* translators: %s: widget name */
+                esc_html(__("A fatal error occurred while saving the widget '%s'. The widget has been deleted. Please check the widget data and try again."
+                    ,'bifm'))
+            ,$widget_name)
+
+            ] );
         // Optionally, log the error for debugging
         // error_log(print_r($error, true));
     }
@@ -124,12 +133,12 @@ function bifm_handle_plugin_save() {
     $dir_path = wp_upload_dir()['basedir'] . '/bifm-files/bifm-widgets/' . $widget_name;
     if (file_exists($dir_path)) {
         $error_encountered = true;
-        wp_send_json_error(array('message' => 'A widget with this name already exists.'));
+        wp_send_json_error(array('message' => esc_html(__('A widget with this name already exists.','bifm') )));
     }
 
     // register the function to be called in case of a fatal error
     register_shutdown_function(function() use ($dir_path, $widget_name) {
-        handle_fatal_error($dir_path, $widget_name);
+        bifm_handle_fatal_error($dir_path, $widget_name);
     });
     
     // call the API to save
@@ -145,7 +154,7 @@ function bifm_handle_plugin_save() {
     if (is_wp_error($response)) {
         $error_encountered = true;
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
+        wp_send_json_error(array('message' => esc_html(__("Something went wrong:",'bifm')) .  wp_kses($error_message)));
     } 
     
     //Saving the widget
@@ -160,11 +169,11 @@ function bifm_handle_plugin_save() {
         $dir_path = wp_upload_dir()['basedir'] . '/bifm-files/bifm-widgets/' . $widget_name;
         if (file_exists($dir_path)) {
             $error_encountered = true;
-            wp_send_json_error(array('message' => 'A widget with this name already exists.'));
+            wp_send_json_error(array('message' => esc_html(__('A widget with this name already exists.','bifm'))));
         } else {
-            if (!mkdir($dir_path, 0755, true)) {
+            if (!wp_mkdir_p($dir_path)) {
                 $error_encountered = true;
-                wp_send_json_error(array('message' => 'Failed to create directory.'));
+                wp_send_json_error(array('message' => esc_html(__('Failed to create directory.','bifm'))));
             }
         }
     
@@ -185,16 +194,16 @@ function bifm_handle_plugin_save() {
                     $file_path = $dir_path . '/' . $file_name;
                     
                     // check that the new file doesn't return errors
-                    if (!lint_php_code($decoded_file)) {
-                        error_log("New widget failed lint");
+                    if (!bifm_lint_php_code($decoded_file)) {
+                        error_log(__("New widget failed lint",'bifm'));
                         // Delete all files created for this widget to ensure consistency
-                        remove_widget($dir_path, $widget_name);
-                        wp_send_json_error(array('message' => "The widget's code contains errors and cannot be saved."));
+                        bifm_remove_widget($dir_path, $widget_name);
+                        wp_send_json_error(array('message' => __("The widget's code contains errors and cannot be saved.",'bifm')));
                     } else {
                         // Save the file
-                        if (file_put_contents($file_path, $decoded_file) === false) {
+                        if (bifm_create_file($file_path, $decoded_file) === false) {
                             $error_encountered = true;
-                            wp_send_json_error(array('message' => "Failed to save file: {$file_name}"));
+                            wp_send_json_error(array('message' => __("Failed to save file:",'bifm').$file_name));
                         }
                         $saved_files[] = $file_path;
                     }
@@ -207,12 +216,12 @@ function bifm_handle_plugin_save() {
                 foreach ($hook_names as $hook_name) {
                     error_log("hook name: " . $hook_name);
                     // Check and save the hook
-                    if (!save_hook($hook_name, $widget_name)) {
+                    if (!bifm_save_hook($hook_name, $widget_name)) {
                         $error_encountered = true;
                         error_log("Tried to save action hook but one with same name already exists");
                         // Delete all files created for this widget to ensure consistency
-                        remove_widget($dir_path, $widget_name);
-                        wp_send_json_error(array('message' => "An action hook with this name already exists."));
+                        bifm_remove_widget($dir_path, $widget_name);
+                        wp_send_json_error(array('message' => __("An action hook with this name already exists.",'bifm')));
                     }
                 }
             }                    
@@ -230,44 +239,44 @@ function bifm_handle_plugin_save() {
                 } else {
                     // Handle the case where a widget with the same name already exists
                     // You might want to return an error message or perform some other action
-                    wp_send_json_error(array('message' => 'A widget with that name already exists.'));
+                    wp_send_json_error(array('message' => __('A widget with that name already exists.','bifm')));
                 }    
             } else {
                 $error_encountered = true;
-                wp_send_json_error(array('message' => 'No valid file data received from the server.'));
+                wp_send_json_error(array('message' => __('No valid file data received from the server.','bifm')));
             }
         } else {
             $error_encountered = true;
-            wp_send_json_error(array('message' => 'No file data received from the server.'));
+            wp_send_json_error(array('message' => __('No file data received from the server.','bifm')));
         }
     } catch (Exception $e) {
         $rollback_required = true;
-        wp_send_json_error(array('message' => 'An error occurred: ' . esc_html__($e->getMessage())));
+        wp_send_json_error(array('message' => __('An error occurred: ','bifm') . wp_kses($e->getMessage())));
     
     } finally {
         // 3. Rollback on error
         if ($rollback_required) {
-            remove_widget($dir_path,  $widget_name);
+            bifm_remove_widget($dir_path,  $widget_name);
         }
         else {
            wp_send_json_success(array(
-                'message' => 'Files saved successfully!',
+                'message' => __('Files saved successfully!','bifm'),
                 'file_paths' => $saved_files
             ));
         }
     }
     
     // Always die at the end of AJAX functions in WordPress
-    wp_die('Save ended without a response');
+    wp_die(esc_html(__('Save ended without a response','bifm')));
 }
 
-function get_hooks() {
+function bifm_get_hooks() {
     return get_option('bifm_action_hooks', []);
 }
 
-function save_hook($hook_name, $widget_name) {
-    error_log("Saving hook: " . $hook_name);
-    $hooks = get_hooks();
+function bifm_save_hook($hook_name, $widget_name) {
+    error_log(__("Saving hook: ",'bifm') . $hook_name);
+    $hooks = bifm_get_hooks();
     if (isset($hooks[$hook_name])) {
         return false; // Hook name already exists
     }
@@ -278,10 +287,10 @@ function save_hook($hook_name, $widget_name) {
 }
 
 
-function lint_php_code($code) {
+function bifm_lint_php_code($code) {
     // Create a temporary file
     $temp_file = tempnam(sys_get_temp_dir(), 'lint');
-    file_put_contents($temp_file, $code);
+    bifm_create_file($temp_file, $code);
     
     //debug delete
     $output0 = shell_exec("echo 'Hello World'");
@@ -304,7 +313,7 @@ function lint_php_code($code) {
         //$output = shell_exec("php -l " . escapeshellarg($temp_file));
         //error_log("Lint test output: " . $output);
         // Delete the temporary file
-        unlink($temp_file);
+        wp_delete_file($temp_file);
         // If the output contains "No syntax errors", the lint was successful
         return strpos($output, "No syntax errors") !== false;
     } else {
@@ -321,7 +330,7 @@ function lint_php_code($code) {
 
         // Wrap in output buffering to prevent execution
         ob_start();
-        $result = @eval('return true; if(0){ ?>' . $code . '<?php }');
+        $result = @eval('return true; if(0){ ?>' . $code . '<?php }'); // phpcs:ignore
         ob_end_clean();
         $deb1 = shell_exec("pwd");
 
@@ -349,15 +358,15 @@ function bifm_handle_plugin_reset() {
     // Check for errors
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
+        wp_send_json_error(array('message' => "Something went wrong:" .  wp_kses($error_message)));
     }
     
     wp_send_json_success(array(
-        'message' => 'Files saved successfully!',
+        'message' => __('Files saved successfully!','bifm'),
     ));
 
     // Always die at the end of AJAX functions in WordPress
-    wp_die('Save ended without a response');
+    wp_die(esc_html(__('Save ended without a response','bifm')));
 }
 
 
@@ -381,14 +390,14 @@ function bifm_handle_plugin_undo() {
     // Check for errors
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
-        wp_send_json_error(array('message' => "Something went wrong:" .  esc_html__($error_message)));
+        wp_send_json_error(array('message' => __("Something went wrong:",'bifm') .  wp_kses($error_message)));
     }
     
     wp_send_json_success(array(
-        'message' => 'Files saved successfully!',
+        'message' => __('Files saved successfully!','bifm'),
     ));
 
     // Always die at the end of AJAX functions in WordPress
-    wp_die('Save ended without a response');
+    wp_die(esc_html(__('Save ended without a response','bifm')));
 }
 

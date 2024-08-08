@@ -112,7 +112,7 @@ function pollForResult(jobId, messageBody) {
             url: billy_localize.ajax_url,
             type: 'POST',
             data: {
-                action: 'billy_check_job_status',
+                action: 'bifm_billy_check_job_status',
                 nonce: billy_localize.nonce,
                 jobId: jobId,
                 message: messageBody
@@ -258,8 +258,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // handle clicks on new_chat_button with id new-chat-button
-        document.getElementById('new_chat_button').addEventListener('click', function(event) {
+        // handle clicks on bifm_new_chat_button with id new-chat-button
+        document.getElementById('bifm_new_chat_button').addEventListener('click', function(event) {
             // prevent sending a new request for the page
             event.preventDefault();
             //reset the suggestions
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 url: billy_localize.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'new_chat',
+                    action: 'bifm_new_chat',
                     nonce: billy_localize.nonce,
                 },
                 success: function(response) {
@@ -319,7 +319,7 @@ function loadThread(threadId) {
         url: billy_localize.ajax_url, // Ensure ajaxurl is defined or use admin_url('admin-ajax.php')
         type: 'POST',
         data: {
-            action: 'load_billy_chat', // WordPress AJAX action hook
+            action: 'bifm_load_billy_chat', // WordPress AJAX action hook
             thread_id: threadId,
             nonce: billy_localize.nonce,
         },
@@ -451,7 +451,7 @@ function saveAgreement() {
         url: billy_localize.ajax_url,
         type: 'POST',
         data: {
-            action: 'save_agreement',
+            action: 'bifm_save_agreement',
             nonce: billy_localize.nonce,
         },
         success: function(response) {

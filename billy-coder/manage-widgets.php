@@ -1,9 +1,10 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 // handle deleting widgets
-add_action('wp_ajax_delete_custom_widget', 'delete_custom_widget_callback');
-function delete_custom_widget_callback() {    
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'my_custom_action')) {
-        wp_send_json_error('Invalid nonce');
+add_action('wp_ajax_delete_custom_widget', 'bifm_delete_custom_widget_callback');
+function bifm_delete_custom_widget_callback() {    
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'my_custom_action')) {
+        wp_send_json_error(__('Invalid nonce','bifm'));
         exit;
     }
 
@@ -13,11 +14,11 @@ function delete_custom_widget_callback() {
 
     // Delete the widget action hook in the uploads /backend_functions.php file
     $action_hooks_file = wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php';
-    $action_hooks_content = file_get_contents($action_hooks_file);
+    $action_hooks_content = wp_remote_get($action_hooks_file);
     /*Find teh string that starts with "include_once plugin_dir_path( __FILE__ ) . './bifm-widgets/{$widget_name}/backend_functions.php';...<a bunch of content>" and ends with two consecutive line breaks, remove it
     */
     $action_hooks_content = preg_replace("/include_once plugin_dir_path\( __FILE__ \) \. '\/bifm-widgets\/{$widget_name}\/backend_functions.php';.*?\n\n/s", '', $action_hooks_content);
-    file_put_contents($action_hooks_file, $action_hooks_content);
+    bifm_create_file($action_hooks_file, $action_hooks_content);
 
     // delete any action hooks in options that start with this widget name + _
     $hooks = get_option('bifm_action_hooks', []);
@@ -31,16 +32,16 @@ function delete_custom_widget_callback() {
 
     // Delete the widget folder
     try {
-        remove_widget($widget_folder_path, $widget_name);
+        bifm_remove_widget($widget_folder_path, $widget_name);
     } catch (Exception $e) {
         wp_send_json_error($e->getMessage());
     }
     wp_send_json_success();
 }
 
-function remove_widget($dir,  $widget_name) {
+function bifm_remove_widget($dir,  $widget_name) {
     // delete corresponding widget folder
-    rrmdir($dir);
+    rbifm_delete_folder($dir);
     error_log("widget removed from widget_registration.php");
 
     // Retrieve the existing widget names
@@ -63,30 +64,30 @@ function remove_widget($dir,  $widget_name) {
     }
 }
 
-function rrmdir($dir){
+function rbifm_delete_folder($dir){
     if (is_dir($dir)) {
         $objects = scandir($dir);
         foreach ($objects as $object) {
             if ($object != "." && $object != "..") {
                 if (is_dir($dir . "/" . $object))
-                    rrmdir($dir . "/" . $object);
+                    rbifm_delete_folder($dir . "/" . $object);
                 else
-                    unlink($dir . "/" . $object);
+                    wp_delete_file($dir . "/" . $object);
             }
         }
-        rmdir($dir);
+        bifm_delete_folder($dir);
     }
 }
 
 // Handle create new widget
-add_action('wp_ajax_get_folder_name', 'get_folder_name_callback');
-function get_folder_name_callback() {
+add_action('wp_ajax_get_folder_name', 'bifm_get_folder_name_callback');
+function bifm_get_folder_name_callback() {
     if (is_user_logged_in()){
         $current_user = wp_get_current_user();
         $user_email = $current_user->user_email;
         $user_id = get_current_user_id();
     } else {
-        wp_send_json_error('User not logged in to wordpress.');
+        wp_send_json_error(__('User not logged in to wordpress.','bifm'));
         return;
     }
     
@@ -109,11 +110,11 @@ function get_folder_name_callback() {
         'headers' => array(
           'Content-Type' => 'application/json'
         ),
-        'body' => json_encode($body_data)
+        'body' => wp_json_encode($body_data)
     ));
 
     if (is_wp_error($response)) {
-        wp_send_json_error('Failed to fetch folder name from API.');
+        wp_send_json_error(__('Failed to fetch folder name from API.' ,'bifm') );
         return;
     }
 
@@ -130,7 +131,7 @@ function get_folder_name_callback() {
     } else if (isset($data['warning'])) {
         wp_send_json_error($data['warning']);
     } else {
-        wp_send_json_error('Invalid response from API.');
+        wp_send_json_error(__('Invalid response from API.','bifm') );
     }
 }
 

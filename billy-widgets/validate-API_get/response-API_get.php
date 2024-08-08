@@ -1,5 +1,6 @@
 <?php
-function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_id){
+if ( ! defined( 'ABSPATH' ) ) exit;
+function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_id){
     $authorized = $data['authorize'];
     if ($authorized === true or $authorized === "true"){
         error_log("requesting API access");
@@ -10,11 +11,11 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
         error_log("username in response-API_get: " . $username);
         $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
         if (!$username || !$encrypted_password) {
-            wp_send_json_error(array('message' => "Please set a username and password in the [settings page](/wp-admin/admin.php?page=bifm-plugin#settings)."));
+            wp_send_json_error(array('message' => __("Please set a username and password in the [settings page](/wp-admin/admin.php?page=bifm#settings).",'bifm') ));
         }
     } else {
         error_log("Rejected granting API access");
-        $tool_message = "User rejectes your request for API access.";
+        $tool_message = __("User rejectes your request for API access.",'bifm');
         $user_id = NULL;
         $username = NULL;
         $encrypted_password = NULL;
@@ -31,7 +32,7 @@ function widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_i
 
     $response_tool = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
-        'body' => json_encode(array(
+        'body' => wp_json_encode(array(
             'message' => null,
             'tool_outputs' => array(
                 'tool_call_id' => $tool_call_id,

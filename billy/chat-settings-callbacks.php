@@ -1,17 +1,18 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 // define base url for the API
 require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 // Handle change smart chat settings
 // Add action for logged-in users
-add_action('wp_ajax_bifm_smart_chat_settings', 'handle_bifm_smart_chat_settings');
-add_action("wp_ajax_bifm_smart_chat_reset", "handle_bifm_smart_chat_reset");
+add_action('wp_ajax_bifm_smart_chat_settings', 'bifm_smart_chat_settings');
+add_action("wp_ajax_bifm_smart_chat_reset", "bifm_smart_chat_reset");
 
-function handle_bifm_smart_chat_reset() {
+function bifm_smart_chat_reset() {
     error_log("requested handle_bifm_smart_chat_reset");
     try {
         // Check for nonce security
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'update-chat-settings-nonce')) {
-            throw new Exception('Nonce verification failed!');
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'update-chat-settings-nonce')) {
+            throw new Exception(__('Nonce verification failed!','bifm'));
         }
         // if directory doesn't exist, create it
         $dirPath = wp_upload_dir()['basedir'] . '/bifm-files/chat_files/';
@@ -26,7 +27,7 @@ function handle_bifm_smart_chat_reset() {
                 // Read files from the directory
                 while (($file = readdir($dh)) !== false) {
                     if ($file != "." && $file != "..") { // Exclude current and parent directory links
-                        unlink($dirPath . $file);
+                        wp_delete_file($dirPath . $file);
                     }
                 }
                 closedir($dh);
@@ -39,7 +40,7 @@ function handle_bifm_smart_chat_reset() {
         $url = $API_URL . '/delete_assistant';
         $response = wp_remote_post($url, array(
             'headers' => array('Content-Type' => 'application/json'),
-            'body' => json_encode(array(
+            'body' => wp_json_encode(array(
                 'assistant_id' => $assistant_id,
                 'vector_store_id' => get_option('vector_store_id'),
             )),
@@ -56,19 +57,23 @@ function handle_bifm_smart_chat_reset() {
         update_option('assistant_id', '');
         update_option('vector_store_id', NULL);
         // return confirmation
-        wp_send_json_success('Chatbot reset successfully.');
+        wp_send_json_success(__('Chatbot reset successfully.','bifm'));
     } catch (Exception $e) {
         wp_send_json_error($e->getMessage(), 400);
     }
 }
 
+function bifm_get_custom_upload_folder(){
+    return wp_upload_dir()['basedir'] . '/bifm-files/chat_files/';
+}
+
 
 // Function to handle form submission
-function handle_bifm_smart_chat_settings() {
+function bifm_smart_chat_settings() {
     try {
         // Check for nonce security
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'update-chat-settings-nonce')) {
-            throw new Exception('Nonce verification failed!');
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'update-chat-settings-nonce')) {
+            throw new Exception(__('Nonce verification failed!','bifm'));
         }
         
         // Handle files that need to be deleted
@@ -105,7 +110,7 @@ function handle_bifm_smart_chat_settings() {
                             // Delete the file if it is not in the list
                             if (!$file_in_list) {
                                 error_log("file to delete: " . $file);
-                                unlink($dirPath . $file);
+                                wp_delete_file($dirPath . $file);
                                 //remove the file from options
                                 $file_list_stored = get_option('uploaded_file_names');
                                 foreach ($file_list_stored as $key => $value) {
@@ -129,7 +134,7 @@ function handle_bifm_smart_chat_settings() {
 
         // Handle assistant update and new files
         if (isset($_POST['assistant_instructions'], $_POST['assistant_instructions'])) {
-            $assistant_instructions = $_POST['assistant_instructions'];
+            $assistant_instructions = sanitize_text_field($_POST['assistant_instructions']);
             update_option( 'assistant_instructions', $assistant_instructions);
             $assistant_id = get_option('assistant_id');
             $uploadedFiles = $_FILES['files'];
@@ -140,12 +145,14 @@ function handle_bifm_smart_chat_settings() {
                 $uploadedFiles = $_FILES['files'];
         
                 // Define the target directory as the /bifm-files/chat_files/ directory in uploads
-                $targetDir = wp_upload_dir()['basedir'] . '/bifm-files/chat_files/';
+                $targetDir = bifm_get_custom_upload_folder();
         
                 // Create the directory if it doesn't exist
                 if (!file_exists($targetDir)) {
                     wp_mkdir_p($targetDir);
                 }
+
+
         
                 // Process each file
                 // in order for python to identify the file, we needed to define a boundary to indicate where the file starts, that doesn't contain special chars
@@ -158,7 +165,17 @@ function handle_bifm_smart_chat_settings() {
                     // Set the target file path
                     $targetFile = $targetDir . basename($name);
 
-                    if (move_uploaded_file($uploadedFiles['tmp_name'][$key], $targetFile)) {
+                    $fileElement = array(
+                      'name'     => $uploadedFiles['name'][$key],
+                      'type'     => $uploadedFiles['type'][$key],
+                      'tmp_name' => $uploadedFiles['tmp_name'][$key],
+                      'error'    => $uploadedFiles['error'][$key],
+                      'size'     => $uploadedFiles['size'][$key]
+                    );
+                    add_filter( 'upload_dir', 'bifm_get_custom_upload_folder' );
+                    wp_handle_upload($fileElement);
+                    remove_filter( 'upload_dir', 'bifm_get_custom_upload_folder' );
+                    //if () {
                         // Check if the file exists and is readable
                         //error_log("file was stored in back end");
                         if (file_exists($targetFile) && is_readable($targetFile)) {
@@ -169,18 +186,19 @@ function handle_bifm_smart_chat_settings() {
                             $body .= 'Content-Disposition: form-data; name="vector_store_id"' . "\r\n\r\n";
                             $body .= $vector_store_id . "\r\n";
                             // Add the file to the body
-                            $file_content = file_get_contents($targetFile);
+                            $file_content = wp_remote_get($targetFile);
                             $body .= '--' . $boundary . "\r\n";
                             $body .= 'Content-Disposition: form-data; name="file"; filename="' . basename($name) . '"' . "\r\n";
                             $body .= 'Content-Type: ' . mime_content_type($targetFile) . "\r\n\r\n";
                             $body .= $file_content . "\r\n";
                         }
-                    } else {
+                    //} 
+                    /*else {
                         // Handle errors, e.g., file couldn't be moved
                         error_log("Error uploading file: " . $name);
                         wp_send_json_error('Error uploading file: ' . $name);
                         return;
-                    }
+                    }*/
                     $body .= '--' . $boundary . '--';
 
                     // Send the file to the Flask API
@@ -197,7 +215,7 @@ function handle_bifm_smart_chat_settings() {
                         error_log("Error when calling file upload api");
                         // delete file if there is an error
                         $targetFile = $targetDir . basename($name);
-                        unlink($targetFile);
+                        wp_delete_file($targetFile);
                         $error_message = $file_response->get_error_message();
                         wp_send_json_error(array('message' => "Something went wrong: $error_message"), 500);
                         return;
@@ -215,7 +233,7 @@ function handle_bifm_smart_chat_settings() {
                             // delete file if there is an error
                             error_log("deleting file: " . $name);
                             $targetFile = $targetDir . basename($name);
-                            unlink($targetFile);
+                            wp_delete_file($targetFile);
                             wp_send_json_error(array('message' => $response_body['message']), $status_code);
                             return;
                         }
@@ -236,23 +254,23 @@ function handle_bifm_smart_chat_settings() {
 
            // Collect basic setup info
             global $wp_version;
-            $site_info = 'The site is running on WordPress version: ' . $wp_version . '. ';
+            $site_info = __('The site is running on WordPress version: ','bifm') . $wp_version . '. ';
             $theme = wp_get_theme();
-            $site_info .= 'The theme is: ' . $theme->get('Name') . ' Version: ' . $theme->get('Version') . '. ';
+            $site_info .= __('The theme is: ','bifm') . $theme->get('Name') . __(' Version: ','bifm') . $theme->get('Version') . '. ';
 
             // Check if Elementor is active
             if (in_array('elementor/elementor.php', apply_filters('active_plugins', get_option('active_plugins')))) {
                 $elementor_data = get_plugin_data(WP_PLUGIN_DIR . '/elementor/elementor.php');
-                $site_info .= 'Elementor is active. Please guide the user to use Elementor for editing pages. ';
-                $site_info .= 'Elementor Version: ' . $elementor_data['Version'] . '. ';
+                $site_info .= __('Elementor is active. Please guide the user to use Elementor for editing pages. ','bifm');
+                $site_info .= __('Elementor Version: ','bifm') . $elementor_data['Version'] . '. ';
                 
                 // Check Elementor experiments
                 $experiments_manager = \Elementor\Plugin::$instance->experiments;
                 $is_flex_active = $experiments_manager->is_feature_active('flexbox-layout');
                 $is_grid_active = $experiments_manager->is_feature_active('container');
                 
-                $site_info .= 'Flexbox Layout is ' . ($is_flex_active ? 'active' : 'not active') . '. ';
-                $site_info .= 'Grid Layout is ' . ($is_grid_active ? 'active' : 'not active') . '. ';
+                $site_info .= __('Flexbox Layout is ','bifm') . ($is_flex_active ? 'active' : 'not active') . '. ';
+                $site_info .= __('Grid Layout is ','bifm') . ($is_grid_active ? 'active' : 'not active') . '. ';
             } else {
                 $other_editors = [];
                 
@@ -289,7 +307,7 @@ function handle_bifm_smart_chat_settings() {
 
             $response = wp_remote_post($url, array(
                 'headers' => array('Content-Type' => 'application/json'),
-                'body' => json_encode(array(
+                'body' => wp_json_encode(array(
                     'assistant_id' => $assistant_id,
                     'assistant_instructions' => stripslashes($assistant_instructions),
                     'assistant_files' => $list_file_ids,
@@ -306,7 +324,7 @@ function handle_bifm_smart_chat_settings() {
             if (is_wp_error($response)) {
                 $error_message = $response->get_error_message();
                 error_log("Error when calling chat update api");
-                wp_send_json_error(array('message' => "Something went wrong: $error_message"), 500);
+                wp_send_json_error(array('message' => __("Something went wrong: ",'bifm').$error_message), 500);
             } else {
                 $status_code = wp_remote_retrieve_response_code($response);
                 $response_body = json_decode(wp_remote_retrieve_body($response), true);
@@ -328,7 +346,7 @@ function handle_bifm_smart_chat_settings() {
             }            
         }
 
-        wp_send_json_success('Settings saved successfully.');
+        wp_send_json_success(__('Settings saved successfully.','bifm'));
     } catch (Exception $e) {
         wp_send_json_error($e->getMessage(), 400);
     }

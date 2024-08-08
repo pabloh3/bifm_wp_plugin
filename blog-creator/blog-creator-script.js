@@ -136,7 +136,7 @@
 
         function submitSingleItem(item) {
             let data = {
-                action: 'cbc_create_blog',
+                action: 'cbc_bifm_create_blog',
                 nonce: cbc_object.single_post_nonce,
                 keyphrase: item.keyphrase,
                 category: item.category,
@@ -194,7 +194,7 @@
         // Process clicks on back button
         document.getElementById('backButton').addEventListener('click', goBack);
         function goBack() {
-            window.location.href = 'admin.php?page=bifm-plugin';
+            window.location.href = 'admin.php?page=bifm';
         }
 
         // Delete request
