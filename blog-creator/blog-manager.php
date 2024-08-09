@@ -333,24 +333,7 @@ function bifm_cbc_process_items($items) {
     }
 }
 
-function bifm_create_requests_table() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'cbc_blog_requests';
-    $charset_collate = $wpdb->get_charset_collate();
 
-    $sql = "CREATE TABLE $table_name (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        uuid varchar(36) NOT NULL,
-        requested_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-        keyphrase text NOT NULL,
-        category varchar(255) NOT NULL,
-        requester varchar(100) NOT NULL,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
-
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta($sql);
-}
 
 function bifm_register_request($uuid, $keyphrase, $category, $requester) {
     global $wpdb;

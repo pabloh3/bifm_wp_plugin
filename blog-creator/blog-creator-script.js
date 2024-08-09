@@ -155,6 +155,7 @@ jQuery(document).ready(function($) {
     }
 
     function handleResponse(response) {
+        console.log(response);
         if (response.status === 202) {
             //json load the response message
             response_data = JSON.parse(response.data);
@@ -241,6 +242,7 @@ jQuery(document).ready(function($) {
 
     // Define the showMessage function
     function showMessage(message) {
+        console.log('Message',message);
         // Scroll to #cbc_response
         $('html, body').animate({
             scrollTop: $('#cbc_response').offset().top + 350

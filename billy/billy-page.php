@@ -61,7 +61,7 @@ if (isset($_SESSION['thread_id'])) {
       <li>
         <a href="admin.php?page=create-blog" class="waves-effect">
           <div class="svg-icon writer-icon inline-icon">
-            <?php include(plugin_dir_path(__FILE__) . '../static/icons/Writer.svg'); ?>
+            <?php include(BIFM_PATH . 'static/icons/Writer.svg'); ?>
           </div>
           <?php esc_html_e('Writer Bot','bifm'); ?>
         </a>

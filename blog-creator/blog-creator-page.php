@@ -66,7 +66,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
         <?php
         global $wpdb;
         $table_name = $wpdb->prefix . 'cbc_blog_requests';
-        $requests = $wpdb->get_results($wpdb->prepare("SELECT * FROM %s ORDER BY requested_at DESC",$table_name)); //phpcs:ignore
+        $requests = $wpdb->get_results( "SELECT * FROM ".$table_name." ORDER BY requested_at DESC"); //phpcs:ignore
         ?>
         <br/>
         <div id="posts-table-div">
@@ -99,7 +99,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
                             // count how many requests were made at the same time as this one
                             //phpcs:ignore
                             $same_time_requests = $wpdb->get_results(
-                                $wpdb->prepare("SELECT * FROM %s WHERE requested_at = %s",$table_name,$request->requested_at)
+                                $wpdb->prepare("SELECT * FROM ".$table_name." WHERE requested_at = %s",$request->requested_at) // phpcs:ignore
                             );
                             $count_same_time_requests = count($same_time_requests);
                             if ($time_diff > 600 && $count_same_time_requests < 5) {

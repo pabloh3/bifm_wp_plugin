@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Build It For Me - AI creator
  * Description: Ask a bot to create for you.
- * Version: 1.2.5
+ * Version: 1.2.8
  * Author: Build It For Me
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -12,13 +12,35 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-define('BIFM_VERSION', '1.2.5');
+define('BIFM_VERSION', '1.2.6');
 define('BIFM_URL',plugin_dir_url(__FILE__));
+define('BIFM_PATH',plugin_dir_path(__FILE__));
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+
+function bifm_create_requests_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'cbc_blog_requests';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        uuid varchar(36) NOT NULL,
+        requested_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        keyphrase text NOT NULL,
+        category varchar(255) NOT NULL,
+        requester varchar(100) NOT NULL,
+        PRIMARY KEY (id)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+}
+
+register_activation_hook(__FILE__,'bifm_create_requests_table');
 
 function bifm_create_file($path,$content){
     global $wp_filesystem; 
@@ -43,16 +65,7 @@ function bifm_delete_folder($path){
         throw new Exception(esc_html(__('Failed to remove directory','bifm')));
     }
 }
-
-function bifm_scripts_and_links(){
-    wp_enqueue_style('materialicons',BIFM_URL.'static/materialicons/icon.css',[],BIFM_VERSION);
-    wp_enqueue_style('highlightcss',BIFM_URL.'static/highlightjs/default.min.css',[],BIFM_VERSION);
-    wp_enqueue_script('highlightjs',BIFM_URL.'static/highlightjs/highlight.min.js',['jquery'],BIFM_VERSION,true);
-    wp_enqueue_script('markdownit',BIFM_URL.'static/markdownit/markdown-it.min.js',['jquery'],BIFM_VERSION,true);
-    wp_enqueue_script('materialize',BIFM_URL.'static/materialize/materialize.min.js',['jquery'],BIFM_VERSION,true);
-}
-
-add_action('wp_enqueue_scripts','bifm_scripts_and_links');
+ 
 
 // DEFINE ALL THE PAGES //
 function bifm_admin_menu() {
@@ -171,7 +184,7 @@ function bifm_create_blog_content() {
     include plugin_dir_path(__FILE__) . 'blog-creator/blog-creator-page.php';
     // Enqueue scripts for the blog page
     wp_enqueue_style('cbc_script_blog_creator-page', BIFM_URL . 'blog-creator/blog-creator.css', [], filemtime(plugin_dir_path(__FILE__) . 'blog-creator/blog-creator.css'), 'all');
-    wp_enqueue_script('cbc_script', plugins_url('/blog-creator/blog-creator-script.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '/blog-creator/blog-creator-script.js'), true);
+    wp_enqueue_script('cbc_script', plugins_url('/blog-creator/blog-creator-script.js', __FILE__), array('jquery'), BIFM_VERSION, true);
     
 
     // Localize the script with your data
@@ -221,7 +234,7 @@ function bifm_create_design_system() {
 function bifm_ewm_enqueue_admin_scripts($hook) {
     global $pagenow;
     // Check if we're on the create-widget page to load that JS
-    if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'create-blog' || $_GET['page'] == 'bifm' || $_GET['page'] == 'create-chat' || $_GET['page'] == 'widget-manager' || $_GET['page'] == 'design_system' || $_GET['page'] == 'writer-settings')) { // phpcs:ignore
+    if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'bifm' || $_GET['page'] == 'create-widget' || $_GET['page'] == 'create-blog' || $_GET['page'] == 'bifm' || $_GET['page'] == 'create-chat' || $_GET['page'] == 'widget-manager' || $_GET['page'] == 'design_system' || $_GET['page'] == 'writer-settings')) { // phpcs:ignore
         // in all admin pages load the styles
         
     wp_enqueue_style('materialicons',BIFM_URL.'static/materialicons/icon.css',[],BIFM_VERSION);

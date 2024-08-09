@@ -59,7 +59,7 @@ function bifm_save_settings() {
 function bifm_encrypt_data($data) {
     // Load the public key from this folder's public_key.pem file
     error_log("data to encrypt: " . $data);
-    $public_key = wp_remote_get(plugin_dir_path(__FILE__) . 'public_key.pem');
+    $public_key = file_get_contents(plugin_dir_path(__FILE__) . 'public_key.pem'); //phpcs:ignore
     error_log("Public key: " . $public_key);
     // Encrypt the password using the public key
     openssl_public_encrypt($data, $encrypted_password, $public_key);

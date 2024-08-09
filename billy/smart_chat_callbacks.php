@@ -106,7 +106,8 @@ function bifm_billy_check_job_status() {
         $status_code = wp_remote_retrieve_response_code($response);
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
         if ($status_code == 200) {
-            if ($assistant_id == NULL && isset($response_body['site_info'])) {
+            // If this is the first time calling the assistant, store the assistant ID
+            if ((!isset($assistant_id) || $assistant_id == NULL) && isset($response_body['site_info'])) {
                 $site_info = $response_body['site_info'];
                 if (isset($site_info['assistant_id'])) {
                     update_option('assistant_id', $site_info['assistant_id']);
@@ -116,7 +117,8 @@ function bifm_billy_check_job_status() {
         } else if ($status_code == 202) {
             // log response array
             $response_data = json_decode(wp_remote_retrieve_body($response), true);
-            $jobId = $response_data['jobId'];
+            //In progress
+            $jobId = isset($response_data['jobId']) ? $response_data['jobId'] : null;
             wp_send_json_success(array('jobId' => $jobId), 202);
         } else {
             $error_response = isset($response_body['message']) ? $response_body['message'] : "API for job status returned an error with code: " .  $status_code;
