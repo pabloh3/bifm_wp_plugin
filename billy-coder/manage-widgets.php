@@ -14,7 +14,7 @@ function bifm_delete_custom_widget_callback() {
 
     // Delete the widget action hook in the uploads /backend_functions.php file
     $action_hooks_file = wp_upload_dir()['basedir'] . '/bifm-files/bifm_action_hooks.php';
-    $action_hooks_content = wp_remote_get($action_hooks_file);
+    $action_hooks_content = file_get_contents($action_hooks_file);
     /*Find teh string that starts with "include_once plugin_dir_path( __FILE__ ) . './bifm-widgets/{$widget_name}/backend_functions.php';...<a bunch of content>" and ends with two consecutive line breaks, remove it
     */
     $action_hooks_content = preg_replace("/include_once plugin_dir_path\( __FILE__ \) \. '\/bifm-widgets\/{$widget_name}\/backend_functions.php';.*?\n\n/s", '', $action_hooks_content);
@@ -75,7 +75,7 @@ function rbifm_delete_folder($dir){
                     wp_delete_file($dir . "/" . $object);
             }
         }
-        bifm_delete_folder($dir);
+        rmdir($dir);
     }
 }
 
