@@ -1,9 +1,13 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_call_id){
-    $keyphrase = $data['keyphrase'];
     $authorized = $data['authorize'];
     if ($authorized === true or $authorized === "true"){
+        if (!isset($data['keyphrase'])){
+            $keyphrase = NULL;
+        } else {
+            $keyphrase = $data['keyphrase'];
+        }
         error_log("requesting blog creation");
         $response = bifm_create_blog($keyphrase,1,"No category");
         if (is_wp_error($response)) {

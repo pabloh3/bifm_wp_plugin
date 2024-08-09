@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 $folderName = isset($_GET['foldername']) ? sanitize_text_field($_GET['foldername']) : ''; // phpcs:ignore
 $client_folder = preg_replace("/[a-zA-Z]/", "", $folderName); // Remove any letters
 require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
-$url = $WIDGET_URL . esc_attr($folderName) . "/widget.php "; 
+$url = $WIDGET_URL . esc_attr($folderName) . "/widget.php"; 
 $widgets_manager = \Elementor\Plugin::$instance->widgets_manager;
 $widget_types = $widgets_manager->get_widget_types();
 //localhost:3013/<foldername>/widget.php

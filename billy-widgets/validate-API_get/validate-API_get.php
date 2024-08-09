@@ -13,7 +13,7 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     </div>
     <div style='display: flex;'>
         <button id='authorize-API_get-" . esc_attr($widget_id) . "' class='bifm-btn waves-effect waves-light card-button'>".__("Go ahead",'bifm')."</button>
-        <button id='reject-API_get-" . esc_attr(($widget_id) . "' class='bifm-btn waves-effect waves-light grey card-button'>".__("Nope","bifm")."</button>
+        <button id='reject-API_get-" . esc_attr($widget_id) . "' class='bifm-btn waves-effect waves-light grey card-button'>".__("Nope","bifm")."</button>
     </div>
 </div>";
 

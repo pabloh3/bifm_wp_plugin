@@ -15,7 +15,12 @@ function bifm_handle_chat_message() {
     if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
         wp_send_json_error(array('message' => __("Couldn't verify user",'bifm') ), 500);
     }
-    $message = sanitize_text_field($_POST['message']);
+    //$message = sanitize_text_field($_POST['message']);
+    $message = $_POST['message'];
+    // if message is an array
+    if (is_array($_POST['message'])) {
+        error_log("message received on back-end sanitized: " . print_r($message, true));
+    }
     $tool_call_id = sanitize_text_field($_POST['tool_call_id']);
     $widget_name = sanitize_text_field($_POST['widget_name']);
     $run_id = sanitize_text_field($_POST['run_id']);
