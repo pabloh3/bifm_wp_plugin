@@ -10,7 +10,7 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     //make keyphrase a url
     $keyphrase_url = urlencode($keyphrase);
     $path = BIFM_PATH . 'static/icons/Coder.svg';
-    $writer_icon = file_get_contents($path); //phpcs:ignore
+    $coder_icon = file_get_contents($path); //phpcs:ignore
     // widget as a piece of html with two buttons (authorize and reject)
     $widget = "
     <div id='validate-coder-widget-" . $widget_id . "'>
