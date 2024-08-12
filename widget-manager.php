@@ -61,7 +61,7 @@ function bifm_delete_folder($path){
         WP_Filesystem();
     }
 
-    if(!$wp_filesystem->bifm_delete_folder( $path,true) ) {
+    if(!$wp_filesystem->rmdir( $path,true) ) {
         throw new Exception(esc_html(__('Failed to remove directory','bifm')));
     }
 }

@@ -304,7 +304,7 @@ function bifm_lint_php_code($code) {
     $output1 = shell_exec($phpBinary . " -v");
 
     //If shell_exec exists and php can be called
-    if ($output1 !== null && deb1 && deb2) {
+    if ($output1 !== null && $deb1 && $deb2) {
         
         // Lint the file using the dynamic PHP path
         $output = shell_exec($phpBinary . ' -l ' . escapeshellarg($temp_file));

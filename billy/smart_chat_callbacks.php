@@ -21,6 +21,12 @@ function bifm_handle_chat_message() {
     if (is_array($_POST['message'])) {
         error_log("message received on back-end sanitized: " . print_r($message, true));
     }
+    if(!is_array($message))
+        $message = sanitize_text_field($message);
+    else foreach ($message as $key => $value) {
+        if(is_string($value))
+        $message[$key] = sanitize_text_field($value);
+    }
     $tool_call_id = sanitize_text_field($_POST['tool_call_id']);
     $widget_name = sanitize_text_field($_POST['widget_name']);
     $run_id = sanitize_text_field($_POST['run_id']);
