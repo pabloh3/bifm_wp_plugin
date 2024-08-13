@@ -1,13 +1,14 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 // simple PHP file that returns hello world 
-function get_widget($parameters, $run_id, $tool_call_id) {
+function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     // create a random id for the widget
     $widget_id = uniqid();
     $keyphrase = $parameters['keyphrase'];
     // escape chars in keyphrase
     $keyphrase = htmlspecialchars($keyphrase);
-    $path = plugin_dir_path(__FILE__) . '../../static/icons/Writer.svg';
-    $writer_icon = file_get_contents($path);
+    $path = BIFM_PATH . 'static/icons/Writer.svg';
+    $writer_icon = file_get_contents($path); //phpcs:ignore
     // widget as a piece of html with two buttons (authorize and reject)
     $widget = "
     <div id='validate-writer-widget-" . $widget_id . "'>
@@ -17,12 +18,12 @@ function get_widget($parameters, $run_id, $tool_call_id) {
                     <div class='svg-icon writer-icon'>" . $writer_icon . "
                     </div>
                 </div>
-                <span class='card-title'>Billy wants to write</span>
-                <p>Do you want to authorize our writer bot to build blog posts for: <b>" . $keyphrase . "</b>?</p>
+                <span class='card-title'>".__("Billy wants to write","bifm")."</span>
+                <p>".__("Do you want to authorize our writer bot to build blog posts for:","bifm")." <b>" . $keyphrase . "</b>?</p>
             </div>
             <div style='display:flex;'>
-                <button id='authorize-writer-" . $widget_id . "' class='bifm-btn waves-effect waves-light card-button writer-button' type='submit' name='action'>Go ahead</button>
-                <button id='reject-writer-" . $widget_id . "' class='bifm-btn waves-effect waves-light card-button grey'>Nope</button>
+                <button id='authorize-writer-" . $widget_id . "' class='bifm-btn waves-effect waves-light card-button writer-button' type='submit' name='action'>".__("Go ahead","bifm")."</button>
+                <button id='reject-writer-" . $widget_id . "' class='bifm-btn waves-effect waves-light card-button grey'>".__("Nope","bifm")."</button>
             </div>
         </div>
     </div>";

@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 // simple PHP file that returns hello world 
-function get_widget($parameters, $run_id, $tool_call_id) {
+function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     // create a random id for the widget
     $widget_id = uniqid();
     $keyphrase = $parameters['keyphrase'];
@@ -8,8 +9,8 @@ function get_widget($parameters, $run_id, $tool_call_id) {
     $keyphrase = htmlspecialchars($keyphrase);
     //make keyphrase a url
     $keyphrase_url = urlencode($keyphrase);
-    $path = plugin_dir_path(__FILE__) . '../../static/icons/Coder.svg';
-    $coder_icon = file_get_contents($path);
+    $path = BIFM_PATH . 'static/icons/Coder.svg';
+    $coder_icon = file_get_contents($path); //phpcs:ignore
     // widget as a piece of html with two buttons (authorize and reject)
     $widget = "
     <div id='validate-coder-widget-" . $widget_id . "'>
@@ -19,12 +20,12 @@ function get_widget($parameters, $run_id, $tool_call_id) {
                     <div class='svg-icon coder-icon'>" . $coder_icon . "
                     </div>
                 </div>
-                <span class='card-title'>Billy suggests to create a new elementor widget. You can use the Billy Builder.</span>
-                <p>Do you want to authorize our Widget Builder bot to create a new widget: <b>" . $keyphrase . "</b>?</p>
+                <span class='card-title'>".__("Billy suggests to create a new elementor widget. You can use the Billy Builder.","bifm")."</span>
+                <p>".__("Do you want to authorize our Widget Builder bot to create a new widget:","bifm")." <b>" . $keyphrase . "</b>?</p>
             </div>
             <div style='display:flex;'>
-                <button id='authorize-coder-" . $widget_id . "' class='bifm-btn waves-effect waves-light card-button coder-button'>Let's go!</button>
-                <button id='reject-coder-" . $widget_id . "' class='bifm-btn waves-effect waves-light card-button grey'>Nope</button>
+                <button id='authorize-coder-" . $widget_id . "' class='bifm-btn waves-effect waves-light card-button coder-button'>".__("Let's go!","bifm")."</button>
+                <button id='reject-coder-" . $widget_id . "' class='bifm-btn waves-effect waves-light card-button grey'>".__("Nope","bifm")."</button>
             </div>
         </div>
     </div>";

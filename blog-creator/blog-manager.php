@@ -1,9 +1,10 @@
 <?php 
+if ( ! defined( 'ABSPATH' ) ) exit;
 require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
 // Create blog
-add_action('wp_ajax_cbc_create_blog', 'handle_cbc_create_blog');
-function handle_cbc_create_blog() {
+add_action('wp_ajax_cbc_bifm_create_blog', 'bifm_handle_cbc_bifm_create_blog');
+function bifm_handle_cbc_bifm_create_blog() {
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
 
@@ -11,7 +12,7 @@ function handle_cbc_create_blog() {
     $keyphrase = isset($_POST['keyphrase']) ? sanitize_text_field(wp_unslash($_POST['keyphrase'])) : '';
     $category = isset($_POST['category']) ? sanitize_text_field(wp_unslash($_POST['category'])) : '';
     $category_name = isset($_POST['category_name']) ? sanitize_text_field(wp_unslash($_POST['category_name'])) : '';
-    $response = create_blog($keyphrase, $category, $category_name);
+    $response = bifm_create_blog($keyphrase, $category, $category_name);
     if (is_wp_error($response)) {
         $error_message = $response->get_error_message();
         error_log("error when calling create-blog api");
@@ -28,12 +29,12 @@ function handle_cbc_create_blog() {
     wp_die("Reached end without success message");
 }
 
-function create_blog($keyphrase, $category, $category_name) {
+function bifm_create_blog($keyphrase, $category, $category_name) {
     $website = home_url();  // Current website URL
     $user_id = get_current_user_id();
     $current_user = wp_get_current_user();
     $user_email = $current_user->user_email;
-    $related_links = fetch_related_links($category);
+    $related_links = bifm_fetch_related_links($category);
 
     # Extract website info
     $username = get_user_meta($user_id, 'username', true);
@@ -72,7 +73,7 @@ function create_blog($keyphrase, $category, $category_name) {
     $uuid = wp_generate_uuid4();
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
-        'body' => json_encode(array(
+        'body' => wp_json_encode(array(
             'keyphrase' => $keyphrase,
             'category' => $category,
             'category_name' => $category_name,
@@ -94,15 +95,15 @@ function create_blog($keyphrase, $category, $category_name) {
     if (is_wp_error($response)) {
         return $response;
     } else {
-        register_request($uuid, $keyphrase, $category_name, $user_email);
+        bifm_register_request($uuid, $keyphrase, $category_name, $user_email);
         return $response;
     }
 
     return $response;
 }
 
-add_action('wp_ajax_cbc_poll_for_results', 'handle_cbc_poll_for_results');
-function handle_cbc_poll_for_results() {
+add_action('wp_ajax_cbc_poll_for_results', 'bifm_handle_cbc_poll_for_results');
+function bifm_handle_cbc_poll_for_results() {
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
     
@@ -130,8 +131,8 @@ function handle_cbc_poll_for_results() {
 }
 
 // Get the categories
-add_action('wp_ajax_cbc_get_categories', 'handle_cbc_get_categories');
-function handle_cbc_get_categories() {
+add_action('wp_ajax_cbc_get_categories', 'bifm_handle_cbc_get_categories');
+function bifm_handle_cbc_get_categories() {
     // Get all the categories
     $categories = get_categories(array(
         'hide_empty' => false, // Include categories that are empty
@@ -146,14 +147,14 @@ function handle_cbc_get_categories() {
     wp_send_json_success($result);
 }
 
-function get_category_id_by_name($category_name) {
+function bifm_get_category_id_by_name($category_name) {
     $term = get_term_by('name', $category_name, 'category');
     return ($term && !is_wp_error($term)) ? $term->term_id : false;
 }
 
 // If necessary to create a new category for the post
-add_action('wp_ajax_cbc_create_category', 'handle_cbc_create_category');
-function handle_cbc_create_category() {
+add_action('wp_ajax_cbc_create_category', 'bifm_handle_cbc_create_category');
+function bifm_handle_cbc_create_category() {
     // Check nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
     $category_name = isset($_POST['category_name']) ? sanitize_text_field(wp_unslash($_POST['category_name'])) : '';
@@ -172,7 +173,7 @@ function handle_cbc_create_category() {
 }
 
 // Fetch links for similar Pages / posts to feed the bot
-function fetch_related_links($category) {
+function bifm_fetch_related_links($category) {
     $related_links = [];
 
     // Fetching three most recent posts of the same category with a 'published' status
@@ -214,8 +215,8 @@ function fetch_related_links($category) {
 }
 
 // Bulk creation of blog posts
-add_action('wp_ajax_cbc_create_bulk_blogs', 'handle_cbc_create_bulk_blogs');
-function handle_cbc_create_bulk_blogs() {
+add_action('wp_ajax_cbc_create_bulk_blogs', 'bifm_handle_cbc_create_bulk_blogs');
+function bifm_handle_cbc_create_bulk_blogs() {
     // Check nonce for security
     check_ajax_referer('bulk-upload-items-action', 'nonce');
 
@@ -226,7 +227,7 @@ function handle_cbc_create_bulk_blogs() {
         wp_send_json_error(array('message' => "No items provided."));
     }
 
-    $response = cbc_process_items($items);
+    $response = bifm_cbc_process_items($items);
     $status_code = wp_remote_retrieve_response_code($response);
     wp_send_json(array(
         'data' => wp_remote_retrieve_body($response),
@@ -234,7 +235,7 @@ function handle_cbc_create_bulk_blogs() {
     ), $status_code);
 }
 
-function cbc_process_items($items) {
+function bifm_cbc_process_items($items) {
     global $API_URL;
     $url = $API_URL . "create-blog-batch";
     
@@ -250,7 +251,7 @@ function cbc_process_items($items) {
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
     // Return an error if the user has not set their username and password
     if (!$username || !$encrypted_password) {
-        wp_send_json_error(array('message' => "Please set your blog author username and password in the [settings page](/wp-admin/admin.php?page=bifm-plugin#settings)."));
+        wp_send_json_error(array('message' => "Please set your blog author username and password in the [settings page](/wp-admin/admin.php?page=bifm#settings)."));
     }
     $website_description = get_user_meta($user_id, 'website_description', true);
     if (!$website_description) {
@@ -281,7 +282,7 @@ function cbc_process_items($items) {
         $new_items[] = $item; // Use [] to append item to the array
     }
     $items = $new_items;
-    error_log("items modified: " . json_encode($items));
+    error_log("items modified: " . wp_json_encode($items));
     
     // Prepare the headers and body of the request
     $body = array(
@@ -298,7 +299,7 @@ function cbc_process_items($items) {
         'image_height' => $image_height,
     );
     
-    $json_body = json_encode($body);
+    $json_body = wp_json_encode($body);
 
     // Use wp_remote_post to perform the request
     $headers = array(
@@ -315,16 +316,16 @@ function cbc_process_items($items) {
     if (is_wp_error($response)) {
         error_log("error found in response");
         $error_message = $response->get_error_message();
-        wp_die("Something went wrong: $error_message");
+        wp_die(esc_html(__("Something went wrong:",'bifm').$error_message));
     } else {
         // Handle the successful response
-        error_log("response: " . json_encode($response));
+        error_log("response: " . wp_json_encode($response));
         $status_code = wp_remote_retrieve_response_code($response);
         $response_body = wp_remote_retrieve_body($response);
     
         // register requests based on items not keyphrases
         for ($i = 0; $i < count($items); $i++) {
-            register_request($items[$i]['uuid'], $items[$i]['keyphrase'], $items[$i]['category_name'], $user_email);
+            bifm_register_request($items[$i]['uuid'], $items[$i]['keyphrase'], $items[$i]['category_name'], $user_email);
         }
 
         // Do something with the response
@@ -332,35 +333,18 @@ function cbc_process_items($items) {
     }
 }
 
-function create_requests_table() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'cbc_blog_requests';
-    $charset_collate = $wpdb->get_charset_collate();
 
-    $sql = "CREATE TABLE $table_name (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        uuid varchar(36) NOT NULL,
-        requested_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-        keyphrase text NOT NULL,
-        category varchar(255) NOT NULL,
-        requester varchar(100) NOT NULL,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
 
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta($sql);
-}
-
-function register_request($uuid, $keyphrase, $category, $requester) {
+function bifm_register_request($uuid, $keyphrase, $category, $requester) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'cbc_blog_requests';
 
-    // Check if table exists, if not call create_requests_table
-    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
-        create_requests_table();
+    // Check if table exists, if not call bifm_create_requests_table
+    if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s",$table_name)) != $table_name) { //phpcs:ignore
+        bifm_create_requests_table();
     }
 
-    $wpdb->insert($table_name, array(
+    $wpdb->insert($table_name, array( //phpcs:ignore
         'uuid' => $uuid,
         'requested_at' => current_time('mysql'),
         'keyphrase' => $keyphrase,
@@ -370,7 +354,7 @@ function register_request($uuid, $keyphrase, $category, $requester) {
 }
 
 
-function cbc_delete_blog_post() {
+function bifm_cbc_delete_blog_post() {
     // Check the nonce for security
     check_ajax_referer('create-single-post-action', 'nonce');
 
@@ -389,7 +373,7 @@ function cbc_delete_blog_post() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'cbc_blog_requests';
 
-    $deleted_request = $wpdb->delete($table_name, array('uuid' => $uuid));
+    $deleted_request = $wpdb->delete($table_name, array('uuid' => $uuid)); //phpcs:ignore
 
     if ($deleted_request === false) {
         wp_send_json_error('Failed to delete the request from the custom table.');
@@ -398,7 +382,7 @@ function cbc_delete_blog_post() {
     // If everything is successful
     wp_send_json_success('Post and request deleted successfully.');
 }
-add_action('wp_ajax_cbc_delete_blog', 'cbc_delete_blog_post');
-add_action('wp_ajax_nopriv_cbc_delete_blog', 'cbc_delete_blog_post');
+add_action('wp_ajax_cbc_delete_blog', 'bifm_cbc_delete_blog_post');
+add_action('wp_ajax_nopriv_cbc_delete_blog', 'bifm_cbc_delete_blog_post');
 
 ?>

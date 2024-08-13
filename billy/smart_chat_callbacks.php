@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
 $custom_log_file = WP_CONTENT_DIR . '/custom.log';
@@ -9,23 +10,34 @@ if (!session_id()) {
 
 
 //assistant start
-add_action('wp_ajax_send_chat_message', 'handle_chat_message');
-function handle_chat_message() {
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
-        wp_send_json_error(array('message' => "Couldn't verify user"), 500);
+add_action('wp_ajax_send_chat_message', 'bifm_handle_chat_message');
+function bifm_handle_chat_message() {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
+        wp_send_json_error(array('message' => __("Couldn't verify user",'bifm') ), 500);
     }
+    //$message = sanitize_text_field($_POST['message']);
     $message = $_POST['message'];
-    $tool_call_id = $_POST['tool_call_id'];
-    $widget_name = $_POST['widget_name'];
-    $run_id = $_POST['run_id'];
+    // if message is an array
+    if (is_array($_POST['message'])) {
+        error_log("message received on back-end sanitized: " . print_r($message, true));
+    }
+    if(!is_array($message))
+        $message = sanitize_text_field($message);
+    else foreach ($message as $key => $value) {
+        if(is_string($value))
+        $message[$key] = sanitize_text_field($value);
+    }
+    $tool_call_id = sanitize_text_field($_POST['tool_call_id']);
+    $widget_name = sanitize_text_field($_POST['widget_name']);
+    $run_id = sanitize_text_field($_POST['run_id']);
     // Send the message to AI API
     //commenting out to build out widget!!!
-    $response = callAPI($message, $widget_name, $run_id, $tool_call_id);
+    $response = bifm_call_api($message, $widget_name, $run_id, $tool_call_id);
 }
 
 
 // Call the API
-function callAPI($message, $widget_name, $run_id, $tool_call_id) {
+function bifm_call_api($message, $widget_name, $run_id, $tool_call_id) {
     $assistant_id = get_option('assistant_id');
     if ($assistant_id === false) {
         update_option('assistant_instructions', '');
@@ -45,7 +57,7 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
     if ($widget_name == null) {
         $response = wp_remote_post($url, array(
             'headers' => array('Content-Type' => 'application/json'),
-            'body' => json_encode(array(
+            'body' => wp_json_encode(array(
                 'message' => $message,
                 'thread_id' => $thread_id,
                 'assistant_id' => $assistant_id
@@ -56,13 +68,13 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
         ));
 
     } else {
-        $response = widget_submission($message, $run_id, $widget_name, $assistant_id, $thread_id, $tool_call_id);
+        $response = bifm_widget_submission($message, $run_id, $widget_name, $assistant_id, $thread_id, $tool_call_id);
     }
 
     if (is_wp_error($response)) {
         $error_response = $response->get_error_message() ? $response->get_error_message() : "Unknown error when calling chat API";
         error_log($error_response);
-        wp_send_json_error(array('message' => "Something went wrong: $error_response"), 500);
+        wp_send_json_error(array('message' => __("Something went wrong:",'bifm').$error_response), 500);
     } else {
         $status_code = wp_remote_retrieve_response_code($response);
         error_log("Status code from chat response: " . $status_code);
@@ -74,9 +86,9 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
             $jobId = $response_body['jobId'];
             wp_send_json_success(array('jobId' => $jobId), 202);
         } else if ($status_code == 200) {
-            handle_response($response_body, $message);
+            bifm_handle_response($response_body, $message);
         } else {
-            $error_response = isset($response_body['message']) ? $response_body['message'] : "API for chat returned an error with code: " .  $status_code;
+            $error_response = isset($response_body['message']) ? $response_body['message'] : __("API for chat returned an error with code: ",'bifm') .  $status_code;
             error_log("Error_message: " . $error_response);
             wp_send_json_error(array('message' => $error_response), $status_code > 0 ? $status_code : 500);
         }
@@ -85,9 +97,9 @@ function callAPI($message, $widget_name, $run_id, $tool_call_id) {
 }
 
 // endpoint for polling
-function billy_check_job_status() {
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
-        wp_send_json_error(array('message' => "Couldn't verify user"), 500);
+function bifm_billy_check_job_status() {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
+        wp_send_json_error(array('message' => __("Couldn't verify user",'bifm') ), 500);
     }
     $jobId = sanitize_text_field($_POST['jobId']);
     $message = sanitize_text_field($_POST['message']);
@@ -98,24 +110,26 @@ function billy_check_job_status() {
     $response = wp_remote_get($url, array('timeout' => 60));
 
     if (is_wp_error($response)) {
-        $error_response = $response->get_error_message() ? $response->get_error_message() : "Unknown error when checking job status";
+        $error_response = $response->get_error_message() ? $response->get_error_message() : __("Unknown error when checking job status",'bifm');
         error_log("Error in checking chat job status: " . $error_response);
-        wp_send_json_error(array('message' => "Something went wrong: $error_response"), 500);
+        wp_send_json_error(array('message' => __("Something went wrong:",'bifm').$error_response), 500);
     } else {
         $status_code = wp_remote_retrieve_response_code($response);
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
         if ($status_code == 200) {
-            if ($assistant_id == NULL && isset($response_body['site_info'])) {
+            // If this is the first time calling the assistant, store the assistant ID
+            if ((!isset($assistant_id) || $assistant_id == NULL) && isset($response_body['site_info'])) {
                 $site_info = $response_body['site_info'];
                 if (isset($site_info['assistant_id'])) {
                     update_option('assistant_id', $site_info['assistant_id']);
                 }
             }
-            handle_response($response_body, $message);
+            bifm_handle_response($response_body, $message);
         } else if ($status_code == 202) {
             // log response array
             $response_data = json_decode(wp_remote_retrieve_body($response), true);
-            $jobId = $response_data['jobId'];
+            //In progress
+            $jobId = isset($response_data['jobId']) ? $response_data['jobId'] : null;
             wp_send_json_success(array('jobId' => $jobId), 202);
         } else {
             $error_response = isset($response_body['message']) ? $response_body['message'] : "API for job status returned an error with code: " .  $status_code;
@@ -125,11 +139,11 @@ function billy_check_job_status() {
     }
     wp_die();
 }
-add_action('wp_ajax_billy_check_job_status', 'billy_check_job_status');
+add_action('wp_ajax_bifm_billy_check_job_status', 'bifm_billy_check_job_status');
 
 
 // Handle response from API
-function handle_response($body, $message) {
+function bifm_handle_response($body, $message) {
     // Case where just a regular chat response
     if (isset($body['thread_id'])) {
         $_SESSION['thread_id'] = $body['thread_id'];
@@ -172,50 +186,50 @@ function handle_response($body, $message) {
                 $tool_call_id = $body['tool_call_id'];
                 $run_id = $body['run_id'];
                 // to do, estamos pasando empty run id y tool call id 
-                $response = include_widget($tool_name, $parameters, $run_id, $tool_call_id);
+                $response = bifm_include_widget($tool_name, $parameters, $run_id, $tool_call_id);
                 if (isset($response['thread_id'])) {
                     $_SESSION['thread_id'] = $response['thread_id'];
                 }
                 wp_send_json_success(array('tool' => true, 'message' => "", 'widget_object' => $response));
             } catch (Exception $e) {
-                wp_send_json_success(array('message' => 'There was an error in getting ' . $tool_name . '.'));
+                wp_send_json_success(array('message' => __('There was an error in getting ','bifm') . $tool_name . '.'));
             }
         }
     }
 }
 
-// add action for case where new_chat is clicked
-add_action('wp_ajax_new_chat', 'new_chat');
-function new_chat() {
+// add action for case where bifm_new_chat is clicked
+add_action('wp_ajax_bifm_new_chat', 'bifm_new_chat');
+function bifm_new_chat() {
     //check nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
-        wp_send_json_error(array('message' => "Couldn't verify user"), 500);
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
+        wp_send_json_error(array('message' => __("Couldn't verify user",'bifm')), 500);
     }
     $assistant_id = get_option('assistant_id');
     if ($assistant_id === false) {
-        wp_send_json_error(array('message' => "Your admin hasn't configured the smart chat in the BIFM plugin."), 500);
+        wp_send_json_error(array('message' => __("Your admin hasn't configured the smart chat in the BIFM plugin.",'bifm')), 500);
         wp_die();
     }
     // clear the thread_id from session
     unset($_SESSION['thread_id']);
     $thread_id = null;
     //return success
-    wp_send_json_success(array('message' => 'New chat started', 'thread_id' => $thread_id));
+    wp_send_json_success(array('message' => __('New chat started','bifm'), 'thread_id' => $thread_id));
 }
 
 /* Load an old thread */
-add_action('wp_ajax_load_billy_chat', 'load_billy_chat'); // wp_ajax_{action} for logged-in users
-function load_billy_chat() {
+add_action('wp_ajax_bifm_load_billy_chat', 'bifm_load_billy_chat'); // wp_ajax_{action} for logged-in users
+function bifm_load_billy_chat() {
     error_log("load chat called");
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
-        wp_send_json_error(array('message' => "Couldn't verify user"), 500);
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
+        wp_send_json_error(array('message' => __("Couldn't verify user",'bifm')), 500);
     }
     if (!session_id()) {
         session_start();
     }
     // if no thread_id is passed, load current thread
     if (!isset($_POST['thread_id']) && isset($_SESSION['thread_id'])) {
-            $thread_id = $_SESSION['thread_id'];
+            $thread_id = sanitize_text_field($_SESSION['thread_id']);
     } else {
         $thread_id = sanitize_text_field($_POST['thread_id']);
         $_SESSION['thread_id'] = $thread_id; // Set the new current thread ID
@@ -234,7 +248,7 @@ function load_billy_chat() {
     // post to the API
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
-        'body' => json_encode(array(
+        'body' => wp_json_encode(array(
             'thread_id' => $thread_id
         )),
         'data_format' => 'body',
@@ -243,10 +257,10 @@ function load_billy_chat() {
     
     if ($response instanceof WP_Error) {
         error_log("Response to load thread contains an error.");
-        wp_send_json_error(array('message' => "Couldn't load thread: " . $response->get_error_message()), 500);
+        wp_send_json_error(array('message' => __("Couldn't load thread: ",'bifm') . $response->get_error_message()), 500);
     } elseif (wp_remote_retrieve_response_code($response) != 200) {
         error_log("Response to load thread is not 200.");
-        wp_send_json_error(array('message' => "Couldn't load thread: " . wp_remote_retrieve_response_message($response)), 500);
+        wp_send_json_error(array('message' => __("Couldn't load thread: ",'bifm') . wp_remote_retrieve_response_message($response)), 500);
     } else {
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
         error_log("Response body status: ", $response_body['status']);
@@ -254,32 +268,33 @@ function load_billy_chat() {
         $data = json_decode($body, true);
         wp_send_json_success($data);
     }
-    wp_send_json_success(array('message' => "Thread $thread_id loaded and moved up."),200);
+    /* translators: %s: thread ID */
+    wp_send_json_success(array('message' => sprintf(__("Thread %s loaded and moved up.",'bifm'),$thread_id) ),200);
 }
 
 
 
 
 // handle widgets //
-function include_widget($widget_name, $parameters, $run_id, $tool_call_id) {
+function bifm_include_widget($widget_name, $parameters, $run_id, $tool_call_id) {
     include_once __DIR__ . '/../billy-widgets/validate-' . $widget_name . '/validate-' . $widget_name . '.php';
-    $response = get_widget($parameters, $run_id, $tool_call_id);
+    $response = bifm_get_widget($parameters, $run_id, $tool_call_id);
     return $response;
 }
 
 //widget submission
-function widget_submission($message, $run_id, $widget_name, $assistant_id, $thread_id, $tool_call_id) {
+function bifm_widget_submission($message, $run_id, $widget_name, $assistant_id, $thread_id, $tool_call_id) {
     include_once __DIR__ . '/../billy-widgets/validate-' . $widget_name . '/response-' . $widget_name . '.php';
-    $response = widget_response($message, $run_id, $assistant_id, $thread_id, $tool_call_id);
+    $response = bifm_widget_response($message, $run_id, $assistant_id, $thread_id, $tool_call_id);
     return $response;
 }
 
 
 // Handle agreement saving
-function save_agreement() {
+function bifm_save_agreement() {
     // Check nonce for security
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'billy-nonce')) {
-        wp_send_json_error(array('message' => "Couldn't verify user"), 500);
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
+        wp_send_json_error(array('message' => __("Couldn't verify user",'bifm') ), 500);
     }
 
     // Get the current user
@@ -294,6 +309,6 @@ function save_agreement() {
     error_log("Agreement saved for user $user_id");
 
     // Send a success response
-    wp_send_json_success('Agreement saved successfully');
+    wp_send_json_success(__('Agreement saved successfully','bifm'));
 }
-add_action('wp_ajax_save_agreement', 'save_agreement');
+add_action('wp_ajax_bifm_save_agreement', 'bifm_save_agreement');

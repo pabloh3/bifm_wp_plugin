@@ -1,21 +1,22 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 // this file should ONLY CONTAIN PHP
-
-echo "<!DOCTYPE html>";
-echo "<html lang='en'>";
-echo "<head>";
-echo "<meta charset='UTF-8'>";
-echo "</head>";
-echo "<body>";
-echo "<div id='chat-widget'>";
-echo "<div id='welcome-message'>You're chatting with a virtual assistant.</div>"; // Welcome message
-echo "<div id='chat-messages'></div>";
-echo "<div id='responding' style='display: none;'>Responding<span class='dots'>...</span></div>"; // Animation for responding
-echo "<textarea id='chat-input' placeholder='Type your message here...' rows='1'></textarea>";
-echo "<button id='chat-submit'><div id='submit-icon'>→</div></button>";
-echo "</div>";
-echo "</body>";
-echo "</html>";
+?>
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+</head>
+<body>
+<div id='chat-widget'>
+<div id='welcome-message'><?php echo esc_html(__("You're chatting with a virtual assistant",'bifm')); ?></div> <!-- Welcome message-->
+<div id='chat-messages'></div>
+<div id='responding' style='display: none;'><?php echo esc_html(__("Responding",'bifm')); ?><span class='dots'>...</span></div> <!-- Animation for responding-->
+<textarea id='chat-input' placeholder='<?php echo esc_html(__("Type your message here..",'bifm')); ?>' rows='1'></textarea>
+<button id='chat-submit'><div id='submit-icon'>→</div></button>
+</div>
+</body>
+</html>
 
 
 ?>

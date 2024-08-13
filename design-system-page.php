@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Design System Page</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title><?php esc_html_e('Design System Page','bifm'); ?></title> 
 </head>
 <body>
-    <a href="admin.php?page=bifm-plugin" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
+    <a href="admin.php?page=bifm" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
         <i class="material-icons left">arrow_back</i>
-        Back
+        <?php esc_html_e('Back','bifm'); ?>
     </a>
     <div class="bifm-row">
         <div class="plugin-menu">
@@ -21,30 +20,35 @@
                         </div>
                     </div>
                 </li>
-                <li><a href="admin.php?page=smart-chat" class="waves-effect"><i class="material-icons">chat</i>Smart Chat</a></li>
-                <li><a href="admin.php?page=blog-generator" class="waves-effect"><i class="material-icons">edit</i>Blog Generator</a></li>
-                <li><a href="admin.php?page=widget-generator" class="waves-effect"><i class="material-icons">widgets</i>Widget Generator</a></li>
-                <li><a href="admin.php?page=settings" class="waves-effect"><i class="material-icons">settings</i>Settings</a></li>
+                <li><a href="admin.php?page=smart-chat" class="waves-effect"><i class="material-icons">chat</i>
+        <?php esc_html_e('Smart Chat','bifm'); ?></a></li>
+                <li><a href="admin.php?page=blog-generator" class="waves-effect"><i class="material-icons">edit</i>
+        <?php esc_html_e('Blog Generator','bifm'); ?></a></li>
+                <li><a href="admin.php?page=widget-generator" class="waves-effect"><i class="material-icons">widgets</i>
+        <?php esc_html_e('Widget Generator','bifm'); ?></a></li>
+                <li><a href="admin.php?page=settings" class="waves-effect"><i class="material-icons">settings</i>
+        <?php esc_html_e('Settings','bifm'); ?></a></li>
             </ul>
         </div>
         <div class="plugin-content">
             <button id="backButton" class="bifm-btn waves-effect waves-light red lighten-2">
-                <i class="material-icons left">arrow_back</i>Back
+                <i class="material-icons left">arrow_back</i>
+        <?php esc_html_e('Back','bifm'); ?>
             </button>
             <div class="container">
                 <div id="smart-chat" class="bifm-col s12">
-                    <h1>This is an h1</h1>
-                    <h2>This is an h2</h2>
-                    <h3>This is an h3</h3>
-                    <h4>This is an h4</h4>
-                    <h5>This is an h5</h5>
-                    <h6>This is an h6</h6>
-                    <p>This is a paragraph</p>
-                    This is just text<br/>
-                    <i>This is italic text</i><br/>
-                    <b>This is bold text</b><br/>
-                    <u>This is underlined text</u><br/>
-                    <a href="#">This is a link</a><br/>
+                    <h1><?php esc_html_e('This is an h1','bifm'); ?></h1>
+                    <h2><?php esc_html_e('This is an h2','bifm'); ?></h2>
+                    <h3><?php esc_html_e('This is an h3','bifm'); ?></h3>
+                    <h4><?php esc_html_e('This is an h4','bifm'); ?></h4>
+                    <h5><?php esc_html_e('This is an h5','bifm'); ?></h5>
+                    <h6><?php esc_html_e('This is an h6','bifm'); ?></h6>
+                    <p><?php esc_html_e('This is a paragraph','bifm'); ?></p>
+                    <?php esc_html_e('This is just text','bifm'); ?><br/>
+                    <i><?php esc_html_e('This is italic text','bifm'); ?></i><br/>
+                    <b><?php esc_html_e('This is bold text','bifm'); ?></b><br/>
+                    <u><?php esc_html_e('This is underlined text','bifm'); ?></u><br/>
+                    <a href="#"><?php esc_html_e('This is a link','bifm'); ?></a><br/>
                 </div>
             </div>
 
@@ -77,12 +81,12 @@
             'on-error' => 'white base',
         ];
         foreach ($colors as $colorName => $class) {
-            echo "<div class='col s12 m6 l4'>";
-            echo "<div class='card'>";
-            echo "<span class='card-title'>" . ucfirst($colorName) . "</span>";
-            echo "<p>" . $class . "</p>";
-            echo "<div class='card-content " . $class . "'>";
-            echo "</div></div></div>";
+            ?><div class='col s12 m6 l4'>
+            <div class='card'>
+            <span class='card-title'><?php echo esc_html(ucfirst($colorName)); ?></span>
+            <p><?php echo esc_html($class); ?></p>
+            <div class='card-content <?php echo esc_attr($class); ?>'>
+            </div></div></div>
         }
         ?>
     </div>
@@ -90,13 +94,15 @@
         <div class="file-field bifm-col s12 l6">
             <div class="bifm-btn waves-effect waves-light blue lighten-2">
                 <i class="material-icons left">cloud_upload</i>
-                <span>Upload Files</span>
+                <span><?php esc_html_e('Upload Files','bifm'); ?></span>
                 <input type="file" id="fileUpload" name="files[]" multiple accept=".c, .cpp, application/vnd.openxmlformats-officedocument.wordprocessingml.document, .html, .java, application/json, .md, application/pdf, .php, application/vnd.openxmlformats-officedocument.presentationml.presentation, .py, .rb, .tex, .txt">
             </div>
         </div>
     </div>
-    <button class="bifm-btn waves-effect waves-light" type="submit" name="action">Save Changes</button>
-    <button class="bifm-btn waves-effect waves-light red lighten-2" type="submit" name="action" id="reset_chat">Reset chatbot</button>
+    <button class="bifm-btn waves-effect waves-light" type="submit" name="action">
+        <?php esc_html_e('Save changes','bifm'); ?></button>
+    <button class="bifm-btn waves-effect waves-light red lighten-2" type="submit" name="action" id="reset_chat">
+        <?php esc_html_e('Reset chatbot','bifm'); ?></button>
     <h5>Inputs</h5>
     <form id="smart-chat-form" action="#" method="post">
         <div class="bifm-row">
@@ -105,7 +111,7 @@
                 <button class="btn-floating btn-small waves-effect waves-light blue send-input" type="submit">
                     <i class="material-icons">send</i>
                 </button>
-                <label for="text_input">Text Input</label>
+                <label for="text_input"><?php esc_html_e('Text Input','bifm'); ?></label>
             </div>
         </div>
         <div class="input-field">
@@ -117,12 +123,12 @@
         <div class="bifm-row">
             <div class="input-field bifm-col s12 l8">
                 <select id="select_input_1" name="select_input_1">
-                    <option value="" disabled selected>Placeholder</option>
-                    <option value="1">Option 1</option>
-                    <option value="2">Option 2</option>
-                    <option value="3">Option 3</option>
+                    <option value="" disabled selected><?php esc_html_e('Placeholder','bifm'); ?></option>
+                    <option value="1"><?php esc_html_e('Option 1','bifm'); ?></option>
+                    <option value="2"><?php esc_html_e('Option 2','bifm'); ?></option>
+                    <option value="3"><?php esc_html_e('Option 3','bifm'); ?></option>
                 </select>
-                <label for="select_input_1">Label</label>
+                <label for="select_input_1"><?php esc_html_e('Label','bifm'); ?></label>
             </div>
         </div>
         <script>
@@ -134,49 +140,49 @@
         <div class="bifm-row">
             <div class="input-field bifm-col s12 l8">
                 <textarea id="textarea_input_1" name="textarea_input_1" class="materialize-textarea" placeholder="Ask Billy for any assistance you need"></textarea>
-                <label for="textarea_input_1">Label</label>
+                <label for="textarea_input_1"><?php esc_html_e('Label','bifm'); ?></label>
             </div>
         </div>
         <div class="bifm-row">
             <div class="input-field bifm-col s12 l8">
                 <input id="email_input" type="email" name="email_input">
-                <label for="email_input">Email Input</label>
+                <label for="email_input"><?php esc_html_e('Email Input','bifm'); ?></label>
             </div>
         </div>
         <div class="bifm-row">
             <div class="input-field bifm-col s12 l8">
                 <input id="password_input" type="password" name="password_input">
-                <label for="password_input">Password Input</label>
+                <label for="password_input"><?php esc_html_e('Password Input','bifm'); ?></label>
             </div>
         </div>
         <div class="bifm-row">
             <div class="input-field bifm-col s12 l8">
                 <input id="date_input" type="text" class="datepicker" name="date_input">
-                <label for="date_input">Date Input</label>
+                <label for="date_input"><?php esc_html_e('Date Input','bifm'); ?></label>
             </div>
         </div>
         <div class="bifm-row">
             <div class="input-field bifm-col s12 l8">
                 <input id="time_input" type="text" class="timepicker" name="time_input">
-                <label for="time_input">Time Input</label>
+                <label for="time_input"><?php esc_html_e('Time Input','bifm'); ?></label>
             </div>
         </div>
         <div class="bifm-row">
             <div class="input-field bifm-col s12 l8">
                 <select id="select_input" name="select_input">
-                    <option value="" disabled selected>Choose your option</option>
-                    <option value="1">Option 1</option>
-                    <option value="2">Option 2</option>
-                    <option value="3">Option 3</option>
+                    <option value="" disabled selected><?php esc_html_e('Choose your option','bifm'); ?></option>
+                    <option value="1"><?php esc_html_e('Option 1','bifm'); ?></option>
+                    <option value="2"><?php esc_html_e('Option 2','bifm'); ?></option>
+                    <option value="3"><?php esc_html_e('Option 3','bifm'); ?></option>
                 </select>
-                <label for="select_input">Select Input</label>
+                <label for="select_input"><?php esc_html_e('Select Input','bifm'); ?></label>
             </div>
         </div>
         <div class="bifm-row">
         <div class="input-field bifm-col s12 l8">
             <label>
                 <input type="checkbox" id="checkbox_input" name="checkbox_input">
-                <span>Checkbox Input</span>
+                <span><?php esc_html_e('Checkbox Input','bifm'); ?></span>
             </label>
         </div>
     </div>
@@ -187,13 +193,13 @@
             <p>
                 <label>
                     <input name="radio_group" type="radio" id="radio1" value="1">
-                    <span>Radio Option 1</span>
+                    <span><?php esc_html_e('Radio Option 1','bifm'); ?></span>
                 </label>
             </p>
             <p>
                 <label>
                     <input name="radio_group" type="radio" id="radio2" value="2">
-                    <span>Radio Option 2</span>
+                    <span><?php esc_html_e('Radio Option 2','bifm'); ?></span>
                 </label>
             </p>
         </div>
@@ -204,29 +210,29 @@
         <div class="input-field bifm-col s12 l8">
             <div class="switch">
                 <label>
-                    Off
+                    <?php esc_html_e('Off','bifm'); ?>
                     <input type="checkbox" id="switch_input" name="switch_input">
                     <span class="lever"></span>
-                    On
+                    <?php esc_html_e('On','bifm'); ?>
                 </label>
             </div>
         </div>
     </div>
 </form>
 
-<h5>Cards</h5>
+<h5><?php esc_html_e('Cards','bifm'); ?></h5>
 <div class="bifm-row">
     <div class="bifm-col s12 m6 l4">
         <div class="card tool-s-chat-bubble writer-bot">
             <div class="card-content frame-10120667">
                 <div class="frame">
                     <div class="svg-icon writer-icon">
-                        <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Writer.svg'); ?>
+                        <?php include(plugin_dir_path(__FILE__) . 'static/icons/Writer.svg'); ?>
                     </div>
                 </div>
-                <span class="card-title">Writer bot</span>
+                <span class="card-title"><?php esc_html_e('Writer bot','bifm'); ?></span>
                 <p>
-                    Our AI-powered blog post generator crafts engaging articles efficiently, enhancing your blog’s content effortlessly.
+                    <?php esc_html_e('Our AI-powered blog post generator crafts engaging articles efficiently, enhancing your blog’s content effortlessly.','bifm'); ?>
                 </p>
             </div>
             <button class="bifm-btn waves-effect waves-light card-button writer-button" type="submit" name="action">Go to the writer bot</button>
@@ -238,12 +244,12 @@
             <div class="card-content frame-10120667">
                 <div class="frame">
                     <div class="svg-icon coder-icon">
-                        <?php echo file_get_contents(plugin_dir_path(__FILE__) . 'static/icons/Coder.svg'); ?>
+                        <?php include(plugin_dir_path(__FILE__) . 'static/icons/Coder.svg'); ?>
                     </div>
                 </div>
-                <span class="card-title">Coder bot</span>
+                <span class="card-title"><?php esc_html_e('Coder Bot','bifm'); ?></span>
                 <p>
-                    Our AI-powered code generator creates efficient code, enhancing your projects effortlessly.
+                    <?php esc_html_e('Our AI-powered code generator creates efficient code, enhancing your projects effortlessly.','bifm'); ?>
                 </p>
             </div>
             <button class="bifm-btn waves-effect waves-light card-button coder-button" type="submit" name="action">Go to the coder bot</button>
@@ -251,6 +257,6 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
 </body>
 </html>
