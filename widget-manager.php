@@ -16,11 +16,6 @@ define('BIFM_VERSION', '1.2.6');
 define('BIFM_URL',plugin_dir_url(__FILE__));
 define('BIFM_PATH',plugin_dir_path(__FILE__));
 
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-
 function bifm_create_requests_table() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'cbc_blog_requests';
@@ -422,7 +417,6 @@ function bifm_pre_set_site_transient_update_plugins($transient) {
         return $transient;
     }
     // Define your plugin data
-    global $current_version;  // Your current plugin version
     $plugin_slug = plugin_basename(__DIR__) . '/widget-manager.php';  // Path to your main plugin file
     $github_repo = 'https://api.github.com/repos/pabloh3/bifm_wp_plugin/releases/latest';  // Your GitHub repo URL
 
@@ -450,7 +444,7 @@ function bifm_pre_set_site_transient_update_plugins($transient) {
         }
         
         // Check if we found a matching asset and have a download URL
-        if (!empty($download_url) && version_compare($current_version, $latest_version, '<')) {
+        if (!empty($download_url) && version_compare(BIFM_VERSION, $latest_version, '<')) {
             error_log("new version found");
             // Update the transient to include new version information with the correct package URL
             //error_log("new_transient: " .  print_r($transient, true));
