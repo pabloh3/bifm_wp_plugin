@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Build It For Me - AI creator
  * Description: Ask a bot to create for you.
- * Version: 1.2.6
+ * Version: 1.2.4
  * Author: Build It For Me
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-define('BIFM_VERSION', '1.2.6');
+define('BIFM_VERSION', '1.2.4');
 define('BIFM_URL',plugin_dir_url(__FILE__));
 define('BIFM_PATH',plugin_dir_path(__FILE__));
 
@@ -437,7 +437,7 @@ function bifm_pre_set_site_transient_update_plugins($transient) {
     if (!empty($assets)) {
         // Find the browser_download_url for your specific asset, e.g., bifm-plugin.zip
         foreach ($assets as $asset) {
-            if ($asset['name'] == "bifm-plugin.zip") {
+            if ($asset['name'] == "bifm.zip") {
                 $download_url = $asset['browser_download_url'];
                 break;
             }
