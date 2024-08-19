@@ -192,6 +192,16 @@ if (isset($_SESSION['thread_id'])) {
   </div>
 </div>
 
+<?php /*
+include(plugin_dir_path(__FILE__) . '../billy-widgets/validate-generic_approval/validate-generic_approval.php');
+$parameters = array(
+    'message' => __("Billy wants to change your page to do X / Y","bifm"),
+    'card_title' => __("This is a title","bifm"),
+    'selector' => 'all_pages'
+);
+$widget = bifm_get_widget($parameters, 'run_id', 'tool_call_id');
+echo $widget['widget']; */
+?>
 
 
 

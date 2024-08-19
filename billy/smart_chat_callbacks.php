@@ -277,6 +277,7 @@ function bifm_load_billy_chat() {
 
 // handle widgets //
 function bifm_include_widget($widget_name, $parameters, $run_id, $tool_call_id) {
+    error_log("Including widget: " . $widget_name);
     include_once __DIR__ . '/../billy-widgets/validate-' . $widget_name . '/validate-' . $widget_name . '.php';
     $response = bifm_get_widget($parameters, $run_id, $tool_call_id);
     return $response;
