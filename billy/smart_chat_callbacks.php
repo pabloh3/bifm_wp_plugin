@@ -17,10 +17,6 @@ function bifm_handle_chat_message() {
     }
     //$message = sanitize_text_field($_POST['message']);
     $message = $_POST['message'];
-    // if message is an array
-    if (is_array($_POST['message'])) {
-        error_log("message received on back-end sanitized: " . print_r($message, true));
-    }
     if(!is_array($message))
         $message = sanitize_text_field($message);
     else foreach ($message as $key => $value) {

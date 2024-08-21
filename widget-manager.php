@@ -275,6 +275,15 @@ add_action('rest_api_init', function () {
     ]);
 });
 
+add_action('rest_api_init', function () {
+    register_rest_field(['page', 'post'], 'elementor_data', [
+        'get_callback'    => 'bifm_get_elementor_data',
+        'update_callback' => 'bifm_update_elementor_data',
+        'schema'          => null,
+    ]);
+});
+
+
 function bifm_get_elementor_data($object, $field_name, $request) {
     return get_post_meta($object['id'], '_elementor_data', true);
 }
