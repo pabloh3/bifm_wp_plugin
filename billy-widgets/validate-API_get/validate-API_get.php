@@ -40,7 +40,7 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         data['authorize'] = false;
         var bubble = document.createElement('div');
         bubble.classList.add('billy-bubble', 'bubble');
-        bubble.innerHTML = '<p>You rejected granting Billy private access to your site.</p>';
+        bubble.innerHTML = '<p>".__('You rejected granting Billy private access to your site.', 'bifm')."</p>';
         document.getElementById('validate-API_get-widget-" . esc_attr($widget_id) . "').outerHTML = bubble.outerHTML;
         var processingMessage = document.createElement('div');
         processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';

@@ -114,13 +114,3 @@ $widget_types = $widgets_manager->get_widget_types();
         </div>
     </div>
 </div>
-
-
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.tooltipped');
-    var instances = M.Tooltip.init(elems);
-  });
-</script>

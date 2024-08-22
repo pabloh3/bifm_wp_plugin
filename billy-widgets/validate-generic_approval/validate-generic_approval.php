@@ -10,13 +10,13 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
 
     $widget_id = uniqid();
     $parameters_json = wp_json_encode($parameters);
-    $selector = $parameters['selector'];
     $message = $parameters['message'];
     $card_title = $parameters['card_title'];
     // check if the parameters have a selctor
     $selector_section = '';
     if (!empty($parameters['selector'])) {
-        if ($parameters['selector'] == 'all_pages') {
+        $selector = $parameters['selector'];
+        if ($selector == 'all_pages') {
             // load the code from the selector-all_pages.php file
             include plugin_dir_path(__FILE__) . 'selector-all_pages.php';
             $selector_section = bifm_get_selector_html($parameters);
@@ -24,7 +24,7 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     }
 
     // Use Materialize card layout for the widget with two buttons (authorize and reject)
-    $widget = "<div id='validate-generic_approval-widget-" . $widget_id . "' class='card'>
+    $widget = "<div id='validate-generic_approval-widget-" . esc_attr($widget_id) . "' class='card'>
         <div class='card-content' id='bifm-generic_approval'>
             <span class='card-title'>" . esc_attr($card_title) . "</span>
             <p>". esc_attr($message) ."</p>"
@@ -41,7 +41,7 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     $script = "
     document.getElementById('authorize-generic_approval-" . esc_attr($widget_id) . "').addEventListener('click', function(event) {
         event.preventDefault();
-        var data = " . wp_json_encode($parameters) . "; 
+        var data = " . $parameters_json . "; 
         data.authorize = true;
         if (document.getElementById('bifm_generic_approval_selector')) {
             var name = document.getElementById('bifm_generic_approval_selector').name;
@@ -49,12 +49,12 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         }
         var bubble = document.createElement('div');
         bubble.classList.add('billy-bubble', 'bubble');
-        bubble.innerHTML = '<p>' + " . wp_json_encode(__('You authorized Billy to make changes.', 'bifm')) . " + '</p>';
+        bubble.innerHTML = '<p>' + " .__('You authorized Billy to make changes. This could take a few minutes.', 'bifm') . " + '</p>';
         document.getElementById('validate-generic_approval-widget-" . esc_attr($widget_id) . "').outerHTML = bubble.outerHTML;
         var processingMessage = document.createElement('div');
-        processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">' + " . wp_json_encode(__('Processing', 'bifm')) . " + '<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
+        processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">' + " . __('Processing', 'bifm') . " + '<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
         document.getElementById('billy-chatbox').appendChild(processingMessage);
-        sendMessage(data, 'generic_approval', " . wp_json_encode($run_id) . ", " . wp_json_encode($tool_call_id) . ");
+        sendMessage(data, 'generic_approval', " . esc_attr($run_id) . ", " . esc_attr($tool_call_id) . ");
     });
 
     document.getElementById('reject-generic_approval-" . esc_attr($widget_id) . "').addEventListener('click', function(event) {
@@ -64,14 +64,14 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         data.authorize = false;
         var bubble = document.createElement('div');
         bubble.classList.add('billy-bubble', 'bubble');
-        bubble.innerHTML = '<p>' + " . wp_json_encode(__('You rejected the changes Billy wanted to make on your site.', 'bifm')) . " + '</p>';
+        bubble.innerHTML = '<p>' + " . __('You rejected the changes Billy wanted to make on your site.', 'bifm') . " + '</p>';
         document.getElementById('validate-generic_approval-widget-" . esc_attr($widget_id) . "').outerHTML = bubble.outerHTML;
         
         var processingMessage = document.createElement('div');
-        processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">' + " . wp_json_encode(__('Processing', 'bifm')) . " + '<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
+        processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">' + " . __('Processing', 'bifm') . " + '<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
         document.getElementById('billy-chatbox').appendChild(processingMessage);
         
-        sendMessage(data, 'generic_approval', " . wp_json_encode($run_id) . ", " . wp_json_encode($tool_call_id) . ");
+        sendMessage(data, 'generic_approval', " . esc_attr($run_id) . ", " . esc_attr($tool_call_id) . ");
     });
 
     function reinitializeSelect() {
