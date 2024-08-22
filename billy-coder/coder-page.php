@@ -8,8 +8,6 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 $url = $WIDGET_URL . esc_attr($folderName) . "/widget.php"; 
 $widgets_manager = \Elementor\Plugin::$instance->widgets_manager;
 $widget_types = $widgets_manager->get_widget_types();
-//localhost:3013/<foldername>/widget.php
-// for testing
 ?>
 
 <!-- This is the Widget Builder tool --> 
