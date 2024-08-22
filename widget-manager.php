@@ -137,7 +137,6 @@ function bifm_admin_page_content() {
     //this code was taken to admin-page.php
     include plugin_dir_path(__FILE__) . 'billy/billy-page.php';
     // Externalize JavaScript Code
-    //wp_enqueue_script('my-custom-script', plugins_url('static/admin-page.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/admin-page.js'), true);
     wp_enqueue_script('highlightjs',BIFM_URL.'static/highlightjs/highlight.min.js',['jquery'],BIFM_VERSION,true);
     wp_enqueue_script('markdownit',BIFM_URL.'static/markdownit/markdown-it.min.js',['jquery'],BIFM_VERSION,true);
     wp_enqueue_script('materialize',BIFM_URL.'static/materialize/materialize.min.js',['jquery'],BIFM_VERSION,true);
@@ -230,8 +229,8 @@ function bifm_ewm_enqueue_admin_scripts($hook) {
     // Check if we're on the create-widget page to load that JS
     if ($pagenow == 'admin.php' && isset($_GET['page']) && ($_GET['page'] == 'bifm' || $_GET['page'] == 'create-widget' || $_GET['page'] == 'create-blog' || $_GET['page'] == 'bifm' || $_GET['page'] == 'create-chat' || $_GET['page'] == 'widget-manager' || $_GET['page'] == 'design_system' || $_GET['page'] == 'writer-settings')) { // phpcs:ignore
         // in all admin pages load the styles
-        
-    wp_enqueue_style('materialicons',BIFM_URL.'static/materialicons/icon.css',[],BIFM_VERSION);
+        wp_enqueue_script('initialize_elements', plugins_url('static/admin-page.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'static/admin-page.js'), true);
+        wp_enqueue_style('materialicons',BIFM_URL.'static/materialicons/icon.css',[],BIFM_VERSION);
         wp_enqueue_style('my-plugin-styles', esc_url(plugins_url('static/styles.css', __FILE__)), [], filemtime(plugin_dir_path(__FILE__) . 'static/styles.css'), 'all'); 
     }
 }
