@@ -52,4 +52,3 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     // Return a dictionary with both widget and script
     return array('widget' => $widget, 'script' => $script);
 }
-?>

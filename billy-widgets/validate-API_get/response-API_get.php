@@ -15,7 +15,7 @@ function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_c
         }
     } else {
         error_log("Rejected granting API access");
-        $tool_message = __("User rejectes your request for API access.",'bifm');
+        $tool_message = __("User rejected your request for API access.",'bifm');
         $user_id = NULL;
         $username = NULL;
         $encrypted_password = NULL;

@@ -6369,7 +6369,7 @@ textarea.materialize-textarea + label:after {
   width: calc(100% - 3rem - 1.5rem);
 }
 .input-field > label {
-  color: #dfe0e6;
+  color: #acb0c8;
   position: absolute;
   top: 0;
   left: 0;
@@ -8504,14 +8504,6 @@ input[type=range]::-ms-thumb {
     text-align: center;
     margin-top: 1.2rem;
   }
-}
-
-#cbc_response{
-  width: auto;
-  text-align: center;
-  color: #000;
-  z-index: 1000;
-  position: absolute;
 }
 
 /*# sourceMappingURL=styles.css.map */
