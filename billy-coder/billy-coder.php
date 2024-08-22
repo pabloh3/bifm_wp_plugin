@@ -18,7 +18,7 @@ function bifm_handle_plugin_send_message() {
     $site_url = home_url();
     $user_id_complete = "site=" . $site_url . "&user=" . $user_id;
     $folderName = isset($_POST['folderName']) ? sanitize_text_field($_POST['folderName']) : '';
-    #put together the url by concatenating with the API_URL
+    #put together the url by concatenating with the BIFM_API_URL
     global $BIFM_API_URL; 
     $url = $BIFM_API_URL . "/{$folderName}/processgpt";
     $response = wp_remote_post($url, array(

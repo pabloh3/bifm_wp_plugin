@@ -39,8 +39,6 @@ function bifm_create_blog($keyphrase, $category, $category_name) {
     # Extract website info
     $username = get_user_meta($user_id, 'username', true);
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
-    error_log("username: " . $username);
-    error_log("encrypted_password: " . $encrypted_password);
     // return an error if the user has not set their username and password
     if (!$username || !$encrypted_password) {
         wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));

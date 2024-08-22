@@ -12,9 +12,9 @@ if (strpos($host, 'stg-') === 0 ||
 $testing = false;
  
 if ($testing) {
-    $API_URL = 'http://localhost:5001/';
+    $BIFM_API_URL = 'http://localhost:5001/';
     $WIDGET_URL = 'http://localhost:3013/';
 } else {
-    $API_URL = $environment === 'staging' ? 'https://staging-wp.builditforme.ai/' : 'https://wp.builditforme.ai/';
-    $WIDGET_URL = $API_URL . "widget-page/";
+    $BIFM_API_URL = $environment === 'staging' ? 'https://staging-wp.builditforme.ai/' : 'https://wp.builditforme.ai/';
+    $WIDGET_URL = $BIFM_API_URL . "widget-page/";
 }

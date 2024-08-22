@@ -20,9 +20,9 @@ function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_c
     }
 
     // Ensure API_URL is set and sanitized
-    global $API_URL;
-    $API_URL = esc_url_raw($API_URL);
-    $url = $API_URL . '/assistant_chat';
+    global $BIFM_API_URL;
+    $BIFM_API_URL = esc_url_raw($BIFM_API_URL);
+    $url = $BIFM_API_URL . '/assistant_chat';
     $website = home_url();  // Current website URL
     $site_info = array(
         'website' => esc_url($website),
