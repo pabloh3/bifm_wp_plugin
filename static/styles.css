@@ -6369,7 +6369,7 @@ textarea.materialize-textarea + label:after {
   width: calc(100% - 3rem - 1.5rem);
 }
 .input-field > label {
-  color: #dfe0e6;
+  color: #acb0c8;
   position: absolute;
   top: 0;
   left: 0;

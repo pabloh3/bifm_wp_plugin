@@ -15,11 +15,6 @@ define('BIFM_VERSION', '1.2.8');
 define('BIFM_URL',plugin_dir_url(__FILE__));
 define('BIFM_PATH',plugin_dir_path(__FILE__));
 
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-
 function bifm_create_requests_table() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'cbc_blog_requests';
@@ -279,6 +274,15 @@ add_action('rest_api_init', function () {
     ]);
 });
 
+add_action('rest_api_init', function () {
+    register_rest_field(['page', 'post'], 'elementor_data', [
+        'get_callback'    => 'bifm_get_elementor_data',
+        'update_callback' => 'bifm_update_elementor_data',
+        'schema'          => null,
+    ]);
+});
+
+
 function bifm_get_elementor_data($object, $field_name, $request) {
     return get_post_meta($object['id'], '_elementor_data', true);
 }
@@ -393,6 +397,93 @@ foreach ($hooks as $hook_name => $widget_name) {
     }
 }
 
+
+
+// CODE TO HANDLE PLUGIN UPDATES //
+// Filter the update_plugins transient just before it's updated
+add_filter('pre_set_site_transient_update_plugins', 'bifm_pre_set_site_transient_update_plugins');
+function bifm_pre_set_site_transient_update_plugins($transient) {
+    //error_log("pre_set_site_transient_update_plugins called");
+    //following line commented out, is used for debugging since deleting transient checks for new updates immediately
+    //delete_transient('bifm_last_update_check');
+    // Don't do anything if we are not checking for plugin updates
+    if (empty($transient->checked)) {
+        //error_log("empty transient checked, this is not a plugin update check");
+        return $transient;
+    }
+    $last_checked = get_transient('bifm_last_update_check');
+    $check_each_hours = 1;
+    // if the transient has expired $last_checked will be false so this won't run and skip to update
+    if ($last_checked && (time() - $last_checked) < $check_each_hours * HOUR_IN_SECONDS) {
+        $time_elapsed_minutes = (time() - $last_checked) / 60;
+        error_log("less than 1 hour since last check, time elapsed: " . $time_elapsed_minutes . " minutes");
+        // Restore the update data if it's less than an hour since the last check
+        $cached_response = get_transient('bifm_cached_response');
+        if ($cached_response) {
+            $transient->response = array_merge((array) $transient->response, (array) $cached_response);
+        }
+        return $transient;
+    }
+    // Define your plugin data
+    $plugin_slug = plugin_basename(__DIR__) . '/widget-manager.php';  // Path to your main plugin file
+    $github_repo = 'https://api.github.com/repos/pabloh3/bifm_wp_plugin/releases/latest';  // Your GitHub repo URL
+
+    // Use WordPress HTTP API to send a request to GitHub API
+    $response = wp_remote_get($github_repo, array(
+        'headers' => array('Accept' => 'application/vnd.github.v3+json')
+    ));
+
+    if (is_wp_error($response) || wp_remote_retrieve_response_code($response) != 200) {
+        // Handle errors
+        error_log("error in response from github when checking for plugin updates");
+        return $transient;
+    }
+
+    $release_data = json_decode(wp_remote_retrieve_body($response), true);
+    $latest_version = ltrim($release_data['tag_name'], 'v');  // Remove 'v' prefix if present
+    $assets = $release_data['assets'];
+    if (!empty($assets)) {
+        // Find the browser_download_url for your specific asset, e.g., bifm-plugin.zip
+        foreach ($assets as $asset) {
+            if ($asset['name'] == "bifm.zip") {
+                $download_url = $asset['browser_download_url'];
+                break;
+            }
+        }
+        
+        // Check if we found a matching asset and have a download URL
+        if (!empty($download_url) && version_compare(BIFM_VERSION, $latest_version, '<')) {
+            error_log("new version found");
+            // Update the transient to include new version information with the correct package URL
+            //error_log("new_transient: " .  print_r($transient, true));
+            $update_data = (object) array(
+                'slug'        => $plugin_slug,
+                'plugin'      => $plugin_slug,
+                'new_version' => $latest_version,
+                'url'         => $release_data['html_url'],
+                'package'     => $download_url,
+            );
+            $transient->response[$plugin_slug] = $update_data;
+            set_transient('bifm_cached_response', [$plugin_slug => $update_data], $check_each_hours * HOUR_IN_SECONDS);
+        }
+    } else {
+        error_log("no assets found in github release");
+    }
+    set_transient('bifm_last_update_check', time(), $check_each_hours * HOUR_IN_SECONDS);
+    //error_log("new transient returned");
+    // get updated transient
+    return $transient;
+}
+// Clear the update cache when the plugin is updated
+function bifm_clear_update_cache($upgrader_object, $options) {
+    if ($options['action'] == 'update' && $options['type'] == 'plugin') {
+        // Check if the plugin updated is your plugin
+        if (isset($options['plugins']) && in_array(plugin_basename(__DIR__) . '/widget-manager.php', $options['plugins'])) {
+            delete_transient('bifm_cached_response');
+        }
+    }
+}
+add_action('upgrader_process_complete', 'bifm_clear_update_cache', 10, 2);
 
 // Suppress WordPress core update notifications
 /*function suppress_update_notifications() {

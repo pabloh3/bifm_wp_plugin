@@ -12,7 +12,7 @@ if (strpos($host, 'stg-') === 0 ||
     $environment = 'staging';
 }
 
-$testing = true;
+$testing = false;
  
 
 $BIFM_API_URL = $environment === 'staging' ? 'https://staging-wp.builditforme.ai/' : 'https://wp.builditforme.ai/';
