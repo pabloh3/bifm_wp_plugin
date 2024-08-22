@@ -1,11 +1,10 @@
 === Build It For Me ===
 Contributors: pablobifm
-Donate link: https://www.builditforme.ai/donate
 Tags: widgets, elementor, AI, automation, management
 Requires at least: 5.0
 Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 1.2.6
+Stable tag: 1.2.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +16,7 @@ Build It For Me Widget Manager allows WordPress users to efficiently manage thei
 Billy guides users through making changes to their site.
 Our blog creator allows you to create blog posts with a single prompt. The Widget Builder codes elementor widgets from scratch.
 Ideal for developers, content creators, and site managers looking to streamline their WordPress workflow.
-The plugin connects with Build It For Me's API to facilitate the generation and management of these widgets.
+The plugin connects with Build It For Me's API to facilitate the generation and management of content and code.
 
 https://www.youtube.com/watch?v=SXsSv5by0X8
 
@@ -32,7 +31,7 @@ Features:
 
 == Installation ==
 
-1. Install the plugin through the WordPress plugins screen directly, or download a zip from www.builditforme.ai
+1. Install the plugin through the WordPress plugins screen directly, or upload the plugin files to the `/wp-content/plugins/bifm-widget-manager` directory.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Navigate to the 'Build It For Me' menu in your dashboard to chat with Billy.
 4. If you want to use the blog creator, configure your blog creator on the "Writer Settings". If you're not an admin, you'll need an "app password" to configure the writer.
@@ -139,17 +138,18 @@ The BIFM Widget Manager relies on the Build It For Me (BIFM) external API to gen
 - **Service Usage**: The plugin communicates with the Build It For Me API to request widget generation and management tasks.
 
 ### Important Data Safety Notice:
-- **Protection of PII**: Users should avoid entering Personally Identifiable Information (PII) into the plugin. Ensuring the privacy and security of your data is paramount. Avoid entering any sensitive personal details into the widget creation process.
+- **Protection of PII**: Users should never share any Personally Identifiable Information (PII) through the plugin. Ensuring the privacy and security of your data is paramount. Avoid entering any sensitive personal details into the widget creation process.
 
 ### Terms of Service and Privacy:
 - We highly recommend reviewing Build It For Me's Terms and Conditions to understand the usage policies and data handling practices. 
 - For detailed information, please visit [Build It For Me Terms and Conditions](https://www.builditforme.ai/terms-and-conditions).
 
 ### User Consent:
-- By using the BIFM Plugin, you agree to the terms and conditions set forth by Build It For Me. It is important to be aware of these terms as they govern the use of the API and the services provided through our plugin.
+- By using the BIFM Widget Manager, you agree to the terms and conditions set forth by Build It For Me. It is important to be aware of these terms as they govern the use of the API and the services provided through our plugin.
 
 ### Data Handling:
 - The plugin does not store personal data but may transmit data necessary for widget generation to Build It For Me's API. This data is subject to Build It For Me's privacy policy.
+
 This integration is crucial for providing our users with a seamless and efficient widget creation experience. Should you have any concerns or questions regarding the API integration, please feel free to reach out to us.
 
 == Acknowledgments ==

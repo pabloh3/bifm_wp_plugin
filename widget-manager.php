@@ -1,18 +1,17 @@
-<?php
+<?php if ( ! defined( 'ABSPATH' ) ) exit;
 /*
  * Plugin Name: Build It For Me - AI creator
  * Description: Ask a bot to create for you.
- * Version: 1.2.6
+ * Version: 1.2.8
  * Author: Build It For Me
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-define('BIFM_VERSION', '1.2.6');
+define('BIFM_VERSION', '1.2.8');
 define('BIFM_URL',plugin_dir_url(__FILE__));
 define('BIFM_PATH',plugin_dir_path(__FILE__));
 

@@ -34,15 +34,15 @@ function bifm_smart_chat_reset() {
             }
         }
         //reset the assistant
-        $assistant_id = get_option('assistant_id');
+        $assistant_id = get_option('bifm_assistant_id');
         // call the api to delete the assistant
-        global $API_URL;
-        $url = $API_URL . '/delete_assistant';
+        global $BIFM_API_URL;
+        $url = $BIFM_API_URL . '/delete_assistant';
         $response = wp_remote_post($url, array(
             'headers' => array('Content-Type' => 'application/json'),
             'body' => wp_json_encode(array(
-                'assistant_id' => $assistant_id,
-                'vector_store_id' => get_option('vector_store_id'),
+                'bifm_assistant_id' => $assistant_id,
+                'bifm_vector_store_id' => get_option('bifm_vector_store_id'),
             )),
             'method' => 'POST',
             'data_format' => 'body',
@@ -52,10 +52,10 @@ function bifm_smart_chat_reset() {
         if (is_wp_error($response)) {
             //do nothing
         }
-        update_option('assistant_instructions', '');
-        update_option('uploaded_file_names', array());
-        update_option('assistant_id', '');
-        update_option('vector_store_id', NULL);
+        update_option('bifm_assistant_instructions', '');
+        update_option('bifm_uploaded_file_names', array());
+        update_option('bifm_assistant_id', '');
+        update_option('bifm_vector_store_id', NULL);
         // return confirmation
         wp_send_json_success(__('Chatbot reset successfully.','bifm'));
     } catch (Exception $e) {
@@ -87,8 +87,9 @@ function bifm_smart_chat_settings() {
         }
         // in order to manage file updates, the front end passes a list of files not deleted by the user, we iterate through the files in the directory and delete the ones not in the list
         // The deleted files are stored in array $files_to_delete to be passed to the API for deletion by OpenAI
-        if (isset($_POST['files_list'])) {
-            $files_list_json = $_POST['files_list'];
+        if (isset($_POST['files_list']) && is_array($_POST['files_list'])) {
+
+            $files_list_json = map_deep($_POST['files_list'],'trim'); //phpcs:ignore
             $files_list_json = stripslashes($files_list_json);
             $files_list_posted = json_decode($files_list_json, true);
             // Check if directory exists and is readable
@@ -112,7 +113,7 @@ function bifm_smart_chat_settings() {
                                 error_log("file to delete: " . $file);
                                 wp_delete_file($dirPath . $file);
                                 //remove the file from options
-                                $file_list_stored = get_option('uploaded_file_names');
+                                $file_list_stored = get_option('bifm_uploaded_file_names');
                                 foreach ($file_list_stored as $key => $value) {
                                     // iterate through the files in the list and add them to a temp array, except the one to delete
                                     if ($value['file_name'] != $file) {
@@ -123,7 +124,7 @@ function bifm_smart_chat_settings() {
                                         array_push($files_to_delete, $file_to_delete_id);
                                     }
                                 }
-                                update_option('uploaded_file_names', $file_list_stored_new);
+                                update_option('bifm_uploaded_file_names', $file_list_stored_new);
                             }
                         }
                     }
@@ -133,13 +134,13 @@ function bifm_smart_chat_settings() {
         }
 
         // Handle assistant update and new files
-        if (isset($_POST['assistant_instructions'], $_POST['assistant_instructions'])) {
-            $assistant_instructions = sanitize_text_field($_POST['assistant_instructions']);
-            update_option( 'assistant_instructions', $assistant_instructions);
-            $assistant_id = get_option('assistant_id');
+        if (isset($_POST['bifm_assistant_instructions'], $_POST['bifm_assistant_instructions'])) {
+            $assistant_instructions = sanitize_text_field($_POST['bifm_assistant_instructions']);
+            update_option( 'bifm_assistant_instructions', $assistant_instructions);
+            $assistant_id = get_option('bifm_assistant_id');
             $uploadedFiles = $_FILES['files'];
             $uploadedFile = $uploadedFiles['tmp_name'];
-            global $API_URL;
+            global $BIFM_API_URL;
             //handle files
             if (isset($_FILES['files']) && !empty($_FILES['files']['name'][0])) {
                 $uploadedFiles = $_FILES['files'];
@@ -158,7 +159,7 @@ function bifm_smart_chat_settings() {
                 // in order for python to identify the file, we needed to define a boundary to indicate where the file starts, that doesn't contain special chars
                 $boundary = 'UYTvLhK1u09E5OyhWJBqEZPS';
                 $headers = array('Content-Type' => 'multipart/form-data; boundary=' . $boundary);
-                $file_list_query = get_option('uploaded_file_names');
+                $file_list_query = get_option('bifm_uploaded_file_names');
                 foreach ($uploadedFiles['name'] as $key => $name) {
                     // Manually create multipart content
                     $body = '';
@@ -179,7 +180,7 @@ function bifm_smart_chat_settings() {
                         // Check if the file exists and is readable
                         //error_log("file was stored in back end");
                         if (file_exists($targetFile) && is_readable($targetFile)) {
-                            $vector_store_id = get_option('vector_store_id');
+                            $vector_store_id = get_option('bifm_vector_store_id');
                             // Start building the body
                             // Add vector_store_id to the multipart/form-data body
                             $body .= '--' . $boundary . "\r\n";
@@ -203,7 +204,7 @@ function bifm_smart_chat_settings() {
 
                     // Send the file to the Flask API
                     error_log("sending file to flask api");
-                    $file_response = wp_remote_post($API_URL . '/upload_file', array(
+                    $file_response = wp_remote_post($BIFM_API_URL . '/upload_file', array(
                         'headers' => $headers,
                         'body' => $body,
                         'method' => 'POST',
@@ -226,9 +227,9 @@ function bifm_smart_chat_settings() {
                             $file = $response_body['files'];
                             $file_list_query[] = ['file_name' => $file['file_name'], 'file_id' => $file['file_id']];
                             // Store file names and IDs
-                            update_option('uploaded_file_names', $file_list_query); // Store file data
-                            $vector_store_id = $file['vector_store_id'];
-                            update_option('vector_store_id', $vector_store_id);
+                            update_option('bifm_uploaded_file_names', $file_list_query); // Store file data
+                            $vector_store_id = $file['bifm_vector_store_id'];
+                            update_option('bifm_vector_store_id', $vector_store_id);
                         } else {
                             // delete file if there is an error
                             error_log("deleting file: " . $name);
@@ -245,9 +246,9 @@ function bifm_smart_chat_settings() {
             //end handle files
             
             // Send the message to AI API
-            $url = $API_URL . '/assistant_update';
+            $url = $BIFM_API_URL . '/assistant_update';
             $list_file_ids = array();
-            $file_list_stored = get_option('uploaded_file_names');
+            $file_list_stored = get_option('bifm_uploaded_file_names');
             foreach ($file_list_stored as $key => $value) {
                 array_push($list_file_ids, $value['file_id']);
             }
@@ -308,13 +309,13 @@ function bifm_smart_chat_settings() {
             $response = wp_remote_post($url, array(
                 'headers' => array('Content-Type' => 'application/json'),
                 'body' => wp_json_encode(array(
-                    'assistant_id' => $assistant_id,
-                    'assistant_instructions' => stripslashes($assistant_instructions),
+                    'bifm_assistant_id' => $assistant_id,
+                    'bifm_assistant_instructions' => stripslashes($assistant_instructions),
                     'assistant_files' => $list_file_ids,
                     'files_to_delete' => $files_to_delete,
                     'site_url' => get_site_url(),
                     'site_theme' => $site_info,
-                    'vector_store_id' => get_option('vector_store_id'),
+                    'bifm_vector_store_id' => get_option('bifm_vector_store_id'),
                 )),
                 'method' => 'POST',
                 'data_format' => 'body',
@@ -329,10 +330,10 @@ function bifm_smart_chat_settings() {
                 $status_code = wp_remote_retrieve_response_code($response);
                 $response_body = json_decode(wp_remote_retrieve_body($response), true);
                 if ($status_code == 200) {
-                    $assistant_id = $response_body['assistant_id'];
-                    update_option('assistant_id', $assistant_id);
-                    $vector_store_id = $response_body['vector_store_id'];
-                    update_option('vector_store_id', $vector_store_id);
+                    $assistant_id = $response_body['bifm_assistant_id'];
+                    update_option('bifm_assistant_id', $assistant_id);
+                    $vector_store_id = $response_body['bifm_vector_store_id'];
+                    update_option('bifm_vector_store_id', $vector_store_id);
                     // check if there's any message in the response
                     if (isset($response_body['message'])) {
                         wp_send_json_success(array('message' => $response_body['message']));

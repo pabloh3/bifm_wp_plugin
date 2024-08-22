@@ -12,7 +12,7 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API?>
         <p><?php esc_html_e('Here you can update the settings for smart chat.','bifm'); ?></p>
         
         <form id="smart-chat-form" action="#" method="post">
-            <?php $assistant_instructions = get_option('assistant_instructions'); ?>
+            <?php $assistant_instructions = get_option('bifm_assistant_instructions'); ?>
             <div class="bifm-row">
                 <div class="input-field bifm-col s12 l8">
                     <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea" style="height: 80px;"><?php echo esc_textarea($assistant_instructions) ?: ''; ?></textarea>

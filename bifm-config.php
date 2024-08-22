@@ -1,7 +1,10 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 $environment = 'production'; // Default to production
-$host = $_SERVER['HTTP_HOST'];
+if(!isset( $_SERVER['HTTP_HOST'] )){
+    die(__('Could not get host information','bifm'));
+}
+$host = esc_url($_SERVER['HTTP_HOST']);
 if (strpos($host, 'stg-') === 0 || 
     strpos($host, 'localhost') === 0 || 
     strpos($host, '127.0') === 0 || 
@@ -12,5 +15,5 @@ if (strpos($host, 'stg-') === 0 ||
 $testing = true;
  
 
-$API_URL = $environment === 'staging' ? 'https://staging-wp.builditforme.ai/' : 'https://wp.builditforme.ai/';
-    $WIDGET_URL = $API_URL . "widget-page/";
+$BIFM_API_URL = $environment === 'staging' ? 'https://staging-wp.builditforme.ai/' : 'https://wp.builditforme.ai/';
+    $WIDGET_URL = $BIFM_API_URL . "widget-page/";

@@ -43,7 +43,7 @@ if (isset($_SESSION['thread_id'])) {
       <li>
       <!-- load from uptions the values of assistant_thread_ids and add a button for each -->
       <?php
-        $assistant_thread_data = get_option('assistant_thread_data');
+        $assistant_thread_data = get_option('bifm_assistant_thread_data');
         // invert order
         if (is_array($assistant_thread_data)) {
         $assistant_thread_data = array_reverse($assistant_thread_data);
@@ -186,18 +186,11 @@ if (isset($_SESSION['thread_id'])) {
         </form>
         <div id ="billy-form-footer" class="grey-text lighten-2">
           <?php /* translators: %s: create chat page URL */
-           printf(esc_html_e('Go to ')) ?><a href="admin.php?page=create-chat" class="black-text"><?php esc_html_e('Settings'); ?></a> <?php printf(esc_html_e(' to change the way Billy responds.')); ?>
+           printf(esc_html_e('Go to ','bifm')) ?><a href="admin.php?page=create-chat" class="black-text"><?php esc_html_e('Settings','bifm'); ?></a> <?php printf(esc_html_e(' to change the way Billy responds.','bifm')); ?><br>
+           <?php /* translators: %s: API information */
+           printf(esc_html_e('This plugin uses our Build It For Me API. By using it you accept our ','bifm')) ?> <a href="https://www.builditforme.ai/terms-and-conditions/" class="black-text"><?php esc_html_e('Terms and Conditions','bifm'); ?></a> . 
+
           </div>
     </div>
   </div>
 </div>
-
-
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.tooltipped');
-    var instances = M.Tooltip.init(elems);
-  });
-</script>

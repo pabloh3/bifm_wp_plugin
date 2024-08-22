@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
-class smart_chat extends \Elementor\Widget_Base {
+class BIFMSmartChatWidget extends \Elementor\Widget_Base {
     public function get_name() {
         return 'smart_chat';
     }
@@ -45,7 +45,7 @@ class smart_chat extends \Elementor\Widget_Base {
             'setup_message',
             [
                 'type' => \Elementor\Controls_Manager::RAW_HTML,
-                'raw' => '<p>'.__(' In the "Advanced" section select "width: default" to match container.').'<br/>'.__('Change position from "default" to "fixed" to see the chat bubble in a corner. Also set width: custom 300px.','bifm').'</p>',
+                'raw' => '<p>'.__(' In the "Advanced" section select "width: default" to match container.','bifm').'<br/>'.__('Change position from "default" to "fixed" to see the chat bubble in a corner. Also set width: custom 300px.','bifm').'</p>',
                 'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
             ]
         );

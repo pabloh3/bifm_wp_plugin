@@ -1,3 +1,4 @@
+<?php if(!defined('ABSPATH')) return; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,7 +87,7 @@
             <span class='card-title'><?php echo esc_html(ucfirst($colorName)); ?></span>
             <p><?php echo esc_html($class); ?></p>
             <div class='card-content <?php echo esc_attr($class); ?>'>
-            </div></div></div>
+            </div></div></div><?php
         }
         ?>
     </div>
@@ -130,13 +131,7 @@
                 </select>
                 <label for="select_input_1"><?php esc_html_e('Label','bifm'); ?></label>
             </div>
-        </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                var elems = document.querySelectorAll("select");
-                var instances = M.FormSelect.init(elems);
-            });
-        </script>
+        </div> 
         <div class="bifm-row">
             <div class="input-field bifm-col s12 l8">
                 <textarea id="textarea_input_1" name="textarea_input_1" class="materialize-textarea" placeholder="Ask Billy for any assistance you need"></textarea>

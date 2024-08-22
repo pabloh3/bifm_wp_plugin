@@ -1,7 +1,7 @@
 <?php 
 if ( ! defined( 'ABSPATH' ) ) exit;
     require ( __DIR__ . '/../bifm-config.php' );
-    function get_all_usernames() {
+    function bifm_get_all_usernames() {
         $users = get_users();
         $usernames = [];
 
@@ -12,12 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         return $usernames;
     }
 ?>
-
-<style>
-    .input-field {
-        margin: 10px;
-    }
-</style> 
+ 
 <br/>
 <a href="admin.php?page=bifm" class="bifm-btn waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
@@ -32,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <?php $user_id = get_current_user_id(); ?>
             <?php $username = get_user_meta($user_id, 'username', true); ?>
             <div class="bifm-row">
-                <?php $usernames = get_all_usernames(); ?>
+                <?php $usernames = bifm_get_all_usernames(); ?>
                 <div class="input-field bifm-col s12 l4">
                     <select id="blog_author_username" name="blog_author_username" class="materialize-select" required>
                         <option value="" disabled <?php echo is_null($username) ? 'selected' : '' ?>><?php esc_html_e('Choose an author','bifm'); ?></option>
@@ -109,13 +104,5 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         <div id="warningMessage" class="card-panel yellow darken-2" style="position: relative; left: 0; bottom: 0; width: 100%; text-align: center; display: none; z-index: 1000;"><?php esc_html_e('This is a warning message!','bifm'); ?></div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var elems = document.querySelectorAll(".tabs");
-        var instances = M.Tabs.init(elems, {});
-        var elems2 = document.querySelectorAll("select");
-        var instances2 = M.FormSelect.init(elems2, {});
-    });
-</script>
+ 
 

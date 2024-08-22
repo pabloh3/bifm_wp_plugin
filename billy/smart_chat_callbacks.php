@@ -14,15 +14,13 @@ add_action('wp_ajax_send_chat_message', 'bifm_handle_chat_message');
 function bifm_handle_chat_message() {
     if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
         wp_send_json_error(array('message' => __("Couldn't verify user",'bifm') ), 500);
-    }
-    //$message = sanitize_text_field($_POST['message']);
-    $message = $_POST['message'];
+    } 
     // if message is an array
     if (is_array($_POST['message'])) {
         error_log("message received on back-end sanitized: " . print_r($message, true));
     }
-    if(!is_array($message))
-        $message = sanitize_text_field($message);
+    if(!is_array($_POST['message']))
+        $message = sanitize_text_field($_POST['message']);
     else foreach ($message as $key => $value) {
         if(is_string($value))
         $message[$key] = sanitize_text_field($value);
@@ -38,21 +36,21 @@ function bifm_handle_chat_message() {
 
 // Call the API
 function bifm_call_api($message, $widget_name, $run_id, $tool_call_id) {
-    $assistant_id = get_option('assistant_id');
+    $assistant_id = get_option('bifm_assistant_id');
     if ($assistant_id === false) {
-        update_option('assistant_instructions', '');
-        update_option('uploaded_file_names', array());
-        update_option('assistant_id', NULL);
-        update_option('vector_store_id', NULL);
+        update_option('bifm_assistant_instructions', '');
+        update_option('bifm_uploaded_file_names', array());
+        update_option('bifm_assistant_id', NULL);
+        update_option('bifm_vector_store_id', NULL);
     }
     if (isset($_SESSION['thread_id'])) {
-        $thread_id = $_SESSION['thread_id'];
+        $thread_id = sanitize_text_field($_SESSION['thread_id']);
     } else {
         $thread_id = null;
     }
 
-    global $API_URL;
-    $url = $API_URL . '/assistant_chat';
+    global $BIFM_API_URL;
+    $url = $BIFM_API_URL . '/assistant_chat';
 
     if ($widget_name == null) {
         $response = wp_remote_post($url, array(
@@ -60,7 +58,7 @@ function bifm_call_api($message, $widget_name, $run_id, $tool_call_id) {
             'body' => wp_json_encode(array(
                 'message' => $message,
                 'thread_id' => $thread_id,
-                'assistant_id' => $assistant_id
+                'bifm_assistant_id' => $assistant_id
             )),
             'method' => 'POST',
             'data_format' => 'body',
@@ -104,8 +102,8 @@ function bifm_billy_check_job_status() {
     $jobId = sanitize_text_field($_POST['jobId']);
     $message = sanitize_text_field($_POST['message']);
 
-    global $API_URL;
-    $url = $API_URL . 'chat_job_status/' . $jobId;
+    global $BIFM_API_URL;
+    $url = $BIFM_API_URL . 'chat_job_status/' . $jobId;
 
     $response = wp_remote_get($url, array('timeout' => 60));
 
@@ -120,8 +118,8 @@ function bifm_billy_check_job_status() {
             // If this is the first time calling the assistant, store the assistant ID
             if ((!isset($assistant_id) || $assistant_id == NULL) && isset($response_body['site_info'])) {
                 $site_info = $response_body['site_info'];
-                if (isset($site_info['assistant_id'])) {
-                    update_option('assistant_id', $site_info['assistant_id']);
+                if (isset($site_info['bifm_assistant_id'])) {
+                    update_option('bifm_assistant_id', $site_info['bifm_assistant_id']);
                 }
             }
             bifm_handle_response($response_body, $message);
@@ -149,7 +147,7 @@ function bifm_handle_response($body, $message) {
         $_SESSION['thread_id'] = $body['thread_id'];
         $thread_id = $body['thread_id'];
         // Get the existing thread data from the WP option
-        $thread_data = get_option('assistant_thread_data', array());
+        $thread_data = get_option('bifm_assistant_thread_data', array());
 
         // Check if the thread ID is not already in the list of threads
         if (!array_key_exists($thread_id, $thread_data)) {
@@ -166,7 +164,7 @@ function bifm_handle_response($body, $message) {
         }
 
         // Update the option with the new list of thread data
-        update_option('assistant_thread_data', $thread_data);
+        update_option('bifm_assistant_thread_data', $thread_data);
     }
 
     if (!isset($body['status']) || $body['status'] == 'chatting' || $body['status'] == 'error') {
@@ -205,7 +203,7 @@ function bifm_new_chat() {
     if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
         wp_send_json_error(array('message' => __("Couldn't verify user",'bifm')), 500);
     }
-    $assistant_id = get_option('assistant_id');
+    $assistant_id = get_option('bifm_assistant_id');
     if ($assistant_id === false) {
         wp_send_json_error(array('message' => __("Your admin hasn't configured the smart chat in the BIFM plugin.",'bifm')), 500);
         wp_die();
@@ -235,16 +233,16 @@ function bifm_load_billy_chat() {
         $_SESSION['thread_id'] = $thread_id; // Set the new current thread ID
     }
 
-    $thread_ids = get_option('assistant_thread_data');
+    $thread_ids = get_option('bifm_assistant_thread_data');
     if (($key = array_search($thread_id, $thread_ids)) !== false) {
         unset($thread_ids[$key]);
         array_unshift($thread_ids, $thread_id); // Move this thread to the top
-        update_option('assistant_thread_data', $thread_ids);
+        update_option('bifm_assistant_thread_data', $thread_ids);
     }
 
     // Call the API to get the thread
-    global $API_URL;
-    $url = $API_URL . '/load_thread'; // Make sure this matches your Flask route
+    global $BIFM_API_URL;
+    $url = $BIFM_API_URL . '/load_thread'; // Make sure this matches your Flask route
     // post to the API
     $response = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
