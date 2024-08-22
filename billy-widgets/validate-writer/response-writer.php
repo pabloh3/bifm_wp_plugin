@@ -21,8 +21,8 @@ function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_c
         $tool_message = __("User did not authorize blog creation",'bifm');
     }
 
-    global $API_URL;
-    $url = $API_URL . '/assistant_chat';
+    global $BIFM_API_URL;
+    $url = $BIFM_API_URL . '/assistant_chat';
 
     $response_tool = wp_remote_post($url, array(
         'headers' => array('Content-Type' => 'application/json'),
@@ -33,7 +33,7 @@ function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_c
                 'output' => $tool_message
             ),
             'thread_id' => $thread_id,
-            'assistant_id' => $assistant_id,
+            'bifm_assistant_id' => $assistant_id,
             'run_id' => $run_id
         )),
         'method' => 'POST',

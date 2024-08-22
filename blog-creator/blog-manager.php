@@ -39,8 +39,6 @@ function bifm_create_blog($keyphrase, $category, $category_name) {
     # Extract website info
     $username = get_user_meta($user_id, 'username', true);
     $encrypted_password = get_user_meta($user_id, 'encrypted_password', true);
-    error_log("username: " . $username);
-    error_log("encrypted_password: " . $encrypted_password);
     // return an error if the user has not set their username and password
     if (!$username || !$encrypted_password) {
         wp_send_json_error(array('message' => "Please set your blog author username and password in the settings page."));
@@ -66,8 +64,8 @@ function bifm_create_blog($keyphrase, $category, $category_name) {
     if (!$image_height) {
         $image_height = "";
     }
-    global $API_URL;
-    $url = $API_URL . "create-blog";
+    global $BIFM_API_URL;
+    $url = $BIFM_API_URL . "create-blog";
     
     // Generate UUID
     $uuid = wp_generate_uuid4();
@@ -109,9 +107,9 @@ function bifm_handle_cbc_poll_for_results() {
     
     // Get the jobId from the frontend
     $jobId = isset($_POST['jobId']) ? sanitize_text_field(wp_unslash($_POST['jobId'])) : '';
-    global $API_URL;
+    global $BIFM_API_URL;
     // Construct the URL for the external service
-    $url = $API_URL . "poll-blog-results/{$jobId}";
+    $url = $BIFM_API_URL . "poll-blog-results/{$jobId}";
 
     // Send a GET request to the external service
     $response = wp_remote_get($url);
@@ -219,9 +217,11 @@ add_action('wp_ajax_cbc_create_bulk_blogs', 'bifm_handle_cbc_create_bulk_blogs')
 function bifm_handle_cbc_create_bulk_blogs() {
     // Check nonce for security
     check_ajax_referer('bulk-upload-items-action', 'nonce');
-
+    $items = [];
     // Get the items from the frontend
-    $items = isset($_POST['items']) ? $_POST['items'] : array();
+    if(isset($_POST['items']) && count($_POST['items'])) {
+        $items = map_deep( $_POST['items'], 'trim' );
+    }
 
     if (empty($items)) {
         wp_send_json_error(array('message' => "No items provided."));
@@ -236,8 +236,8 @@ function bifm_handle_cbc_create_bulk_blogs() {
 }
 
 function bifm_cbc_process_items($items) {
-    global $API_URL;
-    $url = $API_URL . "create-blog-batch";
+    global $BIFM_API_URL;
+    $url = $BIFM_API_URL . "create-blog-batch";
     
     // Fetch additional data
     $website = home_url();  // Current website URL

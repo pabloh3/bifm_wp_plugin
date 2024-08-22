@@ -8506,4 +8506,12 @@ input[type=range]::-ms-thumb {
   }
 }
 
+#cbc_response{
+  width: auto;
+  text-align: center;
+  color: #000;
+  z-index: 1000;
+  position: absolute;
+}
+
 /*# sourceMappingURL=styles.css.map */

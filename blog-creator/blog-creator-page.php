@@ -157,22 +157,5 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
     </div>
     
 </div>
-
-
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.tooltipped');
-    var instances = M.Tooltip.init(elems);
-    // hide id=wpfooter
-    document.getElementById('wpfooter').style.display = 'none';
-  });
-  
-    
-</script>
-
-
-
-
+ 
 

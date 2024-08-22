@@ -13,16 +13,16 @@ function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_c
         }
     } else {
         error_log("Rejected page edit.");
-        $tool_message = __("User rejected your request for API access.", 'bifm');
+        $tool_message = __("User rejected your request for changes.", 'bifm');
         $user_id = NULL;
         $username = NULL;
         $encrypted_password = NULL;
     }
 
     // Ensure API_URL is set and sanitized
-    global $API_URL;
-    $API_URL = esc_url_raw($API_URL);
-    $url = $API_URL . '/assistant_chat';
+    global $BIFM_API_URL;
+    $BIFM_API_URL = esc_url_raw($BIFM_API_URL);
+    $url = $BIFM_API_URL . '/assistant_chat';
     $website = home_url();  // Current website URL
     $site_info = array(
         'website' => esc_url($website),
@@ -88,17 +88,17 @@ function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_c
         'body' => wp_json_encode(array(
             'message' => null,
             'tool_outputs' => array(
-                'tool_call_id' => sanitize_text_field($tool_call_id),
+                'tool_call_id' => $tool_call_id,
                 'output' => $tool_message,
                 'status' => 'execute_tool',
                 'function' => array(
-                    'name' => sanitize_text_field($data['callback_tool']),
+                    'name' => $data['callback_tool'],
                     'arguments' => $data,
                 )
             ),
-            'thread_id' => sanitize_text_field($thread_id),
-            'assistant_id' => sanitize_text_field($assistant_id),
-            'run_id' => sanitize_text_field($run_id),
+            'thread_id' => $thread_id,
+            'assistant_id' => $assistant_id,
+            'run_id' => $run_id,
             'site_info' => $site_info
         )),
         'method' => 'POST',

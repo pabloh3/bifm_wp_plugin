@@ -63,21 +63,7 @@ function bifm_remove_widget($dir,  $widget_name) {
         error_log("The widget named '{$widget_name}' does not exist and cannot be deleted.");
     }
 }
-
-function rbifm_delete_folder($dir){
-    if (is_dir($dir)) {
-        $objects = scandir($dir);
-        foreach ($objects as $object) {
-            if ($object != "." && $object != "..") {
-                if (is_dir($dir . "/" . $object))
-                    rbifm_delete_folder($dir . "/" . $object);
-                else
-                    wp_delete_file($dir . "/" . $object);
-            }
-        }
-        bifm_delete_folder($dir);
-    }
-}
+ 
 
 // Handle create new widget
 add_action('wp_ajax_get_folder_name', 'bifm_get_folder_name_callback');
@@ -103,8 +89,8 @@ function bifm_get_folder_name_callback() {
         'site_url' => $site_url,
         'plugin_version' => $version
     );
-    global $API_URL;
-    $api_endpoint = $API_URL . '/assign_foldername';
+    global $BIFM_API_URL;
+    $api_endpoint = $BIFM_API_URL . '/assign_foldername';
     $response = wp_remote_post($api_endpoint, array(
         'method' => 'POST',
         'headers' => array(
