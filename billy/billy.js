@@ -179,49 +179,6 @@ function handleError(error) {
 }
 
 
-function handleResponse(response) {
-    document.getElementById('billy-responding').remove();
-    const htmlContent = md.render(response.data.message);
-    if (htmlContent) {
-        let div = document.createElement('div');
-        div.classList.add('billy-bubble', 'bubble');
-        div.innerHTML = htmlContent;
-        chatbox.appendChild(div);
-        chatbox.scrollTop = chatbox.scrollHeight;
-    }
-    if (response.data.widget_object) {
-        let div = document.createElement('div');
-        div.innerHTML = response.data.widget_object.widget;
-        chatbox.appendChild(div);
-        if (response.data.widget_object.script) {
-            let script = document.createElement('script');
-            script.innerHTML = response.data.widget_object.script;
-            document.body.appendChild(script);
-            chatbox.scrollTop = chatbox.scrollHeight;
-        }
-    }
-    hljs.highlightAll();
-}
-
-function handleError(error) {
-    let errorMessage = "";
-    try {
-        errorMessage = error.responseJSON.data.message;
-    } catch (error2) {
-        try {
-            errorMessage = error.responseText;
-        } catch (error3) {
-            errorMessage = "An error occurred. Please try again.";
-        }
-    }
-    displayWarning(errorMessage);
-    document.getElementById('billy-responding').remove();
-    form.assistant_instructions.disabled = false;
-    submit_chat.disabled = false;
-}
-
-
-
 // when one of the suggestions is clicked
 document.addEventListener('DOMContentLoaded', function() {
     try {

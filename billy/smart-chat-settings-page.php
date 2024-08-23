@@ -73,7 +73,8 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API?>
             <button class="bifm-btn waves-effect waves-light purple grey-purple" type="submit" name="action" id="reset_chat"><?php esc_html_e('Reset chatbot','bifm'); ?></button>
         </form>
     </div>
+    <div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>
 </div>
 
-<div id="warningMessage" class="card-panel yellow darken-2" style="display: none;"></div>
+
 

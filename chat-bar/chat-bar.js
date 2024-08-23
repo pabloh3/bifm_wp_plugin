@@ -55,168 +55,178 @@ jQuery(document).ready(function($) {
         }
     });
 
-    function appendUserMessage(message) {
-        $('#billy_chat_messages').append('<div class="message bubble billy-user">' + md_bifm.render(message) + '</div>');
-        $('#billy_chat_messages').scrollTop($('#billy_chat_messages')[0].scrollHeight);
-    }
+});
 
-    function appendBotMessage(message) {
-        $('#billy_chat_messages').append('<div class="message bubble billy-bot">' + md_bifm.render(message) + '</div>');
-        $('#billy_chat_messages').scrollTop($('#billy_chat_messages')[0].scrollHeight);
-    }
+function appendUserMessage(message) {
+    const chatMessages = document.getElementById('billy_chat_messages');
+    const userMessageDiv = document.createElement('div');
+    userMessageDiv.className = 'message bubble billy-user';
+    userMessageDiv.innerHTML = md_bifm.render(message);
+    chatMessages.appendChild(userMessageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-    function loadCurrentSessionThread() {
-        // call bifm_load_billy_chat 
-        $.ajax({
-            url: billy_chat_vars.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'bifm_load_billy_chat',
-                nonce: billy_chat_vars.nonce
-            },
-            success: function(response) {
-                console.log("Current session thread loaded successfully:", response);
-                response.data.reverse().forEach(function(message) {
-                    if (message.role === 'user') {
-                        appendUserMessage(message.text);
-                    } else {
-                        appendBotMessage(message.text);
-                    }
-                });
-            },
-            error: function(error) {
-                console.error('Error loading current session thread:', error);
+function appendBotMessage(message) {
+    const chatMessages = document.getElementById('billy_chat_messages');
+    const botMessageDiv = document.createElement('div');
+    botMessageDiv.className = 'message bubble billy-bot';
+    botMessageDiv.innerHTML = md_bifm.render(message);
+    chatMessages.appendChild(botMessageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function loadCurrentSessionThread() {
+    fetch(billy_chat_vars.ajax_url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            action: 'bifm_load_billy_chat',
+            nonce: billy_chat_vars.nonce
+        })
+    })
+    .then(response => response.json())
+    .then(response => {
+        console.log("Current session thread loaded successfully:", response);
+        response.data.reverse().forEach(function(message) {
+            if (message.role === 'user') {
+                appendUserMessage(message.text);
+            } else {
+                appendBotMessage(message.text);
             }
         });
+    })
+    .catch(error => {
+        console.error('Error loading current session thread:', error);
+    });
+}
+
+function minimize_unminimize() {
+    const chatWidget = document.getElementById('billy_chat_widget');
+    const targetElement = document.getElementById('wp-admin-bar-billy-chat-button');
+    const widgetRect = chatWidget.getBoundingClientRect();
+    const targetRect = targetElement.getBoundingClientRect();
+    const translateX = targetRect.left - (widgetRect.left + widgetRect.width);
+    const translateY = targetRect.top - (widgetRect.top + widgetRect.height);
+
+    chatWidget.style.display = (chatWidget.style.display === 'none' || chatWidget.style.display === '') ? 'block' : 'none';
+
+    if (chatWidget.classList.contains('collapsed')) {
+        chatWidget.classList.remove('collapsed');
+        setTimeout(() => {
+            chatWidget.style.opacity = '1';
+            chatWidget.style.width = '38%';
+            chatWidget.style.height = '80%';
+            chatWidget.style.right = '20px';
+            chatWidget.style.bottom = '20px';
+            chatWidget.style.transform = 'translate(0px, 0px) scale(1)';
+        }, 10);
+    } else {
+        chatWidget.classList.add('collapsed');
+        setTimeout(() => {
+            chatWidget.style.opacity = '0';
+            chatWidget.style.width = '0';
+            chatWidget.style.height = '0';
+            chatWidget.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.1)`;
+        }, 10);
     }
+}
+
+
     
-    function sendMessage(message) {
-        console.log("Sending message:", message);
-        document.getElementById('billy_chat_messages').appendChild(billy_processingMessage);
-        $('#billy_chat_messages').scrollTop($('#billy_chat_messages')[0].scrollHeight);
-        $.ajax({
+function sendMessage(messageBody, widget_name, run_id, tool_call_id) {
+    var chatbox = document.getElementById('billy_chat_messages'); 
+    chatbox.appendChild(billy_processingMessage);
+    chatbox.scrollTop = chatbox.scrollHeight;
+    jQuery.ajax({
+        url: billy_chat_vars.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'send_chat_message',
+            nonce: billy_chat_vars.nonce,
+            message: messageBody,
+            widget_name: widget_name,
+            run_id: run_id,
+            tool_call_id: tool_call_id
+        },
+        success: function(response, textStatus, jqXHR) {
+            if (jqXHR.status === 202) {
+                const jobId = response.data.jobId;
+                pollForResult(jobId, messageBody);
+            } else {
+                handleResponse(response);
+            }
+        },
+        error: function(error) {
+            handleError(error);
+        }
+    });
+}
+
+function pollForResult(jobId, message) {
+    const pollInterval = 3000; // Poll every 3 seconds
+
+    const poll = setInterval(() => {
+        jQuery.ajax({
             url: billy_chat_vars.ajax_url,
             type: 'POST',
             data: {
-                action: 'send_chat_message',
+                action: 'bifm_billy_check_job_status',
                 nonce: billy_chat_vars.nonce,
+                jobId: jobId,
                 message: message
             },
             success: function(response, textStatus, jqXHR) {
-                console.log("response.status: ", response.status);
-                if (jqXHR.status === 202) {
-                    console.log("Job submitted successfully. Polling for result...");
-                    const jobId = response.data.jobId;
-                    pollForResult(jobId, message);
-                } else {
-                    console.log("not 202 response received");
+                if (jqXHR.status === 200) {
+                    clearInterval(poll);
                     handleResponse(response);
+                } else if (jqXHR.status === 202) {
+                    console.log('Job is still processing. Polling will continue.');
+                } else {
+                    clearInterval(poll);
+                    handleError({ responseJSON: { data: { message: 'Unexpected status. Please try again.' } } });
                 }
             },
             error: function(error) {
+                clearInterval(poll);
                 handleError(error);
             }
         });
+    }, pollInterval);
+}
+
+function handleResponse(response) {
+    document.getElementById('billy_chat_messages').removeChild(billy_processingMessage);
+    if (response.data.message) {
+        appendBotMessage(response.data.message);
     }
-
-    function pollForResult(jobId, message) {
-        const pollInterval = 3000; // Poll every 3 seconds
-
-        const poll = setInterval(() => {
-            $.ajax({
-                url: billy_chat_vars.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'bifm_billy_check_job_status',
-                    nonce: billy_chat_vars.nonce,
-                    jobId: jobId,
-                    message: message
-                },
-                success: function(response, textStatus, jqXHR) {
-                    if (jqXHR.status === 200) {
-                        clearInterval(poll);
-                        handleResponse(response);
-                    } else if (jqXHR.status === 202) {
-                        console.log('Job is still processing. Polling will continue.');
-                    } else {
-                        clearInterval(poll);
-                        handleError({ responseJSON: { data: { message: 'Unexpected status. Please try again.' } } });
-                    }
-                },
-                error: function(error) {
-                    clearInterval(poll);
-                    handleError(error);
-                }
-            });
-        }, pollInterval);
-    }
-
-    function handleResponse(response) {
-        document.getElementById('billy_chat_messages').removeChild(billy_processingMessage);
-        if (response.data.message) {
-            appendBotMessage(response.data.message);
-        }
-        if (response.data.widget_object) {
-            let chatbox = document.getElementById('billy_chat_messages');
-            console.log("contains widget");
-            let div = document.createElement('div');
-            div.innerHTML = response.data.widget_object.widget;
-            chatbox.appendChild(div);
-            if (response.data.widget_object.script) {
-                // if response contain script, append to the document's existing <script> tag
-                let script = document.createElement('script');
-                script.innerHTML = response.data.widget_object.script;
-                document.body.appendChild(script);
-                chatbox.scrollTop = chatbox.scrollHeight;
-            }
+    if (response.data.widget_object) {
+        let chatbox = document.getElementById('billy_chat_messages');
+        console.log("contains widget");
+        let div = document.createElement('div');
+        div.innerHTML = response.data.widget_object.widget;
+        chatbox.appendChild(div);
+        if (response.data.widget_object.script) {
+            // if response contain script, append to the document's existing <script> tag
+            let script = document.createElement('script');
+            script.innerHTML = response.data.widget_object.script;
+            document.body.appendChild(script);
+            chatbox.scrollTop = chatbox.scrollHeight;
         }
     }
+}
 
-    function handleError(error) {
-        console.error('Error polling for job status:', error);
-        let errorMessage = "An error occurred. Please try again.";
+function handleError(error) {
+    console.error('Error polling for job status:', error);
+    let errorMessage = "An error occurred. Please try again.";
+    try {
+        errorMessage = error.responseJSON.data.message;
+    } catch (e) {
         try {
-            errorMessage = error.responseJSON.data.message;
-        } catch (e) {
-            try {
-                errorMessage = error.responseText;
-            } catch (e) {}
-        }
-        appendBotMessage(errorMessage);
-        document.getElementById('billy_chat_messages').removeChild(billy_processingMessage);
+            errorMessage = error.responseText;
+        } catch (e) {}
     }
-
-    function minimize_unminimize(){
-        const chatWidget = $('#billy_chat_widget');
-        chatWidget.toggle();
-        const targetElement = $('#wp-admin-bar-billy-chat-button');
-        const widgetOffset = chatWidget.offset();
-        const targetOffset = targetElement.offset();
-        const translateX = targetOffset.left - (widgetOffset.left + chatWidget.outerWidth());
-        const translateY = targetOffset.top - (widgetOffset.top + chatWidget.outerHeight());
-        if (chatWidget.hasClass('collapsed')) {
-            chatWidget.removeClass('collapsed');
-            setTimeout(() => {
-                chatWidget.css('opacity', '1');
-                chatWidget.css('width', '38%');
-                chatWidget.css('height', '80%');
-                chatWidget.css({
-                    right: '20px',
-                    bottom: '20px'});
-                chatWidget.css({transform: `translate(0px, 0px) scale(1)`});
-                
-            }, 10); // Delay to trigger transition effect
-        } else {
-            chatWidget.addClass('collapsed');
-            setTimeout(() => {
-                chatWidget.css('opacity', '0');
-                chatWidget.css('width', '0');
-                chatWidget.css('height', '0');
-                chatWidget.css({transform: `translate(${translateX}px, ${translateY}px) scale(0.1)`});
-            }, 10); // Wait for transition to complete before fully collapsing
-        }
-    }
-
-});
-
-
+    appendBotMessage(errorMessage);
+    document.getElementById('billy_chat_messages').removeChild(billy_processingMessage);
+}

@@ -5,6 +5,9 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     $widget_id = uniqid();
     $parameters_json = wp_json_encode($parameters);
 
+    $rejection_text = __('You rejected granting Billy private access to your site.', 'bifm');
+    $acceptance_text = __('You authorized Billy to read drafts and site configuration.', 'bifm');
+
     // Use Materialize card layout for the widget with two buttons (authorize and reject)
     $widget = "<div id='validate-API_get-widget-" . $widget_id . "' class='card'>
     <div class='card-content'>
@@ -27,11 +30,15 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         data['authorize'] = true;
         var bubble = document.createElement('div');
         bubble.classList.add('billy-bubble', 'bubble');
-        bubble.innerHTML = '<p>You authorized Billy to read drafts and site configuration.</p>';
+        bubble.innerHTML = '<p> " . $acceptance_text . "</p>';
         document.getElementById('validate-API_get-widget-" . esc_attr($widget_id) . "').outerHTML = bubble.outerHTML;
         var processingMessage = document.createElement('div');
         processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
-        document.getElementById('billy-chatbox').appendChild(processingMessage);
+        try {
+            document.getElementById('billy-chatbox').appendChild(processingMessage);
+        } catch (error) {
+            console.error('No chatbox to append processing');
+        }
         sendMessage(data, 'API_get', '" . esc_attr($run_id) . "', '" . esc_attr($tool_call_id) . "');
     });
     document.getElementById('reject-API_get-" . esc_attr($widget_id) . "').addEventListener('click', function() {
@@ -40,11 +47,15 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         data['authorize'] = false;
         var bubble = document.createElement('div');
         bubble.classList.add('billy-bubble', 'bubble');
-        bubble.innerHTML = '<p>".__('You rejected granting Billy private access to your site.', 'bifm')."</p>';
+        bubble.innerHTML = '<p>". $rejection_text ."</p>';
         document.getElementById('validate-API_get-widget-" . esc_attr($widget_id) . "').outerHTML = bubble.outerHTML;
         var processingMessage = document.createElement('div');
         processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
-        document.getElementById('billy-chatbox').appendChild(processingMessage);
+        try {
+            document.getElementById('billy-chatbox').appendChild(processingMessage);
+        } catch (error) {
+            console.error('No chatbox to append processing');
+        }
         sendMessage(data, 'API_get', '" . esc_attr($run_id) . "', '" . esc_attr($tool_call_id) . "');
     });
     ";

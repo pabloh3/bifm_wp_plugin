@@ -24,7 +24,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 warningDiv.textContent = 'Settings saved successfully.';
                 warningDiv.style.display = 'flex';
                 //cleanup all fields
-                document.getElementById('blog_author_password').value = '';
+                try {
+                    document.getElementById('blog_author_password').value = '';
+                } catch (error) {
+                    console.log("no password field, I assume this is an admin user");
+                }
             } else {
                 console.error('Error:', result.data);
                 //display error message

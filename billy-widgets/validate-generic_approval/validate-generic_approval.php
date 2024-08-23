@@ -23,6 +23,11 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         }
     }
 
+    $acceptance_text = __('You authorized Billy to make changes. This could take a few minutes.', 'bifm');
+    $rejection_text = __('You rejected Billy from making changes.', 'bifm');
+    $processing = __('Processing', 'bifm');
+
+
     // Use Materialize card layout for the widget with two buttons (authorize and reject)
     $widget = "<div id='validate-generic_approval-widget-" . esc_attr($widget_id) . "' class='card'>
         <div class='card-content' id='bifm-generic_approval'>
@@ -49,12 +54,16 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         }
         var bubble = document.createElement('div');
         bubble.classList.add('billy-bubble', 'bubble');
-        bubble.innerHTML = '<p>' + " .__('You authorized Billy to make changes. This could take a few minutes.', 'bifm') . " + '</p>';
+        bubble.innerHTML = '<p>" . $acceptance_text . "</p>';
         document.getElementById('validate-generic_approval-widget-" . esc_attr($widget_id) . "').outerHTML = bubble.outerHTML;
         var processingMessage = document.createElement('div');
-        processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">' + " . __('Processing', 'bifm') . " + '<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
-        document.getElementById('billy-chatbox').appendChild(processingMessage);
-        sendMessage(data, 'generic_approval', " . esc_attr($run_id) . ", " . esc_attr($tool_call_id) . ");
+        processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">" . $processing .  "<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
+        try {
+            document.getElementById('billy-chatbox').appendChild(processingMessage);
+        } catch (error) {
+            console.error('No chatbox to append processing');
+        }
+        sendMessage(data, 'generic_approval', '" . esc_attr($run_id) . "', '" . esc_attr($tool_call_id) . "');
     });
 
     document.getElementById('reject-generic_approval-" . esc_attr($widget_id) . "').addEventListener('click', function(event) {
@@ -64,14 +73,17 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         data.authorize = false;
         var bubble = document.createElement('div');
         bubble.classList.add('billy-bubble', 'bubble');
-        bubble.innerHTML = '<p>' + " . __('You rejected the changes Billy wanted to make on your site.', 'bifm') . " + '</p>';
+        bubble.innerHTML = '<p>" . $rejection_text . "</p>';
         document.getElementById('validate-generic_approval-widget-" . esc_attr($widget_id) . "').outerHTML = bubble.outerHTML;
         
         var processingMessage = document.createElement('div');
-        processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">' + " . __('Processing', 'bifm') . " + '<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
-        document.getElementById('billy-chatbox').appendChild(processingMessage);
-        
-        sendMessage(data, 'generic_approval', " . esc_attr($run_id) . ", " . esc_attr($tool_call_id) . ");
+        processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">" . $processing . "<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
+        try {
+            document.getElementById('billy-chatbox').appendChild(processingMessage);
+        } catch (error) {
+            console.error('No chatbox to append processing');
+        }
+        sendMessage(data, 'generic_approval', '" . esc_attr($run_id) . "', '" . esc_attr($tool_call_id) . "');
     });
 
     function reinitializeSelect() {

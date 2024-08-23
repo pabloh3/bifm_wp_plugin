@@ -42,7 +42,12 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         document.getElementById('validate-writer-widget-" . $widget_id . "').outerHTML = div.outerHTML;
         var processingMessage = document.createElement('div');
         processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
-        document.getElementById('billy-chatbox').appendChild(processingMessage);
+        // in chatbar there's no billy chatbox
+        try {
+            document.getElementById('billy-chatbox').appendChild(processingMessage);
+        } catch (error) {
+            console.error('No chatbox to append processing');
+        }
         sendMessage(data, 'writer', '" . $run_id . "', '" . $tool_call_id . "');
     });
     document.getElementById('reject-writer-" . $widget_id . "').addEventListener('click', function() {
@@ -57,7 +62,11 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         document.getElementById('validate-writer-widget-" . $widget_id . "').outerHTML = div.outerHTML;
         var processingMessage = document.createElement('div');
         processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
-        document.getElementById('billy-chatbox').appendChild(processingMessage);
+        try {
+            document.getElementById('billy-chatbox').appendChild(processingMessage);
+        } catch (error) {
+            console.error('No chatbox to append processing');
+        }
         sendMessage(data, 'writer', '" . $run_id . "', '" . $tool_call_id . "');
     });
     ";
