@@ -9,7 +9,7 @@ if (strpos($host, 'stg-') === 0 ||
     $environment = 'staging';
 }
 
-$testing = true;
+$testing = false;
  
 if ($testing) {
     $BIFM_API_URL = 'http://localhost:5001/';
