@@ -35,9 +35,7 @@ function bifm_save_settings() {
                     wp_send_json_error($e->getMessage(), 400);
                 }
             }
-            error_log("Pass to encrypt: " . $password);
             $password = bifm_encrypt_data($password);
-            error_log("Encrypted password: " . $password);
             update_user_meta($user_id, 'encrypted_password', $password);
         }
         

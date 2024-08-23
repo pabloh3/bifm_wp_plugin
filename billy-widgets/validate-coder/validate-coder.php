@@ -11,6 +11,8 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
     $keyphrase_url = urlencode($keyphrase);
     $path = BIFM_PATH . 'static/icons/Coder.svg';
     $coder_icon = file_get_contents($path); //phpcs:ignore
+    $acceptance_text = __("You authorized Billy to build a new Elementor widget.", "bifm");
+    $rejection_text = __("You rejected Billy from building a new Elementor widget for: ", "bifm");
     // widget as a piece of html with two buttons (authorize and reject)
     $widget = "
     <div id='validate-coder-widget-" . $widget_id . "'>
@@ -41,7 +43,7 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         // make the bubble style backgound green
         div.style.backgroundColor = '#fef7ff';
         div.style.alignSelf = 'flex-start';
-        div.innerHTML = '<p>You will be redirected to the widget builder soon.';
+        div.innerHTML = '<p>" . $acceptance_text . " </p>';
         document.getElementById('validate-coder-widget-" . $widget_id . "').outerHTML = div.outerHTML;
         window.location.href = '/wp-admin/admin.php?page=widget-manager&keyphrase=" . $keyphrase_url . "';
     });
@@ -53,11 +55,15 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         div.classList.add('bubble');
         div.style.backgroundColor = '#fef7ff';
         div.style.alignSelf = 'flex-start';
-        div.innerHTML = '<p>You rejected to build an Elementor widget for: <b>" . $keyphrase . "</b></p>';
+        div.innerHTML = '<p>" . $rejection_text ."<b>" . $keyphrase . "</b></p>';
         document.getElementById('validate-coder-widget-" . $widget_id . "').outerHTML = div.outerHTML;
         var processingMessage = document.createElement('div');
         processingMessage.innerHTML = '<div id=\"billy-responding\" class=\"processing-message\">Processing<span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span><span class=\"processing-dot\">.</span></div>';
-        document.getElementById('billy-chatbox').appendChild(processingMessage);
+        try {
+            document.getElementById('billy-chatbox').appendChild(processingMessage);
+        } catch (error) {
+            console.error('No chatbox to append processing');
+        }
         sendMessage(data, 'coder', '" . $run_id . "', '" . $tool_call_id . "');
     });
     ";

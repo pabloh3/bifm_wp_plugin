@@ -15,15 +15,18 @@ function bifm_handle_chat_message() {
     if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
         wp_send_json_error(array('message' => __("Couldn't verify user",'bifm') ), 500);
     } 
-    // if message is an array
-    if (is_array($_POST['message'])) {
-        error_log("message received on back-end sanitized: " . print_r($message, true));
-    }
+
     if(!is_array($_POST['message']))
         $message = sanitize_text_field($_POST['message']);
-    else foreach ($message as $key => $value) {
-        if(is_string($value))
-        $message[$key] = sanitize_text_field($value);
+    else {
+        $message = $_POST['message'];
+        foreach ($message as $key => $value) {
+            if(is_string($value)){
+                $message[$key] = sanitize_text_field($value);
+            } else {
+                $message[$key] = $value;
+            }
+        }
     }
     $tool_call_id = sanitize_text_field($_POST['tool_call_id']);
     $widget_name = sanitize_text_field($_POST['widget_name']);
@@ -75,12 +78,9 @@ function bifm_call_api($message, $widget_name, $run_id, $tool_call_id) {
         wp_send_json_error(array('message' => __("Something went wrong:",'bifm').$error_response), 500);
     } else {
         $status_code = wp_remote_retrieve_response_code($response);
-        error_log("Status code from chat response: " . $status_code);
         $response_body = json_decode(wp_remote_retrieve_body($response), true);
-
         if ($status_code == 202) {
             // log response array as string
-            error_log("202 response: " . print_r($response_body, true));
             $jobId = $response_body['jobId'];
             wp_send_json_success(array('jobId' => $jobId), 202);
         } else if ($status_code == 200) {
@@ -218,7 +218,6 @@ function bifm_new_chat() {
 /* Load an old thread */
 add_action('wp_ajax_bifm_load_billy_chat', 'bifm_load_billy_chat'); // wp_ajax_{action} for logged-in users
 function bifm_load_billy_chat() {
-    error_log("load chat called");
     if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['nonce'])), 'billy-nonce')) {
         wp_send_json_error(array('message' => __("Couldn't verify user",'bifm')), 500);
     }

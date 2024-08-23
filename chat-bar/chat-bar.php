@@ -18,7 +18,6 @@ function bifm_billy_button_enqueue_scripts() {
     wp_enqueue_script('highlightjs',BIFM_URL.'static/highlightjs/highlight.min.js',['jquery'],BIFM_VERSION,true);
     wp_enqueue_script('markdownit',BIFM_URL.'static/markdownit/markdown-it.min.js',['jquery'],BIFM_VERSION,true);
     wp_enqueue_script('materialize',BIFM_URL.'static/materialize/materialize.min.js',['jquery'],BIFM_VERSION,true);
-    wp_enqueue_script('bifm',BIFM_URL.'static/admin.js',['jquery','highlightjs','materialize'],BIFM_VERSION,true);
     wp_enqueue_script('billy_chat_script', plugin_dir_url(__FILE__) . 'chat-bar.js', array('jquery','markdownit'), BIFM_VERSION, true);
     wp_enqueue_style('billy_chat_style', plugin_dir_url(__FILE__)  . '/chat-bar.css',[],BIFM_VERSION);
     // localize

@@ -39,7 +39,7 @@
 #billy-chatbox-input {
     position: absolute;
     width: calc(100% - 120px);
-    bottom: 0px;
+    bottom: 25px;
     left: 0;
     margin: 20px 60px 20px 60px;
 }
@@ -52,9 +52,10 @@
     /* top right bottom left*/
     margin: 10px auto 10px auto;
     position: absolute;
-    width: 280px; /* Fixed or relative width */
+    width: 80%; /* Fixed or relative width */
     left: 50%;
     transform: translateX(-50%);
+    text-align: center;
 }
 
 
