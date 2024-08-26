@@ -49,7 +49,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     </div>
                 <?php else: ?>
                     <div class="input-field bifm-col s12 l4">
-                        <p><?php esc_html_e('Saving will generate an application password. This is used to grant Billy admin access to your site so it can create content and review your content and configuration.','bifm'); ?></p>
+                        <p><?php esc_html_e('Saving will generate an application password for the user you selected. This will be shared with Billy so it can access your site to create and review content and configuration.','bifm'); ?></p>
                     </div>
                 <?php endif; ?>
             </div>
