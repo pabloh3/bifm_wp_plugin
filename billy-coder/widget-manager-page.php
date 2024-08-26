@@ -1,3 +1,4 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <br/>
 <a href="admin.php?page=bifm" class="bifm-btn  waves-effect waves-light purple light-grey" style="width: 120px;">
     <i class="material-icons left">arrow_back</i>
