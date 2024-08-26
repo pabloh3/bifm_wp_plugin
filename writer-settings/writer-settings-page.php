@@ -43,8 +43,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         <input id="blog_author_password" type="password" name="blog_author_password" class="validate materialize-textarea">
                         <label for="blog_author_password"><?php esc_html_e('Blog author\'s password','bifm'); ?></label>
                         <div><?php 
-/* translators: %s: user profile page URL */
-                        printf(wp_kses(__('Will you be credited as the author of Billy\'s posts? If so, create an "Application Password" <a href="%s">here</a>.<br/>If not, ask your admin for the author\'s "Application Password".','bifm'),['a'=>'href']),'/wp-admin/profile.php'); ?></div>
+                            /* translators: %s: user profile page URL */
+                            printf(wp_kses(__('Will you be credited as the author of Billy\'s posts? If so, create an "Application Password" <a href="%s">here</a>.<br/>If not, ask your admin for the author\'s "Application Password".','bifm'),['a'=>'href']),'/wp-admin/profile.php'); ?>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div class="input-field bifm-col s12 l4">
+                        <p><?php esc_html_e('Saving will generate an application password for the user you selected. This will be shared with Billy so it can access your site to create and review content and configuration.','bifm'); ?></p>
                     </div>
                 <?php endif; ?>
             </div>
