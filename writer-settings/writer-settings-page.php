@@ -56,14 +56,19 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             <?php $blog_language = get_user_meta($user_id, 'blog_language', true); ?>
             <div class="bifm-row">
-                <div class="input-field bifm-col s12 l4">
-                    <select id="blog_language" name="blog_language">
-                        <option value="" disabled <?php echo empty($blog_language) ? 'selected' : '' ?>><?php esc_html_e('Choose your option','bifm'); ?></option>
-                        <option value="english" <?php echo $blog_language == 'english' ? 'selected' : '' ?>><?php esc_html_e('English','bifm'); ?></option>
-                        <option value="spanish" <?php echo $blog_language == 'spanish' ? 'selected' : '' ?>><?php esc_html_e('Spanish','bifm'); ?></option>
-                    </select>
-                    <label for="blog_language"><?php esc_html_e('Language for new blog posts','bifm'); ?></label>
-                </div>
+            <div class="input-field bifm-col s12 l4">
+                <select id="blog_language" name="blog_language">
+                    <option value="" disabled <?php echo empty($blog_language) ? 'selected' : '' ?>><?php esc_html_e('Choose your option','bifm'); ?></option>
+                    <option value="english" <?php echo $blog_language == 'english' ? 'selected' : '' ?>><?php esc_html_e('English','bifm'); ?></option>
+                    <option value="spanish" <?php echo $blog_language == 'spanish' ? 'selected' : '' ?>><?php esc_html_e('Spanish','bifm'); ?></option>
+                    <option value="other" <?php echo !in_array($blog_language, ['english', 'spanish']) ? 'selected' : '' ?>><?php esc_html_e('Other','bifm'); ?></option>
+                </select>
+                <label for="blog_language"><?php esc_html_e('Language for new blog posts','bifm'); ?></label>
+            </div>
+            <div id="other_language_wrapper" class="input-field bifm-col s12 l4" style="display: <?php echo !in_array($blog_language, ['english', 'spanish']) ? 'block' : 'none'; ?>;">
+                <input id="other_blog_language" type="text" name="other_blog_language" value="<?php echo !in_array($blog_language, ['english', 'spanish']) ? esc_attr($blog_language) : ''; ?>" />
+                <label for="other_blog_language"><?php esc_html_e('Please specify your language','bifm'); ?></label>
+            </div>
             </div>
 
             <?php $image_width = get_user_meta($user_id, 'image_width', true); ?>

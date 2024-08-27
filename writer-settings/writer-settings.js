@@ -1,4 +1,3 @@
-// Handle submission of blog settings form
 document.addEventListener('DOMContentLoaded', function() {
     var form = document.getElementById('bifm-settings-form');
 
@@ -6,6 +5,14 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
 
         var formData = new FormData(form);
+        var blogLanguageSelect = document.getElementById('blog_language');
+        var otherBlogLanguage = document.getElementById('other_blog_language');
+
+        // If the selected language is "Other", use the custom input value
+        if (blogLanguageSelect.value === 'other') {
+            formData.set('blog_language', otherBlogLanguage.value);
+        }
+
         formData.append('action', 'bifm_save_settings');
         formData.append('bifm_nonce', my_script_object.bifm_nonce);
         console.log("bifm_nonce: " + my_script_object.bifm_nonce);
@@ -19,19 +26,19 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(result => {
             if (result.success) {
                 console.log('Success:', result.data);
-                //display success message
+                // Display success message
                 var warningDiv = document.getElementById('warningMessage');
                 warningDiv.textContent = 'Settings saved successfully.';
                 warningDiv.style.display = 'flex';
-                //cleanup all fields
+                // Clean up all fields
                 try {
                     document.getElementById('blog_author_password').value = '';
                 } catch (error) {
-                    console.log("no password field, I assume this is an admin user");
+                    console.log("No password field, I assume this is an admin user");
                 }
             } else {
                 console.error('Error:', result.data);
-                //display error message
+                // Display error message
                 var warningDiv = document.getElementById('warningMessage');
                 warningDiv.textContent = result.data;
                 warningDiv.style.display = 'flex';
@@ -41,5 +48,20 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
         });
     });
-});
 
+    // Handle blog language selection
+    var blogLanguageSelect = document.getElementById('blog_language');
+    var otherLanguageWrapper = document.getElementById('other_language_wrapper');
+    var otherBlogLanguage = document.getElementById('other_blog_language');
+
+    blogLanguageSelect.addEventListener('change', function() {
+        if (this.value === 'other') {
+            otherLanguageWrapper.style.display = 'block';
+            otherBlogLanguage.setAttribute('required', 'required');
+        } else {
+            otherLanguageWrapper.style.display = 'none';
+            otherBlogLanguage.removeAttribute('required');
+        }
+    });
+
+});
