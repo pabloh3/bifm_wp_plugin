@@ -35,7 +35,6 @@ function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_c
     // Extract page / post elementor_data
     $post_id = intval($data['page']);
     $elementor_data = get_post_meta($post_id, '_elementor_data', true);
-    error_log("giving this elementor data to the post: " . print_r($elementor_data, true));
     //if elementor_data is empty make the post elementor editable
     if (empty($elementor_data)) {
         error_log("post_id: " . $post_id . " has empty elementor_data");

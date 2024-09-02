@@ -19,12 +19,17 @@ function bifm_handle_chat_message() {
     if(!is_array($_POST['message']))
         $message = sanitize_text_field($_POST['message']);
     else {
-        $message = $_POST['message'];
+        $message = $_POST['message']; // each element of this array is sanitized in the next lines
         foreach ($message as $key => $value) {
             if(is_string($value)){
                 $message[$key] = sanitize_text_field($value);
+            } elseif (is_array($value)) {
+                // If the element is an array, recursively sanitize its elements
+                $message[$key] = array_map(function($item) {
+                    return is_string($item) ? sanitize_text_field($item) : $item;
+                }, $value);
             } else {
-                $message[$key] = $value;
+                $message[$key] = $value; // booleans, ints, doubles, etc. are not sanitized
             }
         }
     }
@@ -178,7 +183,6 @@ function bifm_handle_response($body, $message) {
         if ($body['status'] == 'reply_with_widget' || $body['status'] == 'needs_authorization') {
             $tool_name = $body['tool_name'];
             // eventually get rid of this filter, might want a list of approved tools to check against
-            #try - catch block
             try {
                 $parameters = $body['data']['parameters'];
                 $tool_call_id = $body['tool_call_id'];
