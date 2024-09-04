@@ -66,7 +66,7 @@ function bifm_call_api($message, $widget_name, $run_id, $tool_call_id) {
             'body' => wp_json_encode(array(
                 'message' => $message,
                 'thread_id' => $thread_id,
-                'bifm_assistant_id' => $assistant_id
+                'assistant_id' => $assistant_id
             )),
             'method' => 'POST',
             'data_format' => 'body',
@@ -92,7 +92,7 @@ function bifm_call_api($message, $widget_name, $run_id, $tool_call_id) {
             bifm_handle_response($response_body, $message);
         } else {
             $error_response = isset($response_body['message']) ? $response_body['message'] : __("API for chat returned an error with code: ",'bifm') .  $status_code;
-            error_log("Error_message: " . $error_response);
+            error_log("Error trying to call API on smart chat: " . $error_response);
             wp_send_json_error(array('message' => $error_response), $status_code > 0 ? $status_code : 500);
         }
     }
@@ -123,8 +123,8 @@ function bifm_billy_check_job_status() {
             // If this is the first time calling the assistant, store the assistant ID
             if ((!isset($assistant_id) || $assistant_id == NULL) && isset($response_body['site_info'])) {
                 $site_info = $response_body['site_info'];
-                if (isset($site_info['bifm_assistant_id'])) {
-                    update_option('bifm_assistant_id', $site_info['bifm_assistant_id']);
+                if (isset($site_info['assistant_id'])) {
+                    update_option('bifm_assistant_id', $site_info['assistant_id']);
                 }
             }
             bifm_handle_response($response_body, $message);
@@ -136,7 +136,7 @@ function bifm_billy_check_job_status() {
             wp_send_json_success(array('jobId' => $jobId), 202);
         } else {
             $error_response = isset($response_body['message']) ? $response_body['message'] : "API for job status returned an error with code: " .  $status_code;
-            error_log("Error_message: " . $error_response);
+            error_log("Error_message checking Billy job status: " . $error_response);
             wp_send_json_error(array('message' => $error_response), $status_code > 0 ? $status_code : 500);
         }
     }

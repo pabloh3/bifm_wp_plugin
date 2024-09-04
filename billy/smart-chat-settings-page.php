@@ -12,11 +12,11 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API?>
         <p><?php esc_html_e('Here you can update the settings for smart chat.','bifm'); ?></p>
         
         <form id="smart-chat-form" action="#" method="post">
-            <?php $assistant_instructions = get_option('bifm_assistant_instructions'); ?>
+            <?php $bifm_assistant_instructions = get_option('bifm_assistant_instructions'); ?>
             <div class="bifm-row">
                 <div class="input-field bifm-col s12 l8">
-                    <textarea id="assistant_instructions" name="assistant_instructions" class="materialize-textarea" style="height: 80px;"><?php echo esc_textarea($assistant_instructions) ?: ''; ?></textarea>
-                    <label for="assistant_instructions"><?php esc_html_e('Give the bot instructions for how to respond. Start with something like "We use Elementor to edit our pages...','bifm'); ?>"</label>
+                    <textarea id="bifm_assistant_instructions" name="bifm_assistant_instructions" class="materialize-textarea" style="height: 80px;"><?php echo esc_textarea($bifm_assistant_instructions) ?: ''; ?></textarea>
+                    <label for="bifm_assistant_instructions"><?php esc_html_e('Give the bot instructions for how to respond. Start with something like "We use Elementor to edit our pages...','bifm'); ?>"</label>
                 </div>
             </div>
 
@@ -41,28 +41,28 @@ require ( __DIR__ . '/../bifm-config.php' );// define base url for the API?>
                 <div id="uploadedFiles" class="l6">
                     <ul class="collection">
                         <?php
-                        $dirPath = wp_upload_dir()['basedir'] . '/bifm-files/chat_files/';
-                        if (is_dir($dirPath) && is_readable($dirPath)) {
-                            if ($dh = opendir($dirPath)) {
-                                while (($file = readdir($dh)) !== false) {
-                                    if ($file != "." && $file != "..") {
+                            // Get the list of files from the database
+                            $stored_files = get_option('bifm_uploaded_file_names', array());
+
+                            if (!empty($stored_files)) {
+                                foreach ($stored_files as $file) {
+                                    // Ensure file_name is set and not empty
+                                    if (!empty($file['file_name'])) {
                                         ?>
                                         <li class="collection-item">
-                                            <div class="file-name-line" file-name="<?php echo esc_attr($file) ?>">
-                                                <?php echo esc_attr($file) ?>
+                                            <div class="file-name-line" file-name="<?php echo esc_attr($file['file_name']); ?>">
+                                                <?php echo esc_html($file['file_name']); ?>
                                                 <a href="#!" class="secondary-content">
-                                                    <i class="material-icons" onclick="removeFile(this, '<?php echo esc_attr($file) ?>')">delete</i>
+                                                    <i class="material-icons" onclick="removeFile(this, '<?php echo esc_attr($file['file_name']); ?>')">delete</i>
                                                 </a>
                                             </div>
                                         </li>
                                         <?php
                                     }
                                 }
-                                closedir($dh);
+                            } else {
+                                echo '<li class="collection-item">' . esc_html(__('No files uploaded yet.', 'bifm')) . '</li>';
                             }
-                        } else {
-                            echo '<li class="collection-item">'.esc_html(__('Directory not found or not readable','bifm')).'</li>';
-                        }
                         ?>
                     </ul>
                 </div>

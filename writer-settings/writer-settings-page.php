@@ -43,8 +43,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         <input id="blog_author_password" type="password" name="blog_author_password" class="validate materialize-textarea">
                         <label for="blog_author_password"><?php esc_html_e('Blog author\'s password','bifm'); ?></label>
                         <div><?php 
-                            /* translators: %s: user profile page URL */
-                            printf(wp_kses(__('Will you be credited as the author of Billy\'s posts? If so, create an "Application Password" <a href="%s">here</a>.<br/>If not, ask your admin for the author\'s "Application Password".','bifm'),['a'=>'href']),'/wp-admin/profile.php'); ?>
+                            $message = sprintf(
+                                __('Will you be credited as the author of Billy\'s posts? If so, create an "Application Password" <a href="%s">here</a>.<br/>If not, ask your admin for the author\'s "Application Password". This will be shared with Billy so it can access your site to create and review content and configuration.', 'bifm'),
+                                '/wp-admin/profile.php'
+                            );
+                            echo wp_kses($message, ['a' => ['href' => []], 'br' => []]);
+                            /* translators: %s: user profile page URL */?>
                         </div>
                     </div>
                 <?php else: ?>
@@ -87,7 +91,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <select id="image_height" name="image_height">
                         <option value="" disabled <?php echo empty($image_height) ? 'selected' : '' ?>><?php esc_html_e('Height','bifm'); ?></option>
                         <option value="1024" <?php echo $image_height == '1024' ? 'selected' : '' ?>><?php esc_html_e('1024','bifm'); ?></option>
-                        <option value="1792"><?php esc_html_e('1792','bifm'); ?></option>
+                        <option value="1792" <?php echo $image_height == '1792' ? 'selected' : '' ?>><?php esc_html_e('1792','bifm'); ?></option>
                     </select>
                     <label for="image_height"><?php esc_html_e('Image height (px)','bifm'); ?></label>
                 </div>
