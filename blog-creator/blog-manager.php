@@ -219,8 +219,10 @@ function bifm_handle_cbc_create_bulk_blogs() {
     check_ajax_referer('bulk-upload-items-action', 'nonce');
     $items = [];
     // Get the items from the frontend
-    if(isset($_POST['items']) && count($_POST['items'])) {
-        $items = map_deep( $_POST['items'], 'trim' );
+    if (isset($_POST['items']) && count($_POST['items'])) {
+        $items = map_deep($_POST['items'], function($item) { //sanitized in the next lines
+            return is_array($item) ? $item : sanitize_text_field(trim($item));
+        });
     }
 
     if (empty($items)) {

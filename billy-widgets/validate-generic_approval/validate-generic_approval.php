@@ -10,12 +10,12 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
 
     $widget_id = uniqid();
     $parameters_json = wp_json_encode($parameters);
-    $message = $parameters['message'];
-    $card_title = $parameters['card_title'];
+    $message = sanitize_text_field($parameters['message']);
+    $card_title = sanitize_text_field($parameters['card_title']);
     // check if the parameters have a selctor
     $selector_section = '';
     if (!empty($parameters['selector'])) {
-        $selector = $parameters['selector'];
+        $selector = sanitize_text_field($parameters['selector']);
         if ($selector == 'all_pages') {
             // load the code from the selector-all_pages.php file
             include plugin_dir_path(__FILE__) . 'selector-all_pages.php';
@@ -23,9 +23,9 @@ function bifm_get_widget($parameters, $run_id, $tool_call_id) {
         }
     }
 
-    $acceptance_text = __('You authorized Billy to make changes. This could take a few minutes.', 'bifm');
-    $rejection_text = __('You rejected Billy from making changes.', 'bifm');
-    $processing = __('Processing', 'bifm');
+    $acceptance_text = esc_js(__('You authorized Billy to make changes. This could take a few minutes.', 'bifm'));
+    $rejection_text = esc_js(__('You rejected Billy from making changes.', 'bifm'));
+    $processing = esc_js(__('Processing', 'bifm'));
 
 
     // Use Materialize card layout for the widget with two buttons (authorize and reject)

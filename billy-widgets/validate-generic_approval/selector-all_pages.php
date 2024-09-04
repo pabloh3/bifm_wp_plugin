@@ -13,8 +13,6 @@ function bifm_get_selector_html($parameters) {
 
     // Check if parameters include a page, and validate it, check if it's in the pages and posts list
     $pre_selected_page = isset($parameters['page']) && is_int($parameters['page']) && in_array($parameters['page'], $pages_and_posts_ids) ? $parameters['page'] : '';
-    error_log("parameters page: " . $parameters['page']);
-    error_log('pre_selected_page: ' . $pre_selected_page);
 
     // Start building the HTML for the selector
     ob_start(); // Start output buffering
