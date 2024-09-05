@@ -41,6 +41,8 @@ function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_c
         //extract post body
         $post = get_post($post_id);
         $post_content = $post->post_content;
+        // Escape the post content for JSON
+        $escaped_content = wp_slash($post_content);
         // create elementor metadata
         $random_id = uniqid();
         $elementor_data = json_encode(
@@ -58,7 +60,7 @@ function bifm_widget_response($data, $run_id, $assistant_id, $thread_id, $tool_c
                                 [
                                     "id" => substr(str_replace('-', '', wp_generate_uuid4()), 0, 13),
                                     "elType" => "widget",
-                                    "settings" => ["editor" => $post_content],
+                                    "settings" => ["editor" => $escaped_content],
                                     "elements" => [],
                                     "widgetType" => "text-editor"
                                 ]
