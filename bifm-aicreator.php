@@ -1,6 +1,7 @@
 <?php
 /*
  * Plugin Name: Build It For Me - AI creator
+ * Plugin URI: https://wordpress.org/plugins/build-it-for-me-ai-creator
  * Description: Ask a bot to create for you.
  * Version: 1.2.10
  * Author: Build It For Me

@@ -98,7 +98,7 @@ function bifm_handle_fatal_error($dir_path, $widget_name) {
         
         error_log("############### handle fatal error running dir: " . $dir_path);
         error_log("widget: " . $widget_name);
-        // this function lives in widget-manager.php
+        // this function lives in bifm-aicreator.php
         bifm_remove_widget($dir_path,  $widget_name);
     
         wp_send_json_error([

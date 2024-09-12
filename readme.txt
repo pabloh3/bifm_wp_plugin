@@ -31,7 +31,7 @@ Features:
 
 == Installation ==
 
-1. Install the plugin through the WordPress plugins screen directly, or upload the plugin files to the `/wp-content/plugins/bifm-widget-manager` directory.
+1. Install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Navigate to the 'Build It For Me' menu in your dashboard to chat with Billy.
 4. If you want to use the blog creator, configure your blog creator on the "Writer Settings". If you're not an admin, you'll need an "app password" to configure the writer.
@@ -111,10 +111,10 @@ Category: Select the blog category it will be generated in
 
 == Screenshots ==
 
-1. Screenshot 1: Billy's interface. Ask a bot for help on WordPress.
-2. Screenshot 2: Writer Bot interface, ask the bot to write blog posts.
-3. Screenshot 3: Widget Builder. Ask a bot to code custom Elementor widgets. 
-4. Screenshot 4: Pop out chat. Can be opened in any admin page of WordPress.
+1. Screenshot_1.png: Billy's interface. Ask a bot for help on WordPress.
+2. Screenshot_2.png: Writer Bot interface, ask the bot to write blog posts.
+3. Screenshot_3.png: Widget Builder. Ask a bot to code custom Elementor widgets. 
+4. Screenshot_4.png: Pop out chat. Can be opened in any admin page of WordPress.
 
 == Changelog ==
 
