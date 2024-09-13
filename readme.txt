@@ -111,23 +111,15 @@ Category: Select the blog category it will be generated in
 
 == Screenshots ==
 
-1. Screenshot_1.png: Billy's interface. Ask a bot for help on WordPress.
-2. Screenshot_2.png: Writer Bot interface, ask the bot to write blog posts.
-3. Screenshot_3.png: Widget Builder. Ask a bot to code custom Elementor widgets. 
-4. Screenshot_4.png: Pop out chat. Can be opened in any admin page of WordPress.
+1. screenshot-1.png: Billy's interface. Ask a bot for help on WordPress.
+2. screenshot-2.png: Writer Bot interface, ask the bot to write blog posts.
+3. screenshot_3.png: Widget Builder. Ask a bot to code custom Elementor widgets. 
+4. screenshot_4.png: Pop out chat. Can be opened in any admin page of WordPress.
 
 == Changelog ==
 
-= 1.0 =
-* Initial release.
-
-== Upgrade Notice ==
-
-= 1.1 =
-Fixed widget saving issues.
-
 = 1.2 =
-Billy can now read site content to provide more accurate assistance.
+* Billy can now read site content to provide more accurate assistance.
 
 == External API Usage ==
 

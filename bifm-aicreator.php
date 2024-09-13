@@ -5,6 +5,7 @@
  * Description: Ask a bot to create for you.
  * Version: 1.2.10
  * Author: Build It For Me
+ * Author URI: https://www.builditforme.ai/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */

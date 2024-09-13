@@ -112,11 +112,15 @@ if (isset($_SESSION['thread_id'])) {
 
 
 <?php 
-
-    printf(
-      /* translators: %s: terms and conditions URL */ 
-      wp_kses(__('Please note that by using this plugin you are consenting with sharing your email and username with us. You can view our <a href="%s">full privacy policy</a>.','bifm') , ['p','a'=>['href']] )
-      ,'https://www.builditforme.ai/terms-and-conditions/'); ?>
+    echo wp_kses( 
+        sprintf(
+            /* translators: %s: terms and conditions URL */ 
+            __('Please note that by using this plugin you are consenting with sharing your email and username with us. You can view our <a href="%s">full privacy policy</a>.','bifm'),
+            'https://www.builditforme.ai/terms-and-conditions/'
+        ), 
+        ['a' => ['href' => []]] 
+    );
+?>
                   </p><br/>
                 <a href="admin.php?page=bifm" id="backButton" class="bifm-btn bifm-modal-button bifm-backButton waves-effect waves-light purple light-grey" style="width: 120px;">
                     <?php esc_html_e('Go Back','bifm'); ?>
