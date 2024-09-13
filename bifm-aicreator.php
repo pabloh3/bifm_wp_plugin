@@ -3,8 +3,9 @@
  * Plugin Name: Build It For Me - AI creator
  * Plugin URI: https://wordpress.org/plugins/build-it-for-me-ai-creator
  * Description: Ask a bot to create for you.
- * Version: 1.2.9
+ * Version: 1.2.10
  * Author: Build It For Me
+ * Author URI: https://www.builditforme.ai/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -13,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // include the WordPress HTTP API
 include_once(ABSPATH . WPINC . '/http.php');
 require 'bifm-config.php';
-define('BIFM_VERSION', '1.2.9');
+define('BIFM_VERSION', '1.2.10');
 define('BIFM_URL',plugin_dir_url(__FILE__));
 define('BIFM_PATH',plugin_dir_path(__FILE__));
 
