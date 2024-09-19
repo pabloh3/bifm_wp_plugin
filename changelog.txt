@@ -1,0 +1,12 @@
+== Changelog ==
+
+= 1.0 =
+* Initial release.
+
+== Upgrade Notice ==
+
+= 1.1 =
+Fixed widget saving issues.
+
+= 1.2 =
+* Billy can now read site content to provide more accurate assistance.

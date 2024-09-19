@@ -290,9 +290,6 @@ function bifm_get_elementor_data($object, $field_name, $request) {
 }
 
 function bifm_update_elementor_data($value, $object, $field_name) {
-    if (!is_array($value) && !is_object($value)) {
-        return new WP_Error('invalid_data', 'Elementor data must be an array or object.', ['status' => 400]);
-    }
     return update_post_meta($object->ID, '_elementor_data', $value);
 }
 
@@ -398,6 +395,7 @@ foreach ($hooks as $hook_name => $widget_name) {
         add_action('wp_ajax_' . $hook_name, $hook_name);
     }
 }
+
 
 // Suppress WordPress core update notifications
 /*function suppress_update_notifications() {
