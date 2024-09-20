@@ -290,7 +290,23 @@ function bifm_get_elementor_data($object, $field_name, $request) {
 }
 
 function bifm_update_elementor_data($value, $object, $field_name) {
-    return update_post_meta($object->ID, '_elementor_data', $value);
+    //check if data is string
+    if (is_string($value)) {
+        # check if first and last char is ", remove it
+        if (substr($value, 0, 1) === '"') {
+            $value = substr($value, 1);
+        }
+        if (substr($value, -1) === '"') {
+            $value = substr($value, 0, -1);
+        }
+        $json_value = $value;
+            
+    } else {
+        error_log("input is not string");
+        $json_value = $value;
+    }
+    error_log("json value: " . print_r($json_value, true));
+    return update_post_meta($object->ID, '_elementor_data', $json_value);
 }
 
 // Register field used to track post requests
