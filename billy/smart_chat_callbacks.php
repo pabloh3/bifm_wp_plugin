@@ -1,12 +1,14 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
-require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
 
-$custom_log_file = WP_CONTENT_DIR . '/custom.log';
-//session info
+// Start the session before any output
 if (!session_id()) {
     session_start();
 }
+
+require ( __DIR__ . '/../bifm-config.php' );// define base url for the API
+$custom_log_file = WP_CONTENT_DIR . '/custom.log';
+
 
 
 //assistant start
